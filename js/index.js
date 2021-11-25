@@ -12,5 +12,16 @@ $(document).ready(function () {
                 }, 300)
                 // console.log(x.target.id)
             });
+    $('.navbar-nav li a').click(function () {
+        var clickedID = $(this).attr('id');
+        if ($(this).hasClass('inactive')) { //this is the start of our condition 
+            $('.navbar-nav li a').removeClass('active')
+            $('.navbar-nav li a').addClass('inactive');
 
+            $(this).addClass(`active`)
+
+            $('.container').hide();
+            $('#' + clickedID.slice(0,clickedID.length - 4) + 'Content').fadeIn('slow')
+        }
+    });
 });

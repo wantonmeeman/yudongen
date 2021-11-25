@@ -31,3 +31,12 @@
   .navbar {
     background-color: #f7f7f7;
   }
+
+  #meLargeText {
+    font-size: 40px;
+  }
+
+  #meSmallText {
+    font-size: 20px;
+  }
+
