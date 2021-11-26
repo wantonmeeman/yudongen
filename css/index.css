@@ -32,11 +32,31 @@
     background-color: #f7f7f7;
   }
 
-  #meLargeText {
+  #meHeaderLargeText {
     font-size: 40px;
   }
 
-  #meSmallText {
+  #meHeaderSmallText {
     font-size: 20px;
   }
+
+  #meDescription {
+    font-size: 15px;
+  }
+
+  #descDivider{
+    border:0;
+  }
+
+  .skillTitle{
+    white-space: nowrap;
+  }
+
+  .bar{
+    background-color: blue;
+    border-color: white;
+    border-style : solid;
+    border-width: 1px;
+  }
+  
 

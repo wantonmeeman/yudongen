@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $('.nav-link').mouseenter(
         (x) => {
+
             $("#" + x.target.id).animate({
                 opacity: 1,
                 // borderWidth: `0 0 0.2rem 0`
@@ -21,6 +22,8 @@ $(document).ready(function () {
             $(this).addClass(`active`)
 
             $('.container').hide();
+            $('.skillTitle').animate({width: 'toggle'},700)
+            $('.skillBar').animate({width: 'toggle'},700)
             $('#' + clickedID.slice(0,clickedID.length - 4) + 'Content').fadeIn('slow')
         }
     });
