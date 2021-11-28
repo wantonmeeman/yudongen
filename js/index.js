@@ -22,9 +22,8 @@ $(document).ready(function () {
             $(this).addClass(`active`)
 
             $('.container').hide();
-            $('.skillTitle').animate({width: 'toggle'},700)
-            $('.skillBar').animate({width: 'toggle'},700)
             $('#' + clickedID.slice(0,clickedID.length - 4) + 'Content').fadeIn('slow')
         }
     });
+    $('#leftImageGalleryContainer')
 });
