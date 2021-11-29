@@ -25,7 +25,6 @@
 //     return elementBottom > viewportTop && elementTop < viewportBottom;
 // };  
 var iterateHello;
-var stoppedAnimation = false;
 
 var titleArrayIterable = 0;
 
@@ -36,15 +35,6 @@ var titleArray = [
     "Hai"
 ]
 
-function startHello() {
-    console.log('startHello', iterateHello)
-    iterateHello =
-        setInterval(function () {
-            console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
-            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-            changeLargeTextHeader(titleArray[titleArrayIterable])
-        }, 5000)
-}
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -53,38 +43,25 @@ function changeLargeTextHeader(content) {
     }, {
         duration: 500,
         complete: function () {
-            $('#meHeaderLargeText').css("margin-left", "-25%")
+            $('#meHeaderLargeText').css("margin-left", "-10%")
             $('#meHeaderLargeText').animate({
                 "opacity": "100%",
-                "margin-left": "0%",
+                "margin-left": ".75rem",
             }, 500)
             $('#meHeaderLargeText').html(content)
         }
     })
 }
 
-setTimeout(() => {//Prevent iterating too many times at start
-    $(window).scroll(function () {
-        //var y = $(window).scrollTop()
-        var x = $('#meHeaderLargeText').offset().top;
-        console.log(`y`, window.pageYOffset || document.documentElement.scrollTop)
-        // if (y > 41) {
-        //     $('#meHeaderLargeText').clearQueue();
-        //     $('#meHeaderLargeText').stop();
-        //     clearInterval(iterateHello)
-        //     stoppedAnimation = true;
-        // } else {
-        //     if (stoppedAnimation) {
-        //         startHello()
-        //         stoppedAnimation = false;
-        //     }
-        // }
-    });
-}, 1000)
 
 $(document).ready(function () {
 
-    startHello()
+    setInterval(function () {
+        console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
+        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+        changeLargeTextHeader(titleArray[titleArrayIterable])
+    }, 2500)
+
     let imageArray = [
         {
             title: `TestTitle1`,

@@ -48,8 +48,16 @@
     font-weight: 400;
   }
   
+  #meHeaderLargeText{
+    width: auto;
+    margin-left: 0.75rem;
+  }
 
-  
+  #meHeaderSmallText{
+    width: auto;
+    margin-left: 0.75rem;
+  }
+
   .skillTitle{
     font-weight: 300;
   }
