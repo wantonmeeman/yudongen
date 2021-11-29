@@ -70,24 +70,18 @@
 </nav>
 
 <body>
-  <div class="container" id="meTabContent">
-    <div class="row m-5">
-      <div id="leftTextContainer" class="col-md-6">
+  <div class="row contentContainer" id="meTabContent">
+    <div id="leftContainer" class="col-md-9">
+      <div class="row m-5 my-4">
         <div id="meHeaderLargeText">Hi there!
         </div>
         <div id="meHeaderSmallText">I'm Yu Dong En.</div>
       </div>
-      <div id="rightImageContainer" class="col-md-6 d-flex justify-content-end">
-        <img
-          src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
-          height="120rem" width="120rem" style="border-radius: 50%;background: #d4d4d4;">
+      <div class="row mx-5">
+        <hr class="divider" id="titleDivider" style="margin-left: 0.75rem;">
+        <!--had to set style like this as boostrap 5 has a bug :( -->
       </div>
-    </div>
-    <div class="row mx-5">
-      <hr id="descDivider" class="col-md-6" style="margin-left: 0.75rem;">
-    </div>
-    <div class="row mx-5">
-      <div id="leftDescriptionContainer" class="col-md-7">
+      <div id="meDescriptionContainer" class='row mx-5 my-2'>
         <div id="meDescription">
           Test Description Ligma Amogus sussy baka imposter
           Test Description Ligma Amogus sussy baka imposter
@@ -99,13 +93,40 @@
           Test Description Ligma Amogus sussy baka imposter
         </div>
       </div>
-      <div class="col-md-2">
+      <div class="row mx-5 my-2">
+        <hr id="descDivider" class="divider" style="margin-left: 0.75rem;">
+        <!--had to set style like this as boostrap 5 has a bug :( -->
       </div>
-      <div id="rightSkillContainer" class="col-md-3">
-        <div class="skillGroupDescription text-center" id="softSkillsTitle">Soft Skills</div>
+      <div class="row mx-5 my-4">
+        <div id="leftImageGalleryContainer">
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div id="carouselContent" class="carousel-inner">
+              <!--Data is set inside here-->
+            </div>
+            <!--Bootstrap 5 uses data-bs instead of data-mdb -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+              data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+              data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="rightContainer" class="col-md-3">
+      <img class="my-4 row mx-auto"
+        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
+        height="120rem" width="120rem" style="border-radius: 50%;background: grey;">
+      <div id="rightSkillContainer" class='row'>
+        <div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>
         <div class="skillRow row d-flex my-3 justify-content-end">
           <div class="skillTitle col-md-5">
-            Python
+           Python
           </div>
           <div class="skillBar row col-md-7">
             <div class="bar col-md-1"></div>
@@ -114,54 +135,18 @@
             <div class="bar col-md-1"></div>
           </div>
         </div>
-        <hr id="descDivider" style="margin-left: 0.75rem;">
-        <div class="skillGroupDescription text-center" id="softSkillsTitle">Programming Languages</div>
-        <!-- <div class="skillRow row d-flex my-3 justify-content-end">
-          <div class="skillTitle col-md-5">
-            Python
-          </div>
-          <div class="skillBar row col-md-7">
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-          </div>
-        </div> -->
+        <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;">
+        <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>
       </div>
     </div>
-    <div class="row mx-5">
-      <hr id="descDivider" class="col-md-9" style="margin-left: 0.75rem;">
-    </div>
-    <div class="row mx-5 my-2">
-      <div id="leftImageGalleryContainer" class="col-md-9">
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-          <div id="carouselContent" class="carousel-inner">
-            <!--Data is set inside here-->
-          </div>
-          <!--Bootstrap 5 uses data-bs instead of data-mdb -->
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-            data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-            data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
-      </div>
-      <div id="rightImageGalleryContainer" class="col-md-3">
+  </div>
 
-      </div>
-    </div>
+  <!-- Optional JavaScript; choose one of the two! -->
 
-    <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-      crossorigin="anonymous"></script>
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
 
 </body>
 

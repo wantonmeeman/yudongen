@@ -44,12 +44,27 @@
     font-size: 15px;
   }
 
-  /* .skillGroupDescription{
-    opacity: 0%;
-  } */
+  .skillGroupDescription{
+    font-weight: 400;
+  }
+  
+
+  
+  .skillTitle{
+    font-weight: 300;
+  }
+
+  /* All of this handles on start */
+  #titleDivider{
+    width:40%
+  }
+
+  #softSkillDivider{
+    width:82%
+  }
 
   #descDivider{
-    border:0;
+    width:97%
   }
 
   .skillTitle{

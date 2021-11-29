@@ -1,5 +1,90 @@
+
+// $(window).on('scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove', function () {
+//     var top_of_element = $("#meHeaderLargeText").offset().top;
+//     var bottom_of_element = $("#meHeaderLargeText").offset().top + $("#meHeaderLargeText").outerHeight();
+//     var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
+//     var top_of_screen = $(window).scrollTop();
+
+//     if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
+//         // the element is visible, do something
+//         console.log('in')
+//     } else {
+//         // the element is not visible, do something else
+//         console.log('out')
+//         $('#meHeaderLargeText').stop();
+//     }
+// });
+
+// $.fn.isInViewport = function() {
+//     var elementTop = $(this).offset().top;
+//     var elementBottom = elementTop + $(this).outerHeight();
+
+//     var viewportTop = $(window).scrollTop();
+//     var viewportBottom = viewportTop + $(window).height();
+
+//     return elementBottom > viewportTop && elementTop < viewportBottom;
+// };  
+var iterateHello;
+var stoppedAnimation = false;
+
+var titleArrayIterable = 0;
+
+var titleArray = [
+    "Hi there!",
+    "你好",
+    "नमस्ते",
+    "Hai"
+]
+
+function startHello() {
+    console.log('startHello', iterateHello)
+    iterateHello =
+        setInterval(function () {
+            console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
+            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+            changeLargeTextHeader(titleArray[titleArrayIterable])
+        }, 5000)
+}
+
+function changeLargeTextHeader(content) {
+    $('#meHeaderLargeText').animate({
+        "margin-left": "50%",
+        "opacity": "0%"
+    }, {
+        duration: 500,
+        complete: function () {
+            $('#meHeaderLargeText').css("margin-left", "-25%")
+            $('#meHeaderLargeText').animate({
+                "opacity": "100%",
+                "margin-left": "0%",
+            }, 500)
+            $('#meHeaderLargeText').html(content)
+        }
+    })
+}
+
+setTimeout(() => {//Prevent iterating too many times at start
+    $(window).scroll(function () {
+        //var y = $(window).scrollTop()
+        var x = $('#meHeaderLargeText').offset().top;
+        console.log(`y`, window.pageYOffset || document.documentElement.scrollTop)
+        // if (y > 41) {
+        //     $('#meHeaderLargeText').clearQueue();
+        //     $('#meHeaderLargeText').stop();
+        //     clearInterval(iterateHello)
+        //     stoppedAnimation = true;
+        // } else {
+        //     if (stoppedAnimation) {
+        //         startHello()
+        //         stoppedAnimation = false;
+        //     }
+        // }
+    });
+}, 1000)
+
 $(document).ready(function () {
 
+    startHello()
     let imageArray = [
         {
             title: `TestTitle1`,
@@ -26,7 +111,6 @@ $(document).ready(function () {
 
     $('.nav-link').mouseenter(
         (x) => {
-
             $("#" + x.target.id).animate({
                 opacity: 1,
                 // borderWidth: `0 0 0.2rem 0`
@@ -47,19 +131,31 @@ $(document).ready(function () {
 
             $(this).addClass(`active`)
 
-            $('.container').hide();
+            $('.contentContainer').hide();
+            switch (clickedID.slice(0, clickedID.length - 4)) {
+                case "meTab":
+                    $('#descDivider').animate({ width: "97%" }, 1000)
+                    $('#titleDivider').animate({ width: "40%" }, 1000)
+                    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+
+                    break;
+                default:
+                    $('.divider').animate({ width: '0%' })
+                    break;
+
+            }
             $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
         }
     });
 
-    function returnProficiencyHTML(proficiency){
+    function returnProficiencyHTML(proficiency) {
         let returnString = ``;
-        for(var x = 0;proficiency > x;x++){
+        for (var x = 0; proficiency > x; x++) {
             returnString += `<div class="bar col-md-1"></div>`
         }
         return returnString;
     }
-    
+
     for (let x = 0; skillArray.length > x; x++) {
         $('#rightSkillContainer').append(`
         <div class="skillRow row d-flex my-3 justify-content-end">
