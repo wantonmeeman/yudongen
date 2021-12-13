@@ -56,11 +56,28 @@ function changeLargeTextHeader(content) {
 
 $(document).ready(function () {
 
-    setInterval(function () {
+
+    //==================================== ME tab ==========================
+    //Handles if a User focuses on tab
+    var changeGreetingInterval = setInterval(function () {
         console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
         titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
         changeLargeTextHeader(titleArray[titleArrayIterable])
-    }, 2500)
+    }, 15000)
+
+    $(window).focus(function () {
+        changeGreetingInterval = setInterval(function () {
+            console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
+            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+            changeLargeTextHeader(titleArray[titleArrayIterable])
+        }, 15000)
+    })
+
+    $(window).blur(function () {
+        clearInterval(changeGreetingInterval)
+    })
+
+
 
     let imageArray = [
         {
@@ -100,8 +117,17 @@ $(document).ready(function () {
                 // console.log(x.target.id)
             });
 
+    //On normal Startup, start animations
+    $('.contentContainer').hide();
+    $('.divider').css({ width: '0%' })
+    $('#meTabContent').fadeIn('slow')
+    $('#descDivider').animate({ width: "97%" }, 1000)
+    $('#titleDivider').animate({ width: "40%" }, 1000)
+    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
+        console.log(clickedID)
         if ($(this).hasClass('inactive')) { //this is the start of our condition 
             $('.navbar-nav li a').removeClass('active')
             $('.navbar-nav li a').addClass('inactive');
@@ -109,15 +135,20 @@ $(document).ready(function () {
             $(this).addClass(`active`)
 
             $('.contentContainer').hide();
+            $('.divider').animate({ width: '0%' })
             switch (clickedID.slice(0, clickedID.length - 4)) {
                 case "meTab":
                     $('#descDivider').animate({ width: "97%" }, 1000)
                     $('#titleDivider').animate({ width: "40%" }, 1000)
                     $('#softSkillDivider').animate({ width: "82%" }, 1000)
+                    break;
+
+                case "projectsTab":
 
                     break;
-                default:
-                    $('.divider').animate({ width: '0%' })
+
+                case "jobsTab":
+
                     break;
 
             }

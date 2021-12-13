@@ -6,9 +6,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  
+
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <script src="../js/index.js"></script>
   <title>Title</title>
   <link rel="stylesheet" href="../css/index.css">
@@ -17,29 +18,19 @@
   <div class="col-md-1"></div>
   <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
     <ul class="navbar-nav">
-      <li class="nav-item mx-5" id="jobTab">
+      <li class="nav-item mx-5" id="jobsTab">
         <a class="nav-link inactive" id="jobTabLink" href="#">Jobs</a>
-      </li>
-      <li class="nav-item mx-5" id="projectsTab">
-        <a class="nav-link inactive" id="projectsTabLink" href="#">Projects</a>
       </li>
       <li class="nav-item mx-5" id="meTab">
         <a class="nav-link active" id="meTabLink" href="#">Me</a>
       </li>
-      <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" shref="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li> -->
+      <li class="nav-item mx-5" id="projectsTab">
+        <a class="nav-link inactive" id="projectsTabLink" href="#">Projects</a>
+      </li>
     </ul>
   </div>
   <!--animate this increasing/decreasing to fit items at the start of the page-->
+
   <div class="col-md-1 mx-1 justify-content-start d-flex flex-row-reverses"
     style="overflow-x: scroll;background-color: #e8e8e8;border-radius:1rem 1rem 10px 10px;">
     <a class="m-1" href="#">
@@ -70,8 +61,32 @@
 </nav>
 
 <body>
+  <div class="row contentContainer" id="projectsTabContent">
+    <div id="leftMeContainer" class="col-md-3">
+      <div id="projectMiniColumn" class="d-flex flex-column mx-5">
+        <div class="projectMini d-flex">
+          <div class="projectMiniPortraitContainer my-3 mx-3">
+            <img
+              src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
+              height="60rem" width="60rem" style="border-radius: 50%;background: grey;">
+          </div>
+          <div class="textContainer my-3">
+            <div class="projectMiniTitle">
+              Title
+            </div>
+            <div class="projectMiniDescription">
+              Description Description Description
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="rightMeContainer" class="col-md-9">
+      ligma ligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligmaligma
+    </div>
+  </div>
   <div class="row contentContainer" id="meTabContent">
-    <div id="leftContainer" class="col-md-9">
+    <div id="leftMeContainer" class="col-md-9">
       <div class="m-5 my-4" id="meHeaderContainer">
         <div id="meHeaderLargeText">Hi there!
         </div>
@@ -82,7 +97,7 @@
         <!--had to set style like this as boostrap 5 has a bug :( -->
       </div>
       <div id="meDescriptionContainer" class='row mx-5 my-2'>
-        <div id="meDescription" >
+        <div id="meDescription">
           Test Description Ligma Amogus sussy baka imposter
           Test Description Ligma Amogus sussy baka imposter
           Test Description Ligma Amogus sussy baka imposter
@@ -118,7 +133,7 @@
         </div>
       </div>
     </div>
-    <div id="rightContainer" class="col-md-3">
+    <div id="rightMeContainer" class="col-md-3">
       <img class="my-4 row mx-auto"
         src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
         height="120rem" width="120rem" style="border-radius: 50%;background: grey;">
@@ -126,7 +141,7 @@
         <div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>
         <div class="skillRow row d-flex my-3 justify-content-end">
           <div class="skillTitle col-md-5">
-           Python
+            Python
           </div>
           <div class="skillBar row col-md-7">
             <div class="bar col-md-1"></div>
