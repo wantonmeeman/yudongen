@@ -38,6 +38,23 @@
     font-size: 40px;
   }
 
+  #projectMiniColumn{
+    height: 90vh;/*100vh has a scrollbar at the side, ugly*/
+    overflow: scroll;
+  } 
+
+  #projectInfoContainer{
+    height: 90vh;
+  }
+
+  .projectMiniTitle{
+    font-weight: 800;
+  }
+
+  .projectMiniDescription{
+    font-size:.7rem;
+  }
+
   #meHeaderSmallText {
     font-size: 20px;
   }
