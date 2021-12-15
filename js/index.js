@@ -144,7 +144,7 @@ $(document).ready(function () {
                     break;
 
                 case "projectsTab":
-
+                    $('#headerDivider').animate({ width: "97%" }, 1000)
                     break;
 
                 case "jobsTab":

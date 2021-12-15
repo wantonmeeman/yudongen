@@ -47,12 +47,24 @@
     height: 90vh;
   }
 
+  #projectInfoHeader{
+    height: 20%;
+  }
+
+  #projectInfoDescription{
+    height: 75%;
+  }
+
   .projectMiniTitle{
     font-weight: 800;
   }
 
   .projectMiniDescription{
     font-size:.7rem;
+  }
+
+  #selectedTitle{
+    font-size:1.75rem
   }
 
   #meHeaderSmallText {
