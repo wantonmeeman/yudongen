@@ -38,11 +38,6 @@
     font-size: 40px;
   }
 
-  #projectMiniColumn{
-    height: 90vh;/*100vh has a scrollbar at the side, ugly*/
-    overflow: scroll;
-  } 
-
   #projectInfoContainer{
     height: 90vh;
   }
@@ -53,6 +48,16 @@
 
   #projectInfoDescription{
     height: 75%;
+    font-size: 15px;
+  }
+
+  #projectMiniColumn{
+    height: 90vh;/*100vh has a scrollbar at the side, ugly*/
+    overflow: scroll;
+  } 
+  
+  .projectMini{
+    cursor: pointer;
   }
 
   .projectMiniTitle{
@@ -73,6 +78,10 @@
 
   #meDescription {
     font-size: 15px;
+  }
+
+  #meDescriptionContainer{
+    margin-bottom: 100%
   }
 
   .skillGroupDescription{

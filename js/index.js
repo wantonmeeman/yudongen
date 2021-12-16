@@ -125,6 +125,10 @@ $(document).ready(function () {
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
+    $('.projectMini').click(()=>{
+        $(this).attr('id');
+    })
+
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
         console.log(clickedID)
