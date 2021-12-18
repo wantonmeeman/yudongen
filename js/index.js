@@ -81,7 +81,27 @@ $(document).ready(function () {
         {
             projectTitle: `TestTitle1`,
             projectSubTitle: `testDescription`,
-            projectSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
+            projectSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`,
+            projectImageArray: [{
+                imageTitle: `TestTitle1`,
+                imageSubTitle: `testSubTitle1`,
+                imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
+            },
+            {
+                imageTitle: `TestTitle2`,
+                imageSubTitle: `testSubTitle1`,
+                imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
+            }]
+        },
+        {
+            projectTitle: `TestTitle2`,
+            projectSubTitle: `testDescription2`,
+            projectSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`,
+            projectImageArray: [{
+                imageTitle: `TestTitle1`,
+                imageSubTitle: `testSubTitle1`,
+                imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
+            }]
         }
     ]
 
@@ -171,6 +191,7 @@ $(document).ready(function () {
     }
 
     for (let x = 0; projectArray.length > x; x++) {
+
         $('#projectMiniColumn').append(`
         <div class="projectMini d-flex" id="project${x}">
         <div class="projectMiniPortraitContainer m-3">
@@ -189,7 +210,85 @@ $(document).ready(function () {
         </div>
     </div>`)
 
+        $('#project' + x).hover(
+            () => {
+                $('#project' + x).animate({
+                    'background-color': '#e8e8e8'
+                }, {
+                    duration: 500,
+                    queue: false
+                })
+            },
+            () => {
+                $('#project' + x).animate({
+                    'backgroundColor': '#FFFFFF'
+                }, {
+                    duration: 500,
+                    queue: false
+                });
+            }
+        )
+
         $('#project' + x).click(() => {
+            $('.projectMini').css("background-color",`#FFFFFF`)
+
+            for (let x = 0; projectArray.length > x; x++) { //Kinda Ineffecient but wtv
+                $('#project' + x).hover(
+                    () => {
+                        $('#project' + x).animate({
+                            'background-color': '#e8e8e8'
+                        }, {
+                            duration: 500,
+                            queue: false
+                        })
+                    },
+                    () => {
+                        $('#project' + x).animate({
+                            'backgroundColor': '#FFFFFF'
+                        }, {
+                            duration: 500,
+                            queue: false
+                        });
+                    }
+                )
+            }
+
+            $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+
+            $('#projectImageContainer').animate({
+                "margin-left": "50%",
+                "opacity": "0%"
+            }, {
+                duration: 500,
+                queue: false,
+                complete: function () {
+                    $('#projectGalleryLengthIndicator').empty()
+                    $('#carouselContentProject').empty()
+                    for (let y = 0; projectArray[x].projectImageArray.length > y; y++) {
+                        $('#projectGalleryLengthIndicator').append(`<div class="galleryLengthIndicator"></div>`)
+                        if (!y) {
+                            $(`.galleryLengthIndicator`).css("width", (100 / projectArray[x].projectImageArray.length) + "%")
+                            $(`.galleryLengthIndicator`).css("background-color", "black");
+                        } else {
+                            $(`.galleryLengthIndicator`).css("width", (100 / projectArray[x].projectImageArray.length) + "%")
+                        }
+                        $('#carouselContentProject').append(`
+                            <div class="carousel-item ${y == 0 ? "active" : ""}">
+                        <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>${projectArray[x].projectImageArray[y].imageTitle}</h5>
+                            <p>${projectArray[x].projectImageArray[y].imageSubTitle}</p>
+                        </div>
+                    </div>`)
+                    }
+
+                    $('#projectImageContainer').css("margin-left", "-10%")
+                    $('#projectImageContainer').animate({
+                        "opacity": "100%",
+                        "margin-left": "0%",
+                    }, 500)
+                }
+            })
 
             $('#projectInfoHeader').animate({
                 "margin-left": "50%",
@@ -198,20 +297,19 @@ $(document).ready(function () {
                 duration: 500,
                 queue: false,
                 complete: function () {
-                    $(`#projectInfoHeader`).empty()
                     $(`#projectInfoHeader`).html(`
                     <div id="selectedImageContainer">
                     <img
-                      src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
+                      src="${projectArray[x].projectSource}"
                       height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
                   </div>
                   <div id="selectedText" class="mx-4">
-            <div id="selectedTitle">
-              Selected Title
-            </div>
-            <div id="selectedSubText">
-              Selected Sub Text
-            </div>
+                    <div id="selectedTitle">
+                        ${projectArray[x].projectTitle}
+                    </div>
+                    <div id="selectedSubText">
+                        ${projectArray[x].projectSubTitle}
+                    </div>
                     </div>`)
                     $('#projectInfoHeader').css("margin-left", "-10%")
                     $('#projectInfoHeader').animate({
@@ -228,11 +326,10 @@ $(document).ready(function () {
                 duration: 600,
                 queue: false,
                 complete: function () {
-                    $(`#headerDivider`).empty()
                     $('#headerDivider').css("margin-left", "-10%")
                     $('#headerDivider').animate({
                         "opacity": "25%",
-                        "margin-left": "0%",
+                        "margin-left": ".75rem",
                     }, 500)
                 }
             })
@@ -244,7 +341,6 @@ $(document).ready(function () {
                 duration: 700,
                 queue: false,
                 complete: function () {
-                    $(`#projectInfoDescription`).empty()
                     $(`#projectInfoDescription`).html(`
                     <div id="projectInfoDescription">Description Description Description Description Description Description
                     Description Description Description
@@ -272,7 +368,7 @@ $(document).ready(function () {
     }
 
     for (let x = 0; imageArray.length > x; x++) {
-        $('#carouselContent').append(`
+        $('#carouselContentMe').append(`
             <div class="carousel-item ${x == 0 ? "active" : ""}">
                 <img src="${imageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">

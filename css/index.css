@@ -38,8 +38,8 @@
     font-size: 40px;
   }
 
-  #projectInfoContainer{
-    height: 90vh;
+  #headerDivider {
+    margin-left: 0.75rem;
   }
 
   #projectInfoHeader{
@@ -59,6 +59,11 @@
   
   .projectMini{
     cursor: pointer;
+  }
+
+  .galleryLengthIndicator{
+    height: 10px;
+    
   }
 
   .projectMiniTitle{
