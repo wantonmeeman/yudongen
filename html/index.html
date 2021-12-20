@@ -75,23 +75,23 @@
         <div id="projectInfoDescription">Description Description Description Description Description Description
           Description Description Description </div>
         <div id="projectImageContainer" class="d-flex my-5 flex-column">
-          <div id="carouselExampleControlsProjects" class="carousel slide" data-bs-ride="carousel">
-            <div id="carouselContentProject" class="carousel-inner">
+          <div id="projectsCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <ol class="carousel-indicators" id="projectCarouselIndicators">
+            </ol>
+            <div id="projectCarouselContent" class="carousel-inner">
               <!--Data is set inside here-->
             </div>
             <!--Bootstrap 5 uses data-bs instead of data-mdb -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsProjects"
-              data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#projectsCarouselExampleControls"
+              data-bs-slide="prev" id="projectGalleryPrev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsProjects"
-              data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#projectsCarouselExampleControls"
+              data-bs-slide="next" id="projectGalleryNext">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Next</span>
             </button>
-          </div>
-          <div class="d-flex" id="projectGalleryLengthIndicator">
           </div>
         </div>
       </div>
@@ -126,17 +126,19 @@
       </div>
       <div class="row mx-5 mb-4 mt-2">
         <div id="leftImageGalleryContainer">
-          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div id="carouselContentMe" class="carousel-inner">
+          <div id="meCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <ol class="carousel-indicators" id="meCarouselIndicators">
+            </ol>
+            <div id="meCarouselContent" class="carousel-inner">
               <!--Data is set inside here-->
             </div>
             <!--Bootstrap 5 uses data-bs instead of data-mdb -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+            <button class="carousel-control-prev" type="button" data-bs-target="#meCarouselExampleControls"
               data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+            <button class="carousel-control-next" type="button" data-bs-target="#meCarouselExampleControls"
               data-bs-slide="next">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Next</span>
@@ -150,20 +152,6 @@
         src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9db370bc-c5c2-4934-be16-964f759f20f2/dc79c49-ae9456ae-1a9b-4909-aff2-6f8231c9bcfa.png/v1/fill/w_1024,h_1151,strp/soyboy_by_tullamoredew_dc79c49-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE1MSIsInBhdGgiOiJcL2ZcLzlkYjM3MGJjLWM1YzItNDkzNC1iZTE2LTk2NGY3NTlmMjBmMlwvZGM3OWM0OS1hZTk0NTZhZS0xYTliLTQ5MDktYWZmMi02ZjgyMzFjOWJjZmEucG5nIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.FRGOZdzZ4TjuvzjzFdTA7XowilgW4JrCLS-bBOA1WvE"
         height="120rem" width="120rem" style="border-radius: 50%;background: grey;">
       <div id="rightSkillContainer" class='row'>
-        <div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>
-        <div class="skillRow row d-flex my-3 justify-content-end">
-          <div class="skillTitle col-md-5">
-            Python
-          </div>
-          <div class="skillBar row col-md-7">
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-            <div class="bar col-md-1"></div>
-          </div>
-        </div>
-        <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;">
-        <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>
       </div>
     </div>
   </div>

@@ -118,16 +118,37 @@ $(document).ready(function () {
         }
     ]
 
-    let skillArray = [
-        {
-            skillTitle: `Python`,
-            skillProficiency: 4
-        },
-        {
-            skillTitle: `JavaScript`,
-            skillProficiency: 3
-        },
-    ]
+    let skillObject = {
+        programmingLanguagesArray: [
+            {
+                skillTitle: `Python`,
+                skillProficiency: 4
+            },
+            {
+                skillTitle: `JavaScript`,
+                skillProficiency: 3
+            },
+        ],
+        softSkillsArray:
+            [
+                {
+                    skillTitle: `Python`,
+                    skillProficiency: 4
+                }
+            ],
+        languagesArray:
+            [
+                {
+                    skillTitle: `English`,
+                    skillProficiency: 5
+                },
+                {
+                    skillTitle: `Chinese`,
+                    skillProficiency: 2
+                },
+            ]
+    }
+
 
     $('.nav-link').mouseenter(
         (x) => {
@@ -184,8 +205,8 @@ $(document).ready(function () {
 
     function returnProficiencyHTML(proficiency) {
         let returnString = ``;
-        for (var x = 0; proficiency > x; x++) {
-            returnString += `<div class="bar col-md-1"></div>`
+        for (var x = 0;5 > x; x++) {
+            returnString += (proficiency > x ? `<div class="bar col-md-1"></div>` : `<div class="inactivebar col-md-1"></div>`)
         }
         return returnString;
     }
@@ -230,9 +251,9 @@ $(document).ready(function () {
         )
 
         $('#project' + x).click(() => {
-            $('.projectMini').css("background-color",`#FFFFFF`)
+            $('.projectMini').css("background-color", `#FFFFFF`)
 
-            for (let x = 0; projectArray.length > x; x++) { //Kinda Ineffecient but wtv
+            for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
                 $('#project' + x).hover(
                     () => {
                         $('#project' + x).animate({
@@ -262,17 +283,21 @@ $(document).ready(function () {
                 duration: 500,
                 queue: false,
                 complete: function () {
-                    $('#projectGalleryLengthIndicator').empty()
-                    $('#carouselContentProject').empty()
+
+
+                    $('#projectCarouselContent').empty()
+                    $('#projectCarouselIndicators').empty()
                     for (let y = 0; projectArray[x].projectImageArray.length > y; y++) {
-                        $('#projectGalleryLengthIndicator').append(`<div class="galleryLengthIndicator"></div>`)
                         if (!y) {
-                            $(`.galleryLengthIndicator`).css("width", (100 / projectArray[x].projectImageArray.length) + "%")
-                            $(`.galleryLengthIndicator`).css("background-color", "black");
+                            $('#projectCarouselIndicators').append(`
+                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
+                            `)
                         } else {
-                            $(`.galleryLengthIndicator`).css("width", (100 / projectArray[x].projectImageArray.length) + "%")
+                            $('#projectCarouselIndicators').append(`
+                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
+                           `)
                         }
-                        $('#carouselContentProject').append(`
+                        $('#projectCarouselContent').append(`
                             <div class="carousel-item ${y == 0 ? "active" : ""}">
                         <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
                         <div class="carousel-caption d-none d-md-block">
@@ -355,20 +380,68 @@ $(document).ready(function () {
         })
     }
 
-    for (let x = 0; skillArray.length > x; x++) {
+    $('#rightSkillContainer').append(`<div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>`)
+
+    for (let x = 0; skillObject.softSkillsArray.length > x; x++) {
         $('#rightSkillContainer').append(`
-        <div class="skillRow row d-flex my-3 justify-content-end">
-          <div class="skillTitle col-md-5">
-            ${skillArray[x].skillTitle}
-          </div>
-          <div class="skillBar row col-md-7">
-            ${returnProficiencyHTML(skillArray[x].skillProficiency)}
-          </div>
-        </div>`)
+            <div class="skillRow row d-flex my-3 justify-content-end">
+              <div class="skillTitle col-md-4">
+                ${skillObject.softSkillsArray[x].skillTitle}
+              </div>
+              <div class="skillBar row col-md-8">
+                ${returnProficiencyHTML(skillObject.softSkillsArray[x].skillProficiency)}
+              </div>
+            </div>`)
     }
 
+    $('#rightSkillContainer').append(`
+    <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
+    <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>`
+    )
+    
+    for (let x = 0; skillObject.programmingLanguagesArray.length > x; x++) {
+        $('#rightSkillContainer').append(`
+            <div class="skillRow row d-flex my-3 justify-content-end">
+              <div class="skillTitle col-md-4">
+                ${skillObject.programmingLanguagesArray[x].skillTitle}
+              </div>
+              <div class="skillBar row col-md-8">
+                ${returnProficiencyHTML(skillObject.programmingLanguagesArray[x].skillProficiency)}
+              </div>
+            </div>`)
+    }
+
+    $('#rightSkillContainer').append(`
+    <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
+    <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Languages</div>`
+    )
+
+    for (let x = 0; skillObject.languagesArray.length > x; x++) {
+        $('#rightSkillContainer').append(`
+            <div class="skillRow row d-flex my-3 justify-content-end">
+              <div class="skillTitle col-md-4">
+                ${skillObject.languagesArray[x].skillTitle}
+              </div>
+              <div class="skillBar row col-md-8">
+                ${returnProficiencyHTML(skillObject.languagesArray[x].skillProficiency)}
+              </div>
+            </div>`)
+    }
+
+
+
     for (let x = 0; imageArray.length > x; x++) {
-        $('#carouselContentMe').append(`
+        if (!x) {
+            $('#meCarouselIndicators').append(`
+            <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>
+            `)
+        } else {
+            $('#meCarouselIndicators').append(`
+            <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}"}></li>
+            `)
+        }
+
+        $('#meCarouselContent').append(`
             <div class="carousel-item ${x == 0 ? "active" : ""}">
                 <img src="${imageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
