@@ -1,29 +1,6 @@
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, set, get, child } from "firebase/database";
 
-// $(window).on('scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove', function () {
-//     var top_of_element = $("#meHeaderLargeText").offset().top;
-//     var bottom_of_element = $("#meHeaderLargeText").offset().top + $("#meHeaderLargeText").outerHeight();
-//     var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
-//     var top_of_screen = $(window).scrollTop();
-
-//     if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
-//         // the element is visible, do something
-//         console.log('in')
-//     } else {
-//         // the element is not visible, do something else
-//         console.log('out')
-//         $('#meHeaderLargeText').stop();
-//     }
-// });
-
-// $.fn.isInViewport = function() {
-//     var elementTop = $(this).offset().top;
-//     var elementBottom = elementTop + $(this).outerHeight();
-
-//     var viewportTop = $(window).scrollTop();
-//     var viewportBottom = viewportTop + $(window).height();
-
-//     return elementBottom > viewportTop && elementTop < viewportBottom;
-// };  
 var iterateHello;
 
 var titleArrayIterable = 0;
@@ -34,7 +11,6 @@ var titleArray = [
     "नमस्ते",
     "Hai"
 ]
-
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -53,8 +29,30 @@ function changeLargeTextHeader(content) {
     })
 }
 
-
 $(document).ready(function () {
+    const firebaseConfig = {
+        apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
+        authDomain: "personalwebsite-b90a5.firebaseapp.com",
+        databaseURL: "https://personalwebsite-b90a5-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "personalwebsite-b90a5",
+        storageBucket: "personalwebsite-b90a5.appspot.com",
+        messagingSenderId: "890357492051",
+        appId: "1:890357492051:web:4e13b85be606badd5bd9a6"
+    };
+
+    var app = initializeApp(firebaseConfig)
+
+    var database = ref(getDatabase())
+
+    get(child(database, "meImage")).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log(snapshot.val());
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
 
 
     //==================================== ME tab ==========================
@@ -105,14 +103,14 @@ $(document).ready(function () {
         }
     ]
 
-    let imageArray = [
+    let meImageArray = [
         {
             imageTitle: `TestTitle1`,
             imageSubTitle: `testSubTitle1`,
             imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
         },
         {
-            imageTitle: `TestTitle2`,
+            imageTitle: `TestTitle22`,
             imageSubTitle: `testSubTitle2`,
             imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
         }
@@ -205,7 +203,7 @@ $(document).ready(function () {
 
     function returnProficiencyHTML(proficiency) {
         let returnString = ``;
-        for (var x = 0;5 > x; x++) {
+        for (var x = 0; 5 > x; x++) {
             returnString += (proficiency > x ? `<div class="bar col-md-1"></div>` : `<div class="inactivebar col-md-1"></div>`)
         }
         return returnString;
@@ -398,7 +396,7 @@ $(document).ready(function () {
     <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
     <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>`
     )
-    
+
     for (let x = 0; skillObject.programmingLanguagesArray.length > x; x++) {
         $('#rightSkillContainer').append(`
             <div class="skillRow row d-flex my-3 justify-content-end">
@@ -430,7 +428,7 @@ $(document).ready(function () {
 
 
 
-    for (let x = 0; imageArray.length > x; x++) {
+    for (let x = 0; meImageArray.length > x; x++) {
         if (!x) {
             $('#meCarouselIndicators').append(`
             <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>
@@ -443,10 +441,10 @@ $(document).ready(function () {
 
         $('#meCarouselContent').append(`
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${imageArray[x].imageSource}" class="d-block w-100" alt="..." />
+                <img src="${meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>${imageArray[x].imageTitle}</h5>
-                    <p>${imageArray[x].imageSubTitle}</p>
+                    <h5>${meImageArray[x].imageTitle}</h5>
+                    <p>${meImageArray[x].imageSubTitle}</p>
                 </div>
             </div>`)
     }

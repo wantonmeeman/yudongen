@@ -1,0 +1,27 @@
+{
+  "name": "yudongen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode=development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wantonmeeman/yudongen.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wantonmeeman/yudongen/issues"
+  },
+  "homepage": "https://github.com/wantonmeeman/yudongen#readme",
+  "dependencies": {
+    "firebase": "^9.6.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  }
+}
