@@ -1,8 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
-var iterateHello;
-
 var titleArrayIterable = 0;
 
 var titleArray = [
@@ -30,6 +28,7 @@ function changeLargeTextHeader(content) {
 }
 
 $(document).ready(function () {
+
     const firebaseConfig = {
         apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
         authDomain: "personalwebsite-b90a5.firebaseapp.com",
@@ -40,40 +39,9 @@ $(document).ready(function () {
         appId: "1:890357492051:web:4e13b85be606badd5bd9a6"
     };
 
-    var app = initializeApp(firebaseConfig)
+    initializeApp(firebaseConfig)
 
     var database = ref(getDatabase())
-
-    get(child(database, "meImage")).then((snapshot) => {
-        if (snapshot.exists()) {
-            console.log(snapshot.val());
-        } else {
-            console.log("No data available");
-        }
-    }).catch((error) => {
-        console.error(error);
-    });
-
-
-    //==================================== ME tab ==========================
-    //Handles if a User focuses on tab
-    var changeGreetingInterval = setInterval(function () {
-        console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
-        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-        changeLargeTextHeader(titleArray[titleArrayIterable])
-    }, 15000)
-
-    $(window).focus(function () {
-        changeGreetingInterval = setInterval(function () {
-            console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
-            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-            changeLargeTextHeader(titleArray[titleArrayIterable])
-        }, 15000)
-    })
-
-    $(window).blur(function () {
-        clearInterval(changeGreetingInterval)
-    })
 
     let projectArray = [
         {
@@ -103,49 +71,25 @@ $(document).ready(function () {
         }
     ]
 
-    let meImageArray = [
-        {
-            imageTitle: `TestTitle1`,
-            imageSubTitle: `testSubTitle1`,
-            imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
-        },
-        {
-            imageTitle: `TestTitle22`,
-            imageSubTitle: `testSubTitle2`,
-            imageSource: `https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg`
-        }
-    ]
+    //==================================== ME tab ==========================
+    //Handles if a User focuses on tab
+    var changeGreetingInterval = setInterval(function () {
+        console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
+        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+        changeLargeTextHeader(titleArray[titleArrayIterable])
+    }, 15000)
 
-    let skillObject = {
-        programmingLanguagesArray: [
-            {
-                skillTitle: `Python`,
-                skillProficiency: 4
-            },
-            {
-                skillTitle: `JavaScript`,
-                skillProficiency: 3
-            },
-        ],
-        softSkillsArray:
-            [
-                {
-                    skillTitle: `Python`,
-                    skillProficiency: 4
-                }
-            ],
-        languagesArray:
-            [
-                {
-                    skillTitle: `English`,
-                    skillProficiency: 5
-                },
-                {
-                    skillTitle: `Chinese`,
-                    skillProficiency: 2
-                },
-            ]
-    }
+    $(window).focus(function () {
+        changeGreetingInterval = setInterval(function () {
+            console.log(`titleArray`, titleArrayIterable)//Jquery requires functions to be wrapped
+            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+            changeLargeTextHeader(titleArray[titleArrayIterable])
+        }, 15000)
+    })
+
+    $(window).blur(function () {
+        clearInterval(changeGreetingInterval)
+    })
 
 
     $('.nav-link').mouseenter(
@@ -378,10 +322,13 @@ $(document).ready(function () {
         })
     }
 
-    $('#rightSkillContainer').append(`<div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>`)
+    get(child(database, "skillObject")).then((snapshot) => {
+        if (snapshot.exists()) {
+            let skillObject = snapshot.val()
+            $('#rightSkillContainer').append(`<div class="skillGroupDescription text-center my-1" id="softSkillsTitle">Soft Skills</div>`)
 
-    for (let x = 0; skillObject.softSkillsArray.length > x; x++) {
-        $('#rightSkillContainer').append(`
+            for (let x = 0; skillObject.softSkillsArray.length > x; x++) {
+                $('#rightSkillContainer').append(`
             <div class="skillRow row d-flex my-3 justify-content-end">
               <div class="skillTitle col-md-4">
                 ${skillObject.softSkillsArray[x].skillTitle}
@@ -390,15 +337,15 @@ $(document).ready(function () {
                 ${returnProficiencyHTML(skillObject.softSkillsArray[x].skillProficiency)}
               </div>
             </div>`)
-    }
+            }
 
-    $('#rightSkillContainer').append(`
-    <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
-    <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>`
-    )
+            $('#rightSkillContainer').append(`
+            <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
+            <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Programming Languages</div>`)
 
-    for (let x = 0; skillObject.programmingLanguagesArray.length > x; x++) {
-        $('#rightSkillContainer').append(`
+
+            for (let x = 0; skillObject.programmingLanguagesArray.length > x; x++) {
+                $('#rightSkillContainer').append(`
             <div class="skillRow row d-flex my-3 justify-content-end">
               <div class="skillTitle col-md-4">
                 ${skillObject.programmingLanguagesArray[x].skillTitle}
@@ -407,46 +354,70 @@ $(document).ready(function () {
                 ${returnProficiencyHTML(skillObject.programmingLanguagesArray[x].skillProficiency)}
               </div>
             </div>`)
-    }
+            }
 
-    $('#rightSkillContainer').append(`
-    <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
-    <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Languages</div>`
-    )
+            $('#rightSkillContainer').append(`
+            <hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>
+            <div class="skillGroupDescription text-center my-1" id="hardSkillsTitle">Languages</div>`
+            )
 
-    for (let x = 0; skillObject.languagesArray.length > x; x++) {
-        $('#rightSkillContainer').append(`
-            <div class="skillRow row d-flex my-3 justify-content-end">
-              <div class="skillTitle col-md-4">
-                ${skillObject.languagesArray[x].skillTitle}
-              </div>
-              <div class="skillBar row col-md-8">
-                ${returnProficiencyHTML(skillObject.languagesArray[x].skillProficiency)}
-              </div>
-            </div>`)
-    }
+            for (let x = 0; skillObject.languagesArray.length > x; x++) {
 
-
-
-    for (let x = 0; meImageArray.length > x; x++) {
-        if (!x) {
-            $('#meCarouselIndicators').append(`
-            <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>
-            `)
+                $('#rightSkillContainer').append(`
+                    <div class="skillRow row d-flex my-3 justify-content-end">
+                    <div class="skillTitle col-md-4">
+                    ${skillObject.languagesArray[x].skillTitle}
+                    </div>
+                    <div class="skillBar row col-md-8">
+                    ${returnProficiencyHTML(skillObject.languagesArray[x].skillProficiency)}
+                    </div>
+                    </div>`)
+            }
         } else {
-            $('#meCarouselIndicators').append(`
-            <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}"}></li>
-            `)
+            throw new Error("Data does not exist!")
         }
+    }).catch((error) => {
+        console.error(error);
+    }).finally(() => {
 
-        $('#meCarouselContent').append(`
-            <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>${meImageArray[x].imageTitle}</h5>
-                    <p>${meImageArray[x].imageSubTitle}</p>
-                </div>
-            </div>`)
-    }
+    });
+
+
+
+
+
+
+    get(child(database, "meImage")).then((snapshot) => {
+        if (snapshot.exists()) {
+            let meImageArray = snapshot.val()
+            for (let x = 0; meImageArray.length > x; x++) {
+                if (!x) {
+                    $('#meCarouselIndicators').append(`
+                    <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>
+                    `)
+                } else {
+                    $('#meCarouselIndicators').append(`
+                    <li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}"}></li>
+                    `)
+                }
+
+                $('#meCarouselContent').append(`
+                    <div class="carousel-item ${x == 0 ? "active" : ""}">
+                        <img src="${meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>${meImageArray[x].imageTitle}</h5>
+                            <p>${meImageArray[x].imageSubTitle}</p>
+                        </div>
+                    </div>`)
+            }
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    }).finally(() => {
+
+    });
+
 
 });
