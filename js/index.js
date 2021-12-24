@@ -82,9 +82,28 @@ function generateMeCarouselImages(meImageArray) {
                 </div>
             </div>`
     }
-
-    $('#meCarouselIndicators').html(meCarouselIndicatorHTML)
-    $('#meCarouselContent').html(meCarouselContentHTML)
+    
+    $("#leftImageGalleryContainer").html(
+        `<div id="meCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators" id="meCarouselIndicators">
+        ${meCarouselIndicatorHTML}
+        </ol>
+            <div id="meCarouselContent" class="carousel-inner">
+            ${meCarouselContentHTML}
+            </div>
+            <!--Bootstrap 5 uses data-bs instead of data-mdb -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#meCarouselExampleControls"
+              data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#meCarouselExampleControls"
+              data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>`
+    )
 }
 
 $(document).ready(function () {
@@ -144,15 +163,12 @@ $(document).ready(function () {
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
     get(child(database, "mePage")).then((snapshot) => {
-        
-        setTimeout(() => {
             if (snapshot.exists()) {
                 generateMeCarouselImages(snapshot.val().meImages)
                 generateSkills(snapshot.val().meSkillObject)
             } else {
                 throw new Error("Data does not exist!")
             }
-        }, 1000)
     }).catch((error) => {
         console.error(error);
     }).finally(() => {
