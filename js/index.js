@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
+var selectedProject;
+
 var titleArrayIterable = 0;
 
 var titleArray = [
@@ -82,7 +84,7 @@ function generateMeCarouselImages(meImageArray) {
                 </div>
             </div>`
     }
-    
+
     $("#leftImageGalleryContainer").html(
         `<div id="meCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <ol class="carousel-indicators" id="meCarouselIndicators">
@@ -104,6 +106,200 @@ function generateMeCarouselImages(meImageArray) {
             </button>
           </div>`
     )
+}
+
+function generateProjectsAndEvents(projectArray) {
+    $('#projectMiniColumn').empty()
+    for (let x = 0; projectArray.length > x; x++) {
+
+        $('#projectMiniColumn').append(`
+        <div class="projectMini d-flex" id="project${x}">
+        <div class="projectMiniPortraitContainer m-3">
+          <!--Photos should be Square with slight border radius or circles-->
+          <img
+            src="${projectArray[x].projectSource}"
+            height="90rem" width="90rem" style="border-radius: 10%;background: grey;">
+        </div>
+        <div class="textContainer my-3">
+          <div class="projectMiniTitle">
+          ${projectArray[x].projectTitle}
+          </div>
+          <div class="projectMiniDescription">
+            ${projectArray[x].projectSubTitle}
+          </div>
+        </div>
+    </div>`)
+
+        $('#project' + x).hover(
+            () => {
+                $('#project' + x).animate({
+                    'background-color': '#e8e8e8'
+                }, {
+                    duration: 500,
+                    queue: false
+                })
+            },
+            () => {
+                $('#project' + x).animate({
+                    'backgroundColor': '#FFFFFF'
+                }, {
+                    duration: 500,
+                    queue: false
+                });
+            }
+        )
+
+        $('#project' + x).click(() => {
+            $('.projectMini').css("background-color", `#FFFFFF`)
+            selectedProject = x;
+
+            for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
+                $('#project' + x).hover(
+                    () => {
+                        $('#project' + x).animate({
+                            'background-color': '#e8e8e8'
+                        }, {
+                            duration: 500,
+                            queue: false
+                        })
+                    },
+                    () => {
+                        $('#project' + x).animate({
+                            'backgroundColor': '#FFFFFF'
+                        }, {
+                            duration: 500,
+                            queue: false
+                        });
+                    }
+                )
+            }
+
+            $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+
+            $('#projectImageContainer').animate({
+                "margin-left": "50%",
+                "opacity": "0%"
+            }, {
+                duration: 500,
+                queue: false,
+                complete: function () {
+
+                    $('#projectCarouselContent').empty()
+                    $('#projectCarouselIndicators').empty()
+                    for (let y = 0; projectArray[x].projectImageArray.length > y; y++) {
+                        if (!y) {
+                            $('#projectCarouselIndicators').append(`
+                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
+                            `)
+                        } else {
+                            $('#projectCarouselIndicators').append(`
+                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
+                           `)
+                        }
+                        $('#projectCarouselContent').append(`
+                            <div class="carousel-item ${y == 0 ? "active" : ""}">
+                        <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>${projectArray[x].projectImageArray[y].imageTitle}</h5>
+                            <p>${projectArray[x].projectImageArray[y].imageSubTitle}</p>
+                        </div>
+                    </div>`)
+                    }
+
+                    $('#projectImageContainer').css("margin-left", "-10%")
+                    $('#projectImageContainer').animate({
+                        "opacity": "100%",
+                        "margin-left": "0%",
+                    }, 500)
+                }
+            })
+
+            $('#projectInfoHeader').animate({
+                "margin-left": "50%",
+                "opacity": "0%"
+            }, {
+                duration: 500,
+                queue: false,
+                complete: function () {
+                    $(`#projectInfoHeader`).html(`
+                    <div id="selectedImageContainer">
+                    <img
+                      src="${projectArray[x].projectSource}"
+                      height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
+                  </div>
+                  <div id="selectedText" class="mx-4">
+                    <div id="selectedTitle">
+                        ${projectArray[x].projectTitle}
+                    </div>
+                    <div id="selectedSubText">
+                        ${projectArray[x].projectSubTitle}
+                    </div>
+                    </div>`)
+                    $('#projectInfoHeader').css("margin-left", "-10%")
+                    $('#projectInfoHeader').animate({
+                        "opacity": "100%",
+                        "margin-left": "0%",
+                    }, 500)
+                }
+            })
+
+            $('#headerDivider').animate({
+                "margin-left": "50%",
+                "opacity": "0%"
+            }, {
+                duration: 600,
+                queue: false,
+                complete: function () {
+                    $('#headerDivider').css("margin-left", "-10%")
+                    $('#headerDivider').animate({
+                        "opacity": "25%",
+                        "margin-left": ".75rem",
+                    }, 500)
+                }
+            })
+
+            $('#projectInfoDescription').animate({
+                "margin-left": "50%",
+                "opacity": "0%"
+            }, {
+                duration: 700,
+                queue: false,
+                complete: function () {
+                    $(`#projectInfoDescription`).html(`
+                    <div id="projectInfoDescription">Description Description Description Description Description Description
+                    Description Description Description
+                  </div>`)
+                    $('#projectInfoDescription').css("margin-left", "-10%")
+                    $('#projectInfoDescription').animate({
+                        "opacity": "100%",
+                        "margin-left": "0%",
+                    }, 500)
+                }
+            })
+        })
+    }
+}
+
+function generateSpinnersForTab(tab) {
+    switch (tab) {
+        case "meTab":
+            $("#leftImageGalleryContainer").html(`
+            <div id="leftImageGallerySpinner" class="spinner-grow mx-auto text-muted my-5"></div>
+            `)
+            $('#rightSkillContainer').html(`
+            <div class="spinner-grow text-muted mx-auto my-5"></div>
+            `)
+        break;
+        case "projectsTab":
+            console.log(1)
+            $(`#projectMiniColumn`).html(`
+            <div id="projectMiniColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
+            `)
+        break;
+        case "jobsTab":
+
+        break;
+    }
 }
 
 $(document).ready(function () {
@@ -157,22 +353,28 @@ $(document).ready(function () {
 
     //On normal Startup, start animations and call stuff for me page
     $('.contentContainer').hide();
+    $('.contentContainer').height($(window).height() - $(`.navbar`).height());
+
     $('.divider').css({ width: '0%' })
     $('#meTabContent').fadeIn('slow')
     $('#descDivider').animate({ width: "97%" }, 1000)
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
-    get(child(database, "mePage")).then((snapshot) => {
+
+    setTimeout(() => {
+        get(child(database, "mePage")).then((snapshot) => {
             if (snapshot.exists()) {
                 generateMeCarouselImages(snapshot.val().meImages)
                 generateSkills(snapshot.val().meSkillObject)
             } else {
                 throw new Error("Data does not exist!")
             }
-    }).catch((error) => {
-        console.error(error);
-    }).finally(() => {
-    });
+        }).catch((error) => {
+            console.error(error);
+        }).finally(() => {
+        });
+    }, 1000)
+
 
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
@@ -183,7 +385,9 @@ $(document).ready(function () {
             $(this).addClass(`active`)
 
             $('.contentContainer').hide();
-            $('.divider').animate({ width: '0%' })
+            $('.divider').css({ width: '0%' })
+
+            generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
             switch (clickedID.slice(0, clickedID.length - 4)) {
                 case "meTab":
                     $('#descDivider').animate({ width: "97%" }, 1000)
@@ -191,203 +395,38 @@ $(document).ready(function () {
                     $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
                     get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
-                        if (snapshot.exists()) {
-                            $("#leftImageGalleryContainer").hide()
-                            generateMeCarouselImages(snapshot.val().meImages)
-                            generateSkills(snapshot.val().meSkillObject)
-                        } else {
-                            throw new Error("Data does not exist!")
-                        }
+                        setTimeout(() => {
+                            if (snapshot.exists()) {
+                                generateMeCarouselImages(snapshot.val().meImages)
+                                generateSkills(snapshot.val().meSkillObject)
+                            } else {
+                                throw new Error("Data does not exist!")
+                            }
+                        }, 1000)
                     }).catch((error) => {
                         console.error(error);
                     }).finally(() => {
-                        $(`#leftImageGallerySpinner`).hide()
-                        $("#leftImageGalleryContainer").show()
                     });
+
                     break;
 
                 case "projectsTab":
                     $('#headerDivider').animate({ width: "97%" }, 1000)
-
-                    get(child(database, "projectsPage")).then((snapshot) => {
-                        if (snapshot.exists()) {
-                            let projectArray = snapshot.val().projects
-                            for (let x = 0; projectArray.length > x; x++) {
-
-                                $('#projectMiniColumn').append(`
-                                <div class="projectMini d-flex" id="project${x}">
-                                <div class="projectMiniPortraitContainer m-3">
-                                  <!--Photos should be Square with slight border radius or circles-->
-                                  <img
-                                    src="${projectArray[x].projectSource}"
-                                    height="90rem" width="90rem" style="border-radius: 10%;background: grey;">
-                                </div>
-                                <div class="textContainer my-3">
-                                  <div class="projectMiniTitle">
-                                  ${projectArray[x].projectTitle}
-                                  </div>
-                                  <div class="projectMiniDescription">
-                                    ${projectArray[x].projectSubTitle}
-                                  </div>
-                                </div>
-                            </div>`)
-
-                                $('#project' + x).hover(
-                                    () => {
-                                        $('#project' + x).animate({
-                                            'background-color': '#e8e8e8'
-                                        }, {
-                                            duration: 500,
-                                            queue: false
-                                        })
-                                    },
-                                    () => {
-                                        $('#project' + x).animate({
-                                            'backgroundColor': '#FFFFFF'
-                                        }, {
-                                            duration: 500,
-                                            queue: false
-                                        });
-                                    }
-                                )
-
-                                $('#project' + x).click(() => {
-                                    $('.projectMini').css("background-color", `#FFFFFF`)
-
-                                    for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
-                                        $('#project' + x).hover(
-                                            () => {
-                                                $('#project' + x).animate({
-                                                    'background-color': '#e8e8e8'
-                                                }, {
-                                                    duration: 500,
-                                                    queue: false
-                                                })
-                                            },
-                                            () => {
-                                                $('#project' + x).animate({
-                                                    'backgroundColor': '#FFFFFF'
-                                                }, {
-                                                    duration: 500,
-                                                    queue: false
-                                                });
-                                            }
-                                        )
-                                    }
-
-                                    $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
-
-                                    $('#projectImageContainer').animate({
-                                        "margin-left": "50%",
-                                        "opacity": "0%"
-                                    }, {
-                                        duration: 500,
-                                        queue: false,
-                                        complete: function () {
-
-                                            $('#projectCarouselContent').empty()
-                                            $('#projectCarouselIndicators').empty()
-                                            for (let y = 0; projectArray[x].projectImageArray.length > y; y++) {
-                                                if (!y) {
-                                                    $('#projectCarouselIndicators').append(`
-                                                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
-                                                    `)
-                                                } else {
-                                                    $('#projectCarouselIndicators').append(`
-                                                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
-                                                   `)
-                                                }
-                                                $('#projectCarouselContent').append(`
-                                                    <div class="carousel-item ${y == 0 ? "active" : ""}">
-                                                <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
-                                                <div class="carousel-caption d-none d-md-block">
-                                                    <h5>${projectArray[x].projectImageArray[y].imageTitle}</h5>
-                                                    <p>${projectArray[x].projectImageArray[y].imageSubTitle}</p>
-                                                </div>
-                                            </div>`)
-                                            }
-
-                                            $('#projectImageContainer').css("margin-left", "-10%")
-                                            $('#projectImageContainer').animate({
-                                                "opacity": "100%",
-                                                "margin-left": "0%",
-                                            }, 500)
-                                        }
-                                    })
-
-                                    $('#projectInfoHeader').animate({
-                                        "margin-left": "50%",
-                                        "opacity": "0%"
-                                    }, {
-                                        duration: 500,
-                                        queue: false,
-                                        complete: function () {
-                                            $(`#projectInfoHeader`).html(`
-                                            <div id="selectedImageContainer">
-                                            <img
-                                              src="${projectArray[x].projectSource}"
-                                              height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
-                                          </div>
-                                          <div id="selectedText" class="mx-4">
-                                            <div id="selectedTitle">
-                                                ${projectArray[x].projectTitle}
-                                            </div>
-                                            <div id="selectedSubText">
-                                                ${projectArray[x].projectSubTitle}
-                                            </div>
-                                            </div>`)
-                                            $('#projectInfoHeader').css("margin-left", "-10%")
-                                            $('#projectInfoHeader').animate({
-                                                "opacity": "100%",
-                                                "margin-left": "0%",
-                                            }, 500)
-                                        }
-                                    })
-
-                                    $('#headerDivider').animate({
-                                        "margin-left": "50%",
-                                        "opacity": "0%"
-                                    }, {
-                                        duration: 600,
-                                        queue: false,
-                                        complete: function () {
-                                            $('#headerDivider').css("margin-left", "-10%")
-                                            $('#headerDivider').animate({
-                                                "opacity": "25%",
-                                                "margin-left": ".75rem",
-                                            }, 500)
-                                        }
-                                    })
-
-                                    $('#projectInfoDescription').animate({
-                                        "margin-left": "50%",
-                                        "opacity": "0%"
-                                    }, {
-                                        duration: 700,
-                                        queue: false,
-                                        complete: function () {
-                                            $(`#projectInfoDescription`).html(`
-                                            <div id="projectInfoDescription">Description Description Description Description Description Description
-                                            Description Description Description
-                                          </div>`)
-                                            $('#projectInfoDescription').css("margin-left", "-10%")
-                                            $('#projectInfoDescription').animate({
-                                                "opacity": "100%",
-                                                "margin-left": "0%",
-                                            }, 500)
-                                        }
-                                    })
-                                })
+                    setTimeout(() => {
+                        get(child(database, "projectsPage")).then((snapshot) => {
+                            if (snapshot.exists()) {
+                                let projectArray = snapshot.val().projects
+                                generateProjectsAndEvents(projectArray)
+                                $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+                            } else {
+                                throw new Error("Data does not exist!")
                             }
-                        } else {
-                            throw new Error("Data does not exist!")
-                        }
-                    }).catch((error) => {
-                        console.error(error);
-                    }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
+                        }).catch((error) => {
+                            console.error(error);
+                        }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
 
-                    });
-
+                        });
+                    }, 1000)
                     break;
 
                 case "jobsTab":

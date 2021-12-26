@@ -86,6 +86,15 @@
     font-size: 15px;
   }
 
+  body{
+    overflow:hidden
+  }
+
+  .contentContainer{
+    overflow:scroll;
+    background-color:#FFFFFF;
+  }
+
   #meDescriptionContainer{
     margin-bottom: 100%
   }
@@ -149,7 +158,6 @@
   }
 
   #leftImageGallerySpinner{/*had to manually set it*/
-    margin:50%
   }
 
   
