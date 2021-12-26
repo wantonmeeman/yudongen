@@ -3,6 +3,24 @@ import { getDatabase, ref, set, get, child } from "firebase/database";
 
 var selectedProject;
 
+const cssColorVariables = {//1st = light,2nd = dark
+    mainTextColor: ["#000000"],
+    mainBackgroundColor: ["#FFFFFF", "#000000"],
+    navbarBackgroundColor: ["#f7f7f7"],
+    navbarActiveTextColor: ["#000000E5"],
+    /*last 2 hexadecimals = opacity*/
+    navbarInactiveTextColor: ["#0000008C"],
+    /*last 2 hexadecimals = opacity*/
+    /*navbarHoverTextColor:"],*/
+    navbarContactIconContainerBackgroundColor: ["#e8e8e8"],
+    navbarContactIconBackgroundColor: ["#d4d4d4"],
+    personalImageBorderColor: ["#7d7d7d"],
+    skillBarActiveColor: ["#7d7d7d"],
+    skillBarInactive: ["#e8e8e8"],
+    scrollBarThumbColor: ["#e0e0e0"],
+    scrollBarHoverColor: ["#d1d1d1"],
+}
+
 var titleArrayIterable = 0;
 
 var titleArray = [
@@ -289,16 +307,16 @@ function generateSpinnersForTab(tab) {
             $('#rightSkillContainer').html(`
             <div class="spinner-grow text-muted mx-auto my-5"></div>
             `)
-        break;
+            break;
         case "projectsTab":
             console.log(1)
             $(`#projectMiniColumn`).html(`
             <div id="projectMiniColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
             `)
-        break;
+            break;
         case "jobsTab":
 
-        break;
+            break;
     }
 }
 
@@ -317,6 +335,10 @@ $(document).ready(function () {
     initializeApp(firebaseConfig)
 
     var database = ref(getDatabase())
+
+    $('#lightModeInputForm').change(function (checkbox) {
+        $("html").attr("style", "--mainBackgroundColor:" + (cssColorVariables["mainBackgroundColor"][checkbox.target.checked ? 1 : 0]));
+    });
 
     //==================================== ME tab ==========================
     //Handles if a User focuses on tab
@@ -379,10 +401,13 @@ $(document).ready(function () {
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
         if ($(this).hasClass('inactive')) { //this is the start of our condition 
+            //Literally super ineffecient but wtv
             $('.navbar-nav li a').removeClass('active')
             $('.navbar-nav li a').addClass('inactive');
 
             $(this).addClass(`active`)
+            $(this).removeClass('inactive')
+            //iNeffecivency ends here
 
             $('.contentContainer').hide();
             $('.divider').css({ width: '0%' })
