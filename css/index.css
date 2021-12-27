@@ -14,6 +14,7 @@ html{
  --skillBarInactive:#e8e8e8;
  --scrollBarThumbColor:#e0e0e0;
  --scrollBarHoverColor:#d1d1d1;
+ --lightingModeAnim: .75s ease-out;
 }
 
 /* width */
@@ -44,6 +45,10 @@ html{
   }
 
   .navbar {
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
     background-color: var(--navbarBackgroundColor);
   }
 
@@ -128,6 +133,11 @@ html{
 
   .contentContainer{
     overflow:scroll;
+    /*prime variable for animation*/
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
     background-color:var(--mainBackgroundColor);
   }
 

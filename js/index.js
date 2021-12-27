@@ -3,22 +3,22 @@ import { getDatabase, ref, set, get, child } from "firebase/database";
 
 var selectedProject;
 
-const cssColorVariables = {//1st = light,2nd = dark
-    mainTextColor: ["#000000"],
+const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
+    mainTextColor: ["#000000","#FF0000"],
     mainBackgroundColor: ["#FFFFFF", "#000000"],
-    navbarBackgroundColor: ["#f7f7f7"],
-    navbarActiveTextColor: ["#000000E5"],
+    navbarBackgroundColor: ["#f7f7f7","#141414"],
+    navbarActiveTextColor: ["#000000E5","#FF0000"],
     /*last 2 hexadecimals = opacity*/
-    navbarInactiveTextColor: ["#0000008C"],
+    navbarInactiveTextColor: ["#0000008C","#FF0000"],
     /*last 2 hexadecimals = opacity*/
     /*navbarHoverTextColor:"],*/
-    navbarContactIconContainerBackgroundColor: ["#e8e8e8"],
-    navbarContactIconBackgroundColor: ["#d4d4d4"],
-    personalImageBorderColor: ["#7d7d7d"],
-    skillBarActiveColor: ["#7d7d7d"],
-    skillBarInactive: ["#e8e8e8"],
-    scrollBarThumbColor: ["#e0e0e0"],
-    scrollBarHoverColor: ["#d1d1d1"],
+    navbarContactIconContainerBackgroundColor: ["#e8e8e8","#FF0000"],
+    navbarContactIconBackgroundColor: ["#d4d4d4","#FF0000"],
+    personalImageBorderColor: ["#7d7d7d","#FF0000"],
+    skillBarActiveColor: ["#7d7d7d","#FF0000"],
+    skillBarInactive: ["#e8e8e8","#FF0000"],
+    scrollBarThumbColor: ["#e0e0e0","#FF0000"],
+    scrollBarHoverColor: ["#d1d1d1","#FF0000"],
 }
 
 var titleArrayIterable = 0;
@@ -337,8 +337,25 @@ $(document).ready(function () {
     var database = ref(getDatabase())
 
     $('#lightModeInputForm').change(function (checkbox) {
-        $("html").attr("style", "--mainBackgroundColor:" + (cssColorVariables["mainBackgroundColor"][checkbox.target.checked ? 1 : 0]));
+        /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
+
+        //HTML way
+        // document.body.style.setProperty("--mainBackgroundColor",
+        // cssColorVariables["mainBackgroundColor"][checkbox.target.checked ? 1 : 0])
+
+        //JQuery way
+        let cssColorVariablesKeyArray = Object.keys(cssColorVariables)
+        let styleNavbarBackgroundString = ""
+        for(let x = 0;cssColorVariablesKeyArray.length > x;x++){
+            styleNavbarBackgroundString +=
+            `--${cssColorVariablesKeyArray[x]}:
+            ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])};`
+        }
+        console.log(styleNavbarBackgroundString)
+        $("html").attr("style", styleNavbarBackgroundString)
+
     });
+
 
     //==================================== ME tab ==========================
     //Handles if a User focuses on tab
