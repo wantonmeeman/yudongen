@@ -9,6 +9,10 @@ html{
  /*--navbarHoverTextColor:;*/
  --navbarContactIconContainerBackgroundColor:#e8e8e8;
  --navbarContactIconBackgroundColor:#d4d4d4;
+ --carouselImageSubtitle:#FFFFFF;
+ --carouselImageTitle:#FFFFFF;
+ --carouselIndicators:#FFFFFF;
+ --dividerColor:#000000;
  --personalImageBorderColor:#7d7d7d;
  --skillBarActiveColor:#7d7d7d;
  --skillBarInactive:#e8e8e8;
@@ -32,100 +36,45 @@ html{
   /* Handle */
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--scrollBarThumbColor);
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--scrollBarThumbColor);
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollBarHoverColor);
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--scrollBarHoverColor);
   }
 
   .navbar-nav .nav-item .nav-link{
    opacity: 75%;
   }
-
-  .navbar {
-    -webkit-transition: background-color var(--lightingModeAnim);
-    -moz-transition: background-color var(--lightingModeAnim);
-    -o-transition: background-color var(--lightingModeAnim);
-    transition: background-color var(--lightingModeAnim);
-    background-color: var(--navbarBackgroundColor);
-  }
-
-  #navbarContactIconContainer{
-    overflow-x: scroll;
-    background-color: var(--navbarContactIconContainerBackgroundColor);
-    border-radius:1rem 1rem 10px 10px;
-  }
-
-  .contactIcon{
-    border-radius: 50%;
-    background: var(--navbarContactIconBackgroundColor);
-  }
-
-  #meHeaderLargeText {
-    font-size: 40px;
-  }
-
-  #headerDivider {
-    margin-left: 0.75rem;
-  }
-
-  #projectInfoHeader{
-    font-size: 30px;
-    /* font-weight: 800; */
-  }
-
-  #projectInfoDescription{
-    height: 75%;
-    font-size: 15px;
-  }
-
-  #projectMiniColumn{
-    height: 90vh;/*100vh has a scrollbar at the side, ugly*/
-    overflow: scroll;
-  } 
   
-  .projectMini{
-    cursor: pointer;
-  }
-
-  .galleryLengthIndicator{
-    height: 10px;
-    
-  }
-
-  .projectMiniTitle{
-    font-weight: 800;
-  }
-
   .navbar-light .navbar-nav .nav-link.inactive{
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
     color:var(--navbarInactiveTextColor)
   }
 
   .navbar-light .navbar-nav .nav-link.active{
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
     color:var(--navbarActiveTextColor)
   }
 /*
   .navbar-light .navbar-nav .nav-link:hover{
     color:var(--navbarHoverTextColor)
   } */
-
-  .projectMiniDescription{
-    font-size:.7rem;
-  }
-
-  #selectedTitle{
-    font-size:1.75rem
-  }
-
-  #meHeaderSmallText {
-    font-size: 20px;
-  }
-
-  #meDescription {
-    font-size: 15px;
-  }
 
   body{
     overflow:hidden
@@ -141,12 +90,176 @@ html{
     background-color:var(--mainBackgroundColor);
   }
 
-  #meDescriptionContainer{
-    margin-bottom: 100%
+  .navbar {
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--navbarBackgroundColor);
+  }
+
+  #navbarContactIconContainer{
+    overflow-x: scroll;
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--navbarContactIconContainerBackgroundColor);
+    border-radius:1rem 1rem 10px 10px;
+  }
+
+  .contactIcon{
+    border-radius: 50%;
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--navbarContactIconBackgroundColor);
+  }
+
+  .divider{    
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color:var(--dividerColor)
+  }
+
+  .carouselImageSubtitle{
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color:var(--carouselImageSubtitle)
+  }
+
+  .carouselImageTitle{
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color:var(--carouselImageSubtitle)
+  }
+
+  .carousel-indicators [data-bs-target]{/*dangerous! changing bootstrap variables*/
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color:var(--carouselIndicators)
+  }
+
+  #meHeaderLargeText {
+    font-size: 40px;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #meHeaderSmallText {
+    font-size: 20px;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #meDescription {
+    font-size: 15px;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #headerDivider {
+    margin-left: 0.75rem;
   }
 
   .skillGroupDescription{
     font-weight: 400;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  .skillTitle{
+    font-weight: 300;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #projectInfoHeader{
+    font-size: 30px;
+    /* font-weight: 800; */
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #projectInfoDescription{
+    height: 75%;
+    font-size: 15px;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #projectMiniColumn{
+    height: 90vh;/*100vh has a scrollbar at the side, ugly*/
+    overflow: scroll;
+  } 
+  
+  .projectMini{
+    cursor: pointer;
+  }
+
+  .projectMini:hover{
+    color: black;
+  }
+
+  .galleryLengthIndicator{
+    height: 10px;
+    
+  }
+
+  .projectMiniTitle{
+    font-weight: 800;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  .projectMiniDescription{
+    font-size:.7rem;
+    -webkit-transition: color var(--lightingModeAnim);
+    -moz-transition: color var(--lightingModeAnim);
+    -o-transition: color var(--lightingModeAnim);
+    transition: color var(--lightingModeAnim);
+    color: var(--mainTextColor);
+  }
+
+  #selectedTitle{
+    font-size:1.75rem
+  }
+
+  #meDescriptionContainer{
+    margin-bottom: 100%
   }
   
   .projectMini{
@@ -161,10 +274,6 @@ html{
   #meHeaderSmallText{
     width: auto;
     margin-left: 0.75rem;
-  }
-
-  .skillTitle{
-    font-weight: 300;
   }
 
   /* All of this handles on start */
@@ -185,12 +294,20 @@ html{
   }
 
   .bar{
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
     background-color: var(--skillBarActiveColor);
     border-radius: 100%;
-    margin-right: 1%;
+    margin-right: 2%;
   }
 
   .inactivebar{
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
     background-color: var(--skillBarInactive);
     border-radius: 100%;
     margin-right: 1%;

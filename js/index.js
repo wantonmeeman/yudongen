@@ -4,22 +4,28 @@ import { getDatabase, ref, set, get, child } from "firebase/database";
 var selectedProject;
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
-    mainTextColor: ["#000000","#FF0000"],
+    mainTextColor: ["#000000", "#919191"],
     mainBackgroundColor: ["#FFFFFF", "#000000"],
-    navbarBackgroundColor: ["#f7f7f7","#141414"],
-    navbarActiveTextColor: ["#000000E5","#FF0000"],
+    navbarBackgroundColor: ["#f7f7f7", "#141414"],
+    navbarActiveTextColor: ["#000000E5", "#FFFFFFE5"],
     /*last 2 hexadecimals = opacity*/
-    navbarInactiveTextColor: ["#0000008C","#FF0000"],
+    navbarInactiveTextColor: ["#0000008C", "#FFFFFF8C"],
     /*last 2 hexadecimals = opacity*/
     /*navbarHoverTextColor:"],*/
-    navbarContactIconContainerBackgroundColor: ["#e8e8e8","#FF0000"],
-    navbarContactIconBackgroundColor: ["#d4d4d4","#FF0000"],
-    personalImageBorderColor: ["#7d7d7d","#FF0000"],
-    skillBarActiveColor: ["#7d7d7d","#FF0000"],
-    skillBarInactive: ["#e8e8e8","#FF0000"],
-    scrollBarThumbColor: ["#e0e0e0","#FF0000"],
-    scrollBarHoverColor: ["#d1d1d1","#FF0000"],
+    navbarContactIconContainerBackgroundColor: ["#e8e8e8", "#3a3a3a"],
+    navbarContactIconBackgroundColor: ["#d4d4d4", "#6c6c6c"],
+    carouselImageSubtitle: ['#FFFFFF', '#c8c8c8'],
+    carouselImageTitle: ['#FFFFFF', '#c8c8c8'],
+    carouselIndicators: ['#FFFFFF', '#c8c8c8'],
+    dividerColor: ['#000000', '#FFFFFF'],
+    personalImageBorderColor: ["#7d7d7d", "#afafaf"],
+    skillBarActiveColor: ["#7d7d7d", "#c3c3c3"],
+    skillBarInactive: ["#e8e8e8", "#3a3a3a"],
+    scrollBarThumbColor: ["#e0e0e0", "#424242"],
+    scrollBarHoverColor: ["#d1d1d1", "#515151"],
 }
+
+var lightingModeDark = false; 
 
 var titleArrayIterable = 0;
 
@@ -29,6 +35,8 @@ var titleArray = [
     "नमस्ते",
     "Hai"
 ]
+
+var projectData;
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -97,8 +105,8 @@ function generateMeCarouselImages(meImageArray) {
             <div class="carousel-item ${x == 0 ? "active" : ""}">
                 <img src="${meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>${meImageArray[x].imageTitle}</h5>
-                    <p>${meImageArray[x].imageSubTitle}</p>
+                    <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
+                    <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
                 </div>
             </div>`
     }
@@ -126,8 +134,62 @@ function generateMeCarouselImages(meImageArray) {
     )
 }
 
+function regenerateProjectEventsOnly(projectArray) {
+    for (let x = 0; projectArray.length > x; x++) {
+        $('#project' + x).hover(
+            () => {
+                $('#project' + x).animate({
+                    'background-color': '#e8e8e8'
+                }, {
+                    duration: 500,
+                    queue: false
+                })
+            },
+            () => {
+                $('#project' + x).animate({
+                    //'background-color': 'var(--mainBackgroundColor)' Doesnt work 🤷 
+                    'backgroundColor': cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
+                }, {
+                    duration: 500,
+                    queue: false
+                });
+            }
+        )
+
+        $('#project' + x).click(() => {
+            $('.projectMini').css("background-color", cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
+            selectedProject = x;
+
+            for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
+                $('#project' + x).hover(
+                    () => {
+                        $('#project' + x).animate({
+                            'background-color': '#e8e8e8'
+                        }, {
+                            duration: 500,
+                            queue: false
+                        })
+                    },
+                    () => {
+                        $('#project' + x).animate({
+                            'backgroundColor': cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
+                        }, {
+                            duration: 500,
+                            queue: false
+                        });
+                    }
+                )
+            }
+
+            $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+        })
+    }
+}
+
 function generateProjectsAndEvents(projectArray) {
     $('#projectMiniColumn').empty()
+    $('#projectCarouselLeft').hide()
+    $('#projectCarouselRight').hide()
     for (let x = 0; projectArray.length > x; x++) {
 
         $('#projectMiniColumn').append(`
@@ -159,7 +221,7 @@ function generateProjectsAndEvents(projectArray) {
             },
             () => {
                 $('#project' + x).animate({
-                    'backgroundColor': '#FFFFFF'
+                    'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
                 }, {
                     duration: 500,
                     queue: false
@@ -168,9 +230,8 @@ function generateProjectsAndEvents(projectArray) {
         )
 
         $('#project' + x).click(() => {
-            $('.projectMini').css("background-color", `#FFFFFF`)
+            $('.projectMini').css("background-color",  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
             selectedProject = x;
-
             for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
                 $('#project' + x).hover(
                     () => {
@@ -183,7 +244,7 @@ function generateProjectsAndEvents(projectArray) {
                     },
                     () => {
                         $('#project' + x).animate({
-                            'backgroundColor': '#FFFFFF'
+                            'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
                         }, {
                             duration: 500,
                             queue: false
@@ -218,8 +279,8 @@ function generateProjectsAndEvents(projectArray) {
                             <div class="carousel-item ${y == 0 ? "active" : ""}">
                         <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
                         <div class="carousel-caption d-none d-md-block">
-                            <h5>${projectArray[x].projectImageArray[y].imageTitle}</h5>
-                            <p>${projectArray[x].projectImageArray[y].imageSubTitle}</p>
+                            <h5 class="carouselImageTitle">${projectArray[x].projectImageArray[y].imageTitle}</h5>
+                            <p class="carouselImageSubtitle">${projectArray[x].projectImageArray[y].imageSubTitle}</p>
                         </div>
                     </div>`)
                     }
@@ -283,6 +344,8 @@ function generateProjectsAndEvents(projectArray) {
                 duration: 700,
                 queue: false,
                 complete: function () {
+                    $('#projectCarouselLeft').show()
+                    $('#projectCarouselRight').show()
                     $(`#projectInfoDescription`).html(`
                     <div id="projectInfoDescription">Description Description Description Description Description Description
                     Description Description Description
@@ -309,7 +372,6 @@ function generateSpinnersForTab(tab) {
             `)
             break;
         case "projectsTab":
-            console.log(1)
             $(`#projectMiniColumn`).html(`
             <div id="projectMiniColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
             `)
@@ -346,14 +408,16 @@ $(document).ready(function () {
         //JQuery way
         let cssColorVariablesKeyArray = Object.keys(cssColorVariables)
         let styleNavbarBackgroundString = ""
-        for(let x = 0;cssColorVariablesKeyArray.length > x;x++){
+        for (let x = 0; cssColorVariablesKeyArray.length > x; x++) {
             styleNavbarBackgroundString +=
-            `--${cssColorVariablesKeyArray[x]}:
+                `--${cssColorVariablesKeyArray[x]}:
             ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])};`
         }
-        console.log(styleNavbarBackgroundString)
         $("html").attr("style", styleNavbarBackgroundString)
-
+        lightingModeDark = !lightingModeDark
+        if(projectData){
+            regenerateProjectEventsOnly(projectData)
+        }
     });
 
 
@@ -458,6 +522,7 @@ $(document).ready(function () {
                         get(child(database, "projectsPage")).then((snapshot) => {
                             if (snapshot.exists()) {
                                 let projectArray = snapshot.val().projects
+                                projectData = projectArray//Shouldnt do this! but the onyl other way is to change to CSS based animations.
                                 generateProjectsAndEvents(projectArray)
                                 $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
                             } else {
