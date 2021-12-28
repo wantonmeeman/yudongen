@@ -23,9 +23,9 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     skillBarInactive: ["#e8e8e8", "#3a3a3a"],
     scrollBarThumbColor: ["#e0e0e0", "#424242"],
     scrollBarHoverColor: ["#d1d1d1", "#515151"],
+    projectMiniHoverColor:["#e8e8e8","#e8e8e8"],
+    projectMiniSelectedColor:["#cfcfcf","#cfcfcf"]
 }
-
-var lightingModeDark = false; 
 
 var titleArrayIterable = 0;
 
@@ -35,8 +35,6 @@ var titleArray = [
     "नमस्ते",
     "Hai"
 ]
-
-var projectData;
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -134,58 +132,6 @@ function generateMeCarouselImages(meImageArray) {
     )
 }
 
-function regenerateProjectEventsOnly(projectArray) {
-    for (let x = 0; projectArray.length > x; x++) {
-        $('#project' + x).hover(
-            () => {
-                $('#project' + x).animate({
-                    'background-color': '#e8e8e8'
-                }, {
-                    duration: 500,
-                    queue: false
-                })
-            },
-            () => {
-                $('#project' + x).animate({
-                    //'background-color': 'var(--mainBackgroundColor)' Doesnt work 🤷 
-                    'backgroundColor': cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-                }, {
-                    duration: 500,
-                    queue: false
-                });
-            }
-        )
-
-        $('#project' + x).click(() => {
-            $('.projectMini').css("background-color", cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
-            selectedProject = x;
-
-            for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
-                $('#project' + x).hover(
-                    () => {
-                        $('#project' + x).animate({
-                            'background-color': '#e8e8e8'
-                        }, {
-                            duration: 500,
-                            queue: false
-                        })
-                    },
-                    () => {
-                        $('#project' + x).animate({
-                            'backgroundColor': cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-                        }, {
-                            duration: 500,
-                            queue: false
-                        });
-                    }
-                )
-            }
-
-            $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
-        })
-    }
-}
-
 function generateProjectsAndEvents(projectArray) {
     $('#projectMiniColumn').empty()
     $('#projectCarouselLeft').hide()
@@ -210,51 +156,54 @@ function generateProjectsAndEvents(projectArray) {
         </div>
     </div>`)
 
-        $('#project' + x).hover(
-            () => {
-                $('#project' + x).animate({
-                    'background-color': '#e8e8e8'
-                }, {
-                    duration: 500,
-                    queue: false
-                })
-            },
-            () => {
-                $('#project' + x).animate({
-                    'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-                }, {
-                    duration: 500,
-                    queue: false
-                });
-            }
-        )
+        // Color Animations will now be done with CSS since Jquery cant handle dynamic variables
+        // $('#project' + x).hover(
+        //     () => {
+        //         $('#project' + x).animate({
+        //             'background-color': '#e8e8e8'
+        //         }, {
+        //             duration: 500,
+        //             queue: false
+        //         })
+        //     },
+        //     () => {
+        //         $('#project' + x).animate({
+        //             'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
+        //         }, {
+        //             duration: 500,
+        //             queue: false
+        //         });
+        //     }
+        // )
 
+        // $('#project' + x).click(() => {
+        //     $('.projectMini').css("background-color",  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
+        //     selectedProject = x;
+        //     for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
+        //         $('#project' + x).hover(
+        //             () => {
+        //                 $('#project' + x).animate({
+        //                     'background-color': '#e8e8e8'
+        //                 }, {
+        //                     duration: 500,
+        //                     queue: false
+        //                 })
+        //             },
+        //             () => {
+        //                 $('#project' + x).animate({
+        //                     'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
+        //                 }, {
+        //                     duration: 500,
+        //                     queue: false
+        //                 });
+        //             }
+        //         )
+        //     }
+
+        //     $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
         $('#project' + x).click(() => {
-            $('.projectMini').css("background-color",  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
-            selectedProject = x;
-            for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
-                $('#project' + x).hover(
-                    () => {
-                        $('#project' + x).animate({
-                            'background-color': '#e8e8e8'
-                        }, {
-                            duration: 500,
-                            queue: false
-                        })
-                    },
-                    () => {
-                        $('#project' + x).animate({
-                            'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-                        }, {
-                            duration: 500,
-                            queue: false
-                        });
-                    }
-                )
-            }
-
-            $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
-
+            $('.projectMini').removeClass("active")
+            $('#project' + x).addClass("active")
             $('#projectImageContainer').animate({
                 "margin-left": "50%",
                 "opacity": "0%"
@@ -414,10 +363,6 @@ $(document).ready(function () {
             ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])};`
         }
         $("html").attr("style", styleNavbarBackgroundString)
-        lightingModeDark = !lightingModeDark
-        if(projectData){
-            regenerateProjectEventsOnly(projectData)
-        }
     });
 
 
@@ -522,7 +467,6 @@ $(document).ready(function () {
                         get(child(database, "projectsPage")).then((snapshot) => {
                             if (snapshot.exists()) {
                                 let projectArray = snapshot.val().projects
-                                projectData = projectArray//Shouldnt do this! but the onyl other way is to change to CSS based animations.
                                 generateProjectsAndEvents(projectArray)
                                 $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
                             } else {

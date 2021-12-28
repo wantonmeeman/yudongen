@@ -18,7 +18,11 @@ html{
  --skillBarInactive:#e8e8e8;
  --scrollBarThumbColor:#e0e0e0;
  --scrollBarHoverColor:#d1d1d1;
+ --projectMiniHoverColor:#e8e8e8;
+ --projectMiniSelectedColor:#cfcfcf;
+
  --lightingModeAnim: .75s ease-out;
+ --hoverAnim: .25s linear;
 }
 
 /* width */
@@ -225,10 +229,23 @@ html{
   
   .projectMini{
     cursor: pointer;
+    -webkit-transition: background-color var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim);
+    background-color: var(--mainBackgroundColor);
   }
 
   .projectMini:hover{
-    color: black;
+    -webkit-transition: background-color var(--hoverAnim);
+    -moz-transition: background-color var(--hoverAnim);
+    -o-transition: background-color var(--hoverAnim);
+    transition: background-color var(--hoverAnim);
+    background-color: var(--projectMiniHoverColor);
+  }
+
+  .projectMini.active{
+    background-color: var(--projectMiniSelectedColor);
   }
 
   .galleryLengthIndicator{
