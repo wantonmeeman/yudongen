@@ -20,6 +20,7 @@ html{
  --scrollBarHoverColor:#d1d1d1;
  --projectMiniHoverColor:#e8e8e8;
  --projectMiniSelectedColor:#cfcfcf;
+ --projectBottomBorderColor: #dbdbdb;
 
  --lightingModeAnim: .75s ease-out;
  --hoverAnim: .25s linear;
@@ -34,9 +35,12 @@ html{
   /* Track */
   ::-webkit-scrollbar-track {
     border-radius: 10px;
- 
   }
-  
+
+  ::-webkit-scrollbar-corner {
+    display:none;
+  }
+
   /* Handle */
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
@@ -81,11 +85,12 @@ html{
   } */
 
   body{
+    background-color: var(--mainBackgroundColor);
     overflow:hidden
   }
 
   .contentContainer{
-    overflow:scroll;
+    overflow-y:scroll;
     /*prime variable for animation*/
     -webkit-transition: background-color var(--lightingModeAnim);
     -moz-transition: background-color var(--lightingModeAnim);
@@ -280,7 +285,7 @@ html{
   }
   
   .projectMini{
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--projectBottomBorderColor);
   }
 
   #meHeaderLargeText{
@@ -333,8 +338,10 @@ html{
   #personalImage{
     height: 150px;
     width:  150px;
+    padding: 0px;/*Important! will not a be circle*/
+    display: inline-block;
     border-radius: 50%;
-    border: 10px solid var(--personalImageBorderColor);
+    border: 6px solid var(--personalImageBorderColor); 
   }
 
   

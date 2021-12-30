@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
 var selectedProject;
+const bucketLink="https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
     mainTextColor: ["#000000", "#919191"],
@@ -23,8 +24,9 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     skillBarInactive: ["#e8e8e8", "#3a3a3a"],
     scrollBarThumbColor: ["#e0e0e0", "#424242"],
     scrollBarHoverColor: ["#d1d1d1", "#515151"],
-    projectMiniHoverColor:["#e8e8e8","#e8e8e8"],
-    projectMiniSelectedColor:["#cfcfcf","#cfcfcf"]
+    projectMiniHoverColor:["#e8e8e8","#3a3a3a"],
+    projectMiniSelectedColor:["#cfcfcf","#484848"],
+    projectBottomBorderColor: ["#dbdbdb","#5a5a5a"]
 }
 
 var titleArrayIterable = 0;
@@ -59,6 +61,25 @@ function returnProficiencyHTML(proficiency) {
         returnString += (proficiency > x ? `<div class="bar col-md-1"></div>` : `<div class="inactivebar col-md-1"></div>`)
     }
     return returnString;
+}
+
+function generateNavbarContactIcons(contactArray){
+    let navbarContactHTML = ""
+    for(let x = 0;contactArray.length > x;x++){
+        navbarContactHTML += ` <a class="m-1" href="${bucketLink+contactArray[x].iconSource}">
+        <img src="${bucketLink+contactArray[x].iconSource}"
+          height="35rem" width="35rem" class="contactIcon">
+      </a>`
+    }
+    $("#navbarContactIconContainer").html(navbarContactHTML)
+}
+
+function generateDescription(description){
+    $("#meDescription").html(description)
+}
+
+function generatePersonalImage(personalImage){
+    $("#personalImage").attr("src",bucketLink+personalImage)
 }
 
 function generateSkills(skillObject) {
@@ -101,7 +122,7 @@ function generateMeCarouselImages(meImageArray) {
 
         meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
+                <img src="${bucketLink+meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
@@ -143,7 +164,7 @@ function generateProjectsAndEvents(projectArray) {
         <div class="projectMiniPortraitContainer m-3">
           <!--Photos should be Square with slight border radius or circles-->
           <img
-            src="${projectArray[x].projectSource}"
+            src="${bucketLink+projectArray[x].projectSource}"
             height="90rem" width="90rem" style="border-radius: 10%;background: grey;">
         </div>
         <div class="textContainer my-3">
@@ -226,7 +247,7 @@ function generateProjectsAndEvents(projectArray) {
                         }
                         $('#projectCarouselContent').append(`
                             <div class="carousel-item ${y == 0 ? "active" : ""}">
-                        <img src="${projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                        <img src="${bucketLink+projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
                         <div class="carousel-caption d-none d-md-block">
                             <h5 class="carouselImageTitle">${projectArray[x].projectImageArray[y].imageTitle}</h5>
                             <p class="carouselImageSubtitle">${projectArray[x].projectImageArray[y].imageSubTitle}</p>
@@ -252,7 +273,7 @@ function generateProjectsAndEvents(projectArray) {
                     $(`#projectInfoHeader`).html(`
                     <div id="selectedImageContainer">
                     <img
-                      src="${projectArray[x].projectSource}"
+                      src="${bucketLink+projectArray[x].projectSource}"
                       height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
                   </div>
                   <div id="selectedText" class="mx-4">
@@ -347,6 +368,18 @@ $(document).ready(function () {
 
     var database = ref(getDatabase())
 
+    //Navbar stuff
+    get(child(database, "navbar")).then((snapshot) => {
+        if (snapshot.exists()) {
+            generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+        } else {
+            throw new Error("Data does not exist!")
+        }
+    }).catch((error) => {
+        console.error(error);
+    }).finally(() => {
+    });
+
     $('#lightModeInputForm').change(function (checkbox) {
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
 
@@ -365,25 +398,6 @@ $(document).ready(function () {
         $("html").attr("style", styleNavbarBackgroundString)
     });
 
-
-    //==================================== ME tab ==========================
-    //Handles if a User focuses on tab
-    var changeGreetingInterval = setInterval(function () {
-        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-        changeLargeTextHeader(titleArray[titleArrayIterable])
-    }, 15000)
-
-    $(window).focus(function () {
-        changeGreetingInterval = setInterval(function () {
-            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-            changeLargeTextHeader(titleArray[titleArrayIterable])
-        }, 15000)
-    })
-
-    $(window).blur(function () {
-        clearInterval(changeGreetingInterval)
-    })
-
     $('.nav-link').mouseenter(
         (x) => {
             $("#" + x.target.id).animate({
@@ -398,7 +412,72 @@ $(document).ready(function () {
                 // console.log(x.target.id)
             });
 
+            $('.navbar-nav li a').click(function () {
+                var clickedID = $(this).attr('id');
+                if ($(this).hasClass('inactive')) { //this is the start of our condition 
+                    //Literally super ineffecient but wtv
+                    $('.navbar-nav li a').removeClass('active')
+                    $('.navbar-nav li a').addClass('inactive');
+        
+                    $(this).addClass(`active`)
+                    $(this).removeClass('inactive')
+                    //iNeffecivency ends here
+        
+                    $('.contentContainer').hide();
+                    $('.divider').css({ width: '0%' })
+        
+                    generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
+                    switch (clickedID.slice(0, clickedID.length - 4)) {
+                        case "meTab":
+                            $('#descDivider').animate({ width: "97%" }, 1000)
+                            $('#titleDivider').animate({ width: "40%" }, 1000)
+                            $('#softSkillDivider').animate({ width: "82%" }, 1000)
+        
+                            get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
+                                setTimeout(() => {
+                                    if (snapshot.exists()) {
+                                        generateMeCarouselImages(snapshot.val().meImages)
+                                        generateSkills(snapshot.val().meSkillObject)
+                                    } else {
+                                        throw new Error("Data does not exist!")
+                                    }
+                                }, 1000)
+                            }).catch((error) => {
+                                console.error(error);
+                            }).finally(() => {
+                            });
+        
+                            break;
+        
+                        case "projectsTab":
+                            $('#headerDivider').animate({ width: "97%" }, 1000)
+                            setTimeout(() => {
+                                get(child(database, "projectsPage")).then((snapshot) => {
+                                    if (snapshot.exists()) {
+                                        let projectArray = snapshot.val().projects
+                                        generateProjectsAndEvents(projectArray)
+                                        $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+                                    } else {
+                                        throw new Error("Data does not exist!")
+                                    }
+                                }).catch((error) => {
+                                    console.error(error);
+                                }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
+        
+                                });
+                            }, 1000)
+                            break;
+        
+                        case "jobsTab":
+        
+                            break;
+        
+                    }
+                    $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
+                }
+            });
 
+    //Handling Normal Startup
     //On normal Startup, start animations and call stuff for me page
     $('.contentContainer').hide();
     $('.contentContainer').height($(window).height() - $(`.navbar`).height());
@@ -409,11 +488,15 @@ $(document).ready(function () {
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
+
+    //loading Information from mePage
     setTimeout(() => {
         get(child(database, "mePage")).then((snapshot) => {
             if (snapshot.exists()) {
-                generateMeCarouselImages(snapshot.val().meImages)
+                generateMeCarouselImages(snapshot.val().meCarouselImages)
                 generateSkills(snapshot.val().meSkillObject)
+                generatePersonalImage(snapshot.val().meImage)
+                generateDescription(snapshot.val().meDescription)
             } else {
                 throw new Error("Data does not exist!")
             }
@@ -423,69 +506,27 @@ $(document).ready(function () {
         });
     }, 1000)
 
+    
 
-    $('.navbar-nav li a').click(function () {
-        var clickedID = $(this).attr('id');
-        if ($(this).hasClass('inactive')) { //this is the start of our condition 
-            //Literally super ineffecient but wtv
-            $('.navbar-nav li a').removeClass('active')
-            $('.navbar-nav li a').addClass('inactive');
 
-            $(this).addClass(`active`)
-            $(this).removeClass('inactive')
-            //iNeffecivency ends here
+    //==================================== ME tab ==========================
+    //Handles if a User focuses on tab
+    var changeGreetingInterval = setInterval(function () {
+        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+        changeLargeTextHeader(titleArray[titleArrayIterable])
+    }, 15000)
 
-            $('.contentContainer').hide();
-            $('.divider').css({ width: '0%' })
+    $(window).focus(function () {
+        clearInterval(changeGreetingInterval)
+        changeGreetingInterval = setInterval(function () {
+            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
+            changeLargeTextHeader(titleArray[titleArrayIterable])
+        }, 15000)
+    })
 
-            generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
-            switch (clickedID.slice(0, clickedID.length - 4)) {
-                case "meTab":
-                    $('#descDivider').animate({ width: "97%" }, 1000)
-                    $('#titleDivider').animate({ width: "40%" }, 1000)
-                    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+    $(window).blur(function () {
+        clearInterval(changeGreetingInterval)
+    })
 
-                    get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
-                        setTimeout(() => {
-                            if (snapshot.exists()) {
-                                generateMeCarouselImages(snapshot.val().meImages)
-                                generateSkills(snapshot.val().meSkillObject)
-                            } else {
-                                throw new Error("Data does not exist!")
-                            }
-                        }, 1000)
-                    }).catch((error) => {
-                        console.error(error);
-                    }).finally(() => {
-                    });
-
-                    break;
-
-                case "projectsTab":
-                    $('#headerDivider').animate({ width: "97%" }, 1000)
-                    setTimeout(() => {
-                        get(child(database, "projectsPage")).then((snapshot) => {
-                            if (snapshot.exists()) {
-                                let projectArray = snapshot.val().projects
-                                generateProjectsAndEvents(projectArray)
-                                $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
-                            } else {
-                                throw new Error("Data does not exist!")
-                            }
-                        }).catch((error) => {
-                            console.error(error);
-                        }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
-
-                        });
-                    }, 1000)
-                    break;
-
-                case "jobsTab":
-
-                    break;
-
-            }
-            $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
-        }
-    });
+    
 });
