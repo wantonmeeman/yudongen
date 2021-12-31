@@ -26,7 +26,13 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     scrollBarHoverColor: ["#d1d1d1", "#515151"],
     projectMiniHoverColor:["#e8e8e8","#3a3a3a"],
     projectMiniSelectedColor:["#cfcfcf","#484848"],
-    projectBottomBorderColor: ["#dbdbdb","#5a5a5a"]
+    projectBottomBorderColor: ["#dbdbdb","#5a5a5a"],
+    timelineColor:["#ebebeb","#2e2e2e"],
+    timelineNodeColor:["#000000","#FFFFFF"],
+    timelineCardBackgroundColor: ["#d2d2d2","#2d2d2d"],
+    timelineCardShadowColor:["#00000026","#FFFFFF26"],
+    timelineCardBorderColor:["#ebebeb","#1f1f1f"],
+    timelineCardTextHoverColor:["#363636","#b8b8b8"]
 }
 
 var titleArrayIterable = 0;
@@ -346,7 +352,7 @@ function generateSpinnersForTab(tab) {
             <div id="projectMiniColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
             `)
             break;
-        case "jobsTab":
+        case "timelineTab":
 
             break;
     }
@@ -468,11 +474,12 @@ $(document).ready(function () {
                             }, 1000)
                             break;
         
-                        case "jobsTab":
+                        case "timelineTab":
         
                             break;
         
                     }
+                    console.log(('#' + clickedID.slice(0, clickedID.length - 4) + 'Content'))
                     $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
                 }
             });
