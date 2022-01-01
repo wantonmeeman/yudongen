@@ -358,6 +358,21 @@ function generateSpinnersForTab(tab) {
     }
 }
 
+function generateCardIconColor(type){
+    let returnColor;
+    switch(type){
+        case 'job':
+            returnColor = "#c2ffd2"
+        break;
+        case 'project':
+            returnColor = "#ffc2c2"
+        break;
+        
+    }
+    
+    return returnColor
+}
+
 function generateTimeline(timelineArray) {
     console.log(timelineArray)
     let timelineHTML = ""
@@ -371,18 +386,7 @@ function generateTimeline(timelineArray) {
         for (let y = 0; timelineArray[x].events.length > y; y++) {
             timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
                 <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                    <div class="timeline-icon">
-                    <i class="fa fa-briefcase" aria-hidden="true"></i>
-                    </div>
-                    <div class="timeline-text">
-                        <h6>${timelineArray[x].events[y].title}</h6>
-                        <p>${timelineArray[x].events[y].description}</p>
-                    </div>
-                </div>
-            </div>`
-            timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
-                <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                    <div class="timeline-icon">
+                    <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
                     <i class="fa fa-briefcase" aria-hidden="true"></i>
                     </div>
                     <div class="timeline-text">
@@ -392,8 +396,7 @@ function generateTimeline(timelineArray) {
                 </div>
             </div>`
         }
-        timelineHTML += `
-        <hr class="divider mx-auto"></hr>
+        timelineHTML += `<hr class="divider mx-auto my-2"></hr>
         </div>
         </div>`
     }
@@ -528,7 +531,7 @@ $(document).ready(function () {
                         }).catch((error) => {
                             console.error(error);
                         }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
-
+                            $('#timelineSpinner').hide()
                         });
                     }, 1000)
                     break;
