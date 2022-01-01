@@ -426,13 +426,19 @@ html{
 .single-timeline-area .single-timeline-content {
     position: relative;
     z-index: 1;
-    padding: 30px 30px 25px;
+    padding: 20px 30px 25px;
     background-color: var(--timelineCardBackgroundColor);
     border-radius: 6px;
     margin-bottom: 15px;
     margin-top: 15px;
+    height: 150px;
+    overflow-x: scroll;
     -webkit-box-shadow: 0 0.25rem 1rem 0 var(--timelineCardShadowColor);
     box-shadow: 0 0.25rem 1rem 0 var(--timelineCardShadowColor);
+    -webkit-transition: background-color var(--lightingModeAnim),border var(--lightingModeAnim);
+    -moz-transition: background-color var(--lightingModeAnim),border var(--lightingModeAnim);
+    -o-transition: background-color var(--lightingModeAnim),border var(--lightingModeAnim);
+    transition: background-color var(--lightingModeAnim),border var(--lightingModeAnim),;
     border: 1px solid var(--timelineCardBorderColor);
 }
 @media only screen and (max-width: 575px) {
@@ -463,6 +469,7 @@ html{
     transition-duration: 500ms;
     color:var(--mainTextColor)
 }
+
 .single-timeline-area .single-timeline-content .timeline-text p {
   -webkit-transition: color var(--lightingModeAnim);
   -moz-transition: color var(--lightingModeAnim);
@@ -470,7 +477,8 @@ html{
   transition: color var(--lightingModeAnim);
     font-size: 13px;
     margin-bottom: 0;
-    color:var(--mainTextColor)
+    color:var(--mainTextColor);
+    word-break:break-all;
 }
 .single-timeline-area .single-timeline-content:hover .timeline-icon,
 .single-timeline-area .single-timeline-content:focus .timeline-icon {

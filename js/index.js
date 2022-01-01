@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
 var selectedProject;
-const bucketLink="https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
+const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
     mainTextColor: ["#000000", "#919191"],
@@ -24,15 +24,15 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     skillBarInactive: ["#e8e8e8", "#3a3a3a"],
     scrollBarThumbColor: ["#e0e0e0", "#424242"],
     scrollBarHoverColor: ["#d1d1d1", "#515151"],
-    projectMiniHoverColor:["#e8e8e8","#3a3a3a"],
-    projectMiniSelectedColor:["#cfcfcf","#484848"],
-    projectBottomBorderColor: ["#dbdbdb","#5a5a5a"],
-    timelineColor:["#ebebeb","#2e2e2e"],
-    timelineNodeColor:["#000000","#FFFFFF"],
-    timelineCardBackgroundColor: ["#d2d2d2","#2d2d2d"],
-    timelineCardShadowColor:["#00000026","#FFFFFF26"],
-    timelineCardBorderColor:["#ebebeb","#1f1f1f"],
-    timelineCardTextHoverColor:["#363636","#b8b8b8"]
+    projectMiniHoverColor: ["#e8e8e8", "#3a3a3a"],
+    projectMiniSelectedColor: ["#cfcfcf", "#484848"],
+    projectBottomBorderColor: ["#dbdbdb", "#5a5a5a"],
+    timelineColor: ["#ebebeb", "#2e2e2e"],
+    timelineNodeColor: ["#000000", "#FFFFFF"],
+    timelineCardBackgroundColor: ["#d2d2d2", "#2d2d2d"],
+    timelineCardShadowColor: ["#00000026", "#FFFFFF26"],
+    timelineCardBorderColor: ["#ebebeb", "#1f1f1f"],
+    timelineCardTextHoverColor: ["#363636", "#b8b8b8"]
 }
 
 var titleArrayIterable = 0;
@@ -69,23 +69,23 @@ function returnProficiencyHTML(proficiency) {
     return returnString;
 }
 
-function generateNavbarContactIcons(contactArray){
+function generateNavbarContactIcons(contactArray) {
     let navbarContactHTML = ""
-    for(let x = 0;contactArray.length > x;x++){
-        navbarContactHTML += ` <a class="m-1" href="${bucketLink+contactArray[x].iconSource}">
-        <img src="${bucketLink+contactArray[x].iconSource}"
+    for (let x = 0; contactArray.length > x; x++) {
+        navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
+        <img src="${bucketLink + contactArray[x].iconSource}"
           height="35rem" width="35rem" class="contactIcon">
       </a>`
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
 }
 
-function generateDescription(description){
+function generateDescription(description) {
     $("#meDescription").html(description)
 }
 
-function generatePersonalImage(personalImage){
-    $("#personalImage").attr("src",bucketLink+personalImage)
+function generatePersonalImage(personalImage) {
+    $("#personalImage").attr("src", bucketLink + personalImage)
 }
 
 function generateSkills(skillObject) {
@@ -128,7 +128,7 @@ function generateMeCarouselImages(meImageArray) {
 
         meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${bucketLink+meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
+                <img src="${bucketLink + meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
@@ -170,7 +170,7 @@ function generateProjectsAndEvents(projectArray) {
         <div class="projectMiniPortraitContainer m-3">
           <!--Photos should be Square with slight border radius or circles-->
           <img
-            src="${bucketLink+projectArray[x].projectSource}"
+            src="${bucketLink + projectArray[x].projectSource}"
             height="90rem" width="90rem" style="border-radius: 10%;background: grey;">
         </div>
         <div class="textContainer my-3">
@@ -253,7 +253,7 @@ function generateProjectsAndEvents(projectArray) {
                         }
                         $('#projectCarouselContent').append(`
                             <div class="carousel-item ${y == 0 ? "active" : ""}">
-                        <img src="${bucketLink+projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                        <img src="${bucketLink + projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
                         <div class="carousel-caption d-none d-md-block">
                             <h5 class="carouselImageTitle">${projectArray[x].projectImageArray[y].imageTitle}</h5>
                             <p class="carouselImageSubtitle">${projectArray[x].projectImageArray[y].imageSubTitle}</p>
@@ -279,7 +279,7 @@ function generateProjectsAndEvents(projectArray) {
                     $(`#projectInfoHeader`).html(`
                     <div id="selectedImageContainer">
                     <img
-                      src="${bucketLink+projectArray[x].projectSource}"
+                      src="${bucketLink + projectArray[x].projectSource}"
                       height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
                   </div>
                   <div id="selectedText" class="mx-4">
@@ -358,6 +358,48 @@ function generateSpinnersForTab(tab) {
     }
 }
 
+function generateTimeline(timelineArray) {
+    console.log(timelineArray)
+    let timelineHTML = ""
+    for (let x = 0; timelineArray.length > x; x++) {
+        timelineHTML += `
+        <div class="single-timeline-area">
+                  <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
+                      <p>${timelineArray[x].year}</p>
+                  </div>
+            <div class="row">`
+        for (let y = 0; timelineArray[x].events.length > y; y++) {
+            timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
+                <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                    <div class="timeline-icon">
+                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                    </div>
+                    <div class="timeline-text">
+                        <h6>${timelineArray[x].events[y].title}</h6>
+                        <p>${timelineArray[x].events[y].description}</p>
+                    </div>
+                </div>
+            </div>`
+            timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
+                <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                    <div class="timeline-icon">
+                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                    </div>
+                    <div class="timeline-text">
+                        <h6>${timelineArray[x].events[y].title}</h6>
+                        <p>${timelineArray[x].events[y].description}</p>
+                    </div>
+                </div>
+            </div>`
+        }
+        timelineHTML += `
+        <hr class="divider mx-auto"></hr>
+        </div>
+        </div>`
+    }
+    $(".apland-timeline-area").html(timelineHTML)
+}
+
 $(document).ready(function () {
 
     const firebaseConfig = {
@@ -418,71 +460,84 @@ $(document).ready(function () {
                 // console.log(x.target.id)
             });
 
-            $('.navbar-nav li a').click(function () {
-                var clickedID = $(this).attr('id');
-                if ($(this).hasClass('inactive')) { //this is the start of our condition 
-                    //Literally super ineffecient but wtv
-                    $('.navbar-nav li a').removeClass('active')
-                    $('.navbar-nav li a').addClass('inactive');
-        
-                    $(this).addClass(`active`)
-                    $(this).removeClass('inactive')
-                    //iNeffecivency ends here
-        
-                    $('.contentContainer').hide();
-                    $('.divider').css({ width: '0%' })
-        
-                    generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
-                    switch (clickedID.slice(0, clickedID.length - 4)) {
-                        case "meTab":
-                            $('#descDivider').animate({ width: "97%" }, 1000)
-                            $('#titleDivider').animate({ width: "40%" }, 1000)
-                            $('#softSkillDivider').animate({ width: "82%" }, 1000)
-        
-                            get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
-                                setTimeout(() => {
-                                    if (snapshot.exists()) {
-                                        generateMeCarouselImages(snapshot.val().meImages)
-                                        generateSkills(snapshot.val().meSkillObject)
-                                    } else {
-                                        throw new Error("Data does not exist!")
-                                    }
-                                }, 1000)
-                            }).catch((error) => {
-                                console.error(error);
-                            }).finally(() => {
-                            });
-        
-                            break;
-        
-                        case "projectsTab":
-                            $('#headerDivider').animate({ width: "97%" }, 1000)
-                            setTimeout(() => {
-                                get(child(database, "projectsPage")).then((snapshot) => {
-                                    if (snapshot.exists()) {
-                                        let projectArray = snapshot.val().projects
-                                        generateProjectsAndEvents(projectArray)
-                                        $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
-                                    } else {
-                                        throw new Error("Data does not exist!")
-                                    }
-                                }).catch((error) => {
-                                    console.error(error);
-                                }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
-        
-                                });
-                            }, 1000)
-                            break;
-        
-                        case "timelineTab":
-        
-                            break;
-        
-                    }
-                    console.log(('#' + clickedID.slice(0, clickedID.length - 4) + 'Content'))
-                    $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
-                }
-            });
+    $('.navbar-nav li a').click(function () {
+        var clickedID = $(this).attr('id');
+        if ($(this).hasClass('inactive')) { //this is the start of our condition 
+            //Literally super ineffecient but wtv
+            $('.navbar-nav li a').removeClass('active')
+            $('.navbar-nav li a').addClass('inactive');
+
+            $(this).addClass(`active`)
+            $(this).removeClass('inactive')
+            //iNeffecivency ends here
+
+            $('.contentContainer').hide();
+            $('.divider').css({ width: '0%' })
+
+            generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
+            switch (clickedID.slice(0, clickedID.length - 4)) {
+                case "meTab":
+                    $('#descDivider').animate({ width: "97%" }, 1000)
+                    $('#titleDivider').animate({ width: "40%" }, 1000)
+                    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+
+                    get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
+                        setTimeout(() => {
+                            if (snapshot.exists()) {
+                                generateMeCarouselImages(snapshot.val().meImages)
+                                generateSkills(snapshot.val().meSkillObject)
+                            } else {
+                                throw new Error("Data does not exist!")
+                            }
+                        }, 1000)
+                    }).catch((error) => {
+                        console.error(error);
+                    }).finally(() => {
+                    });
+
+                    break;
+
+                case "projectsTab":
+                    $('#headerDivider').animate({ width: "97%" }, 1000)
+                    setTimeout(() => {
+                        get(child(database, "projectsPage")).then((snapshot) => {
+                            if (snapshot.exists()) {
+                                let projectArray = snapshot.val().projects
+                                generateProjectsAndEvents(projectArray)
+                                $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+                            } else {
+                                throw new Error("Data does not exist!")
+                            }
+                        }).catch((error) => {
+                            console.error(error);
+                        }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
+
+                        });
+                    }, 1000)
+                    break;
+
+                case "timelineTab":
+                    setTimeout(() => {
+                        get(child(database, "timelinePage")).then((snapshot) => {
+                            if (snapshot.exists()) {
+                                let timelineArray = snapshot.val().timeline
+                                generateTimeline(timelineArray)
+                            } else {
+                                throw new Error("Data does not exist!")
+                            }
+                        }).catch((error) => {
+                            console.error(error);
+                        }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
+
+                        });
+                    }, 1000)
+                    break;
+
+            }
+            console.log(('#' + clickedID.slice(0, clickedID.length - 4) + 'Content'))
+            $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
+        }
+    });
 
     //Handling Normal Startup
     //On normal Startup, start animations and call stuff for me page
@@ -513,7 +568,7 @@ $(document).ready(function () {
         });
     }, 1000)
 
-    
+
 
 
     //==================================== ME tab ==========================
@@ -535,5 +590,5 @@ $(document).ready(function () {
         clearInterval(changeGreetingInterval)
     })
 
-    
+
 });
