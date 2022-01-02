@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
-var selectedProject;
 const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
@@ -43,6 +42,8 @@ var titleArray = [
     "नमस्ते",
     "Hai"
 ]
+
+var selectedProjectID;
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -116,6 +117,7 @@ function generateSkills(skillObject) {
 }
 
 function generateMeCarouselImages(meImageArray) {
+    console.log(`meIMAGEaRRAY`, meImageArray)
     let meCarouselIndicatorHTML = "";
     let meCarouselContentHTML = "";
 
@@ -159,6 +161,11 @@ function generateMeCarouselImages(meImageArray) {
     )
 }
 
+function generateProjectMiniColumn(x) {
+    $('.projectMini').removeClass("active")
+    $('#project' + x).addClass("active")
+}
+
 function generateProjectsAndEvents(projectArray) {
     $('#projectMiniColumn').empty()
     $('#projectCarouselLeft').hide()
@@ -183,54 +190,18 @@ function generateProjectsAndEvents(projectArray) {
         </div>
     </div>`)
 
-        // Color Animations will now be done with CSS since Jquery cant handle dynamic variables
-        // $('#project' + x).hover(
-        //     () => {
-        //         $('#project' + x).animate({
-        //             'background-color': '#e8e8e8'
-        //         }, {
-        //             duration: 500,
-        //             queue: false
-        //         })
-        //     },
-        //     () => {
-        //         $('#project' + x).animate({
-        //             'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-        //         }, {
-        //             duration: 500,
-        //             queue: false
-        //         });
-        //     }
-        // )
+        if (projectArray[x].projectID == selectedProjectID) {
+            generateProjectMiniColumn(x)
+        }
 
-        // $('#project' + x).click(() => {
-        //     $('.projectMini').css("background-color",  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0])
-        //     selectedProject = x;
-        //     for (let x = 0; projectArray.length > x; x++) { //Regerates all hover events. Ineffecient but wtv
-        //         $('#project' + x).hover(
-        //             () => {
-        //                 $('#project' + x).animate({
-        //                     'background-color': '#e8e8e8'
-        //                 }, {
-        //                     duration: 500,
-        //                     queue: false
-        //                 })
-        //             },
-        //             () => {
-        //                 $('#project' + x).animate({
-        //                     'backgroundColor':  cssColorVariables["mainBackgroundColor"][lightingModeDark ? 1 : 0]
-        //                 }, {
-        //                     duration: 500,
-        //                     queue: false
-        //                 });
-        //             }
-        //         )
-        //     }
-
-        //     $('#project' + x).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
         $('#project' + x).click(() => {
-            $('.projectMini').removeClass("active")
-            $('#project' + x).addClass("active")
+            //This handles the Colour change on Click
+
+            selectedProjectID = projectArray[x].projectID
+
+            generateProjectMiniColumn(x)
+
+            //Handles animating in the content
             $('#projectImageContainer').animate({
                 "margin-left": "50%",
                 "opacity": "0%"
@@ -353,29 +324,44 @@ function generateSpinnersForTab(tab) {
             `)
             break;
         case "timelineTab":
-
+            $(`#timelineRow`).html(`<div id="timelineSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
+            <div class="col-12">
+              <!-- Timeline Area-->
+              <div class="apland-timeline-area">
+                <!-- Single Timeline Content-->
+              </div>
+            </div>`)
             break;
     }
 }
 
-function generateCardIconColor(type){
+function generateCardIconColor(type) {
     let returnColor;
-    switch(type){
+    switch (type) {
         case 'job':
             returnColor = "#c2ffd2"
-        break;
+            break;
         case 'project':
             returnColor = "#ffc2c2"
-        break;
-        
+            break;
+
     }
-    
+
     return returnColor
+}
+
+function generateCursorPointerAndClickEvent(type){
+    let returnStyle;
+    if(type == "project"){
+        return "cursor:pointer"
+    }
+
+    return returnStyle
 }
 
 function generateTimeline(timelineArray) {
     console.log(timelineArray)
-    let timelineHTML = ""
+    
     for (let x = 0; timelineArray.length > x; x++) {
         timelineHTML += `
         <div class="single-timeline-area">
@@ -385,26 +371,26 @@ function generateTimeline(timelineArray) {
             <div class="row">`
         for (let y = 0; timelineArray[x].events.length > y; y++) {
             timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
-                <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-                    <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
-                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                     <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
+                       <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
+                       <i class="fa fa-briefcase" aria-hidden="true"></i>
+                        </div>
+                         <div class="timeline-text">
+                           <h6>${timelineArray[x].events[y].title}</h6>
+                           <p>${timelineArray[x].events[y].description}</p>
+                        </div>
                     </div>
-                    <div class="timeline-text">
-                        <h6>${timelineArray[x].events[y].title}</h6>
-                        <p>${timelineArray[x].events[y].description}</p>
-                    </div>
-                </div>
-            </div>`
+                </div>`
         }
-        timelineHTML += `<hr class="divider mx-auto my-2"></hr>
-        </div>
+        timelineHTML += `
+                <hr class="timelineDivider divider mx-auto my-2"></hr>
+            </div>
         </div>`
     }
     $(".apland-timeline-area").html(timelineHTML)
 }
 
 $(document).ready(function () {
-
     const firebaseConfig = {
         apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
         authDomain: "personalwebsite-b90a5.firebaseapp.com",
@@ -419,19 +405,7 @@ $(document).ready(function () {
 
     var database = ref(getDatabase())
 
-    //Navbar stuff
-    get(child(database, "navbar")).then((snapshot) => {
-        if (snapshot.exists()) {
-            generateNavbarContactIcons(snapshot.val().navbarContactIcons)
-        } else {
-            throw new Error("Data does not exist!")
-        }
-    }).catch((error) => {
-        console.error(error);
-    }).finally(() => {
-    });
-
-    $('#lightModeInputForm').change(function (checkbox) {
+    $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
 
         //HTML way
@@ -447,6 +421,18 @@ $(document).ready(function () {
             ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])};`
         }
         $("html").attr("style", styleNavbarBackgroundString)
+    });
+
+    //===NavBar===
+    get(child(database, "navbar")).then((snapshot) => {
+        if (snapshot.exists()) {
+            generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+        } else {
+            throw new Error("Data does not exist!")
+        }
+    }).catch((error) => {
+        console.error(error);
+    }).finally(() => {
     });
 
     $('.nav-link').mouseenter(
@@ -483,20 +469,21 @@ $(document).ready(function () {
                     $('#descDivider').animate({ width: "97%" }, 1000)
                     $('#titleDivider').animate({ width: "40%" }, 1000)
                     $('#softSkillDivider').animate({ width: "82%" }, 1000)
-
-                    get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
-                        setTimeout(() => {
+                    setTimeout(() => {
+                        get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
                             if (snapshot.exists()) {
-                                generateMeCarouselImages(snapshot.val().meImages)
+                                generateMeCarouselImages(snapshot.val().meCarouselImages)
                                 generateSkills(snapshot.val().meSkillObject)
+                                generatePersonalImage(snapshot.val().meImage)
+                                generateDescription(snapshot.val().meDescription)
                             } else {
                                 throw new Error("Data does not exist!")
                             }
-                        }, 1000)
-                    }).catch((error) => {
-                        console.error(error);
-                    }).finally(() => {
-                    });
+                        }).catch((error) => {
+                            console.error(error);
+                        }).finally(() => {
+                        });
+                    }, 1000)
 
                     break;
 
@@ -507,7 +494,7 @@ $(document).ready(function () {
                             if (snapshot.exists()) {
                                 let projectArray = snapshot.val().projects
                                 generateProjectsAndEvents(projectArray)
-                                $('#project' + selectedProject).stop().css('background-color', '#cfcfcf').unbind('mouseenter mouseleave');
+
                             } else {
                                 throw new Error("Data does not exist!")
                             }
@@ -530,7 +517,7 @@ $(document).ready(function () {
                             }
                         }).catch((error) => {
                             console.error(error);
-                        }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
+                        }).finally(() => {
                             $('#timelineSpinner').hide()
                         });
                     }, 1000)
@@ -542,7 +529,7 @@ $(document).ready(function () {
         }
     });
 
-    //Handling Normal Startup
+    //==========================Handling Normal Startup=============================
     //On normal Startup, start animations and call stuff for me page
     $('.contentContainer').hide();
     $('.contentContainer').height($(window).height() - $(`.navbar`).height());
@@ -570,9 +557,6 @@ $(document).ready(function () {
         }).finally(() => {
         });
     }, 1000)
-
-
-
 
     //==================================== ME tab ==========================
     //Handles if a User focuses on tab
