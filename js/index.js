@@ -62,6 +62,8 @@ function changeLargeTextHeader(content) {
     })
 }
 
+//Use append when events need to be added
+
 function returnProficiencyHTML(proficiency) {
     let returnString = ``;
     for (var x = 0; 5 > x; x++) {
@@ -161,15 +163,147 @@ function generateMeCarouselImages(meImageArray) {
     )
 }
 
-function generateProjectMiniColumn(x) {
+function generateSelectedProjectMiniColumn(x) {
     $('.projectMini').removeClass("active")
     $('#project' + x).addClass("active")
+}
+
+function generateSelectedProjectDescription(projectObject) {
+    $('#projectImageContainer').animate({
+        "margin-left": "50%",
+        "opacity": "0%"
+    }, {
+        duration: 500,
+        queue: false,
+        complete: function () {
+            $('#projectCarouselContent').empty()
+            $('#projectCarouselIndicators').empty()
+            for (let y = 0; projectObject.projectImageArray.length > y; y++) {
+                if (!y) {
+                    $('#projectCarouselIndicators').append(`
+                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
+                    `)
+                } else {
+                    $('#projectCarouselIndicators').append(`
+                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
+                   `)
+                }
+                $('#projectCarouselContent').append(`
+                    <div class="carousel-item ${y == 0 ? "active" : ""}">
+                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                <div class="carousel-caption d-none d-md-block">
+                    <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
+                    <p class="carouselImageSubtitle">${projectObject.projectImageArray[y].imageSubTitle}</p>
+                </div>
+            </div>`)
+            }
+
+            $('#projectImageContainer').css("margin-left", "-10%")
+            $('#projectImageContainer').animate({
+                "opacity": "100%",
+                "margin-left": "0%",
+            }, 500)
+        }
+    })
+
+    $('#projectInfoHeader').animate({
+        "margin-left": "50%",
+        "opacity": "0%"
+    }, {
+        duration: 500,
+        queue: false,
+        complete: function () {
+            $(`#projectInfoHeader`).html(`
+            <div id="selectedImageContainer">
+            <img
+              src="${bucketLink + projectObject.projectSource}"
+              height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
+          </div>
+          <div id="selectedText" class="mx-4">
+            <div id="selectedTitle">
+                ${projectObject.projectTitle}
+            </div>
+            <div id="selectedSubText">
+                ${projectObject.projectSubTitle}
+            </div>
+            </div>`)
+            $('#projectInfoHeader').css("margin-left", "-10%")
+            $('#projectInfoHeader').animate({
+                "opacity": "100%",
+                "margin-left": "0%",
+            }, 500)
+        }
+    })
+
+    $('#headerDivider').animate({
+        "margin-left": "50%",
+        "opacity": "0%"
+    }, {
+        duration: 600,
+        queue: false,
+        complete: function () {
+            $('#headerDivider').css("margin-left", "-10%")
+            $('#headerDivider').animate({
+                "opacity": "25%",
+                "margin-left": ".75rem",
+            }, 500)
+        }
+    })
+
+    $('#projectInfoDescription').animate({
+        "margin-left": "50%",
+        "opacity": "0%"
+    }, {
+        duration: 700,
+        queue: false,
+        complete: function () {
+            $('#projectCarouselLeft').show()
+            $('#projectCarouselRight').show()
+            if (selectedProjectID) {
+                $(`#projectInfoDescription`).html(`<div id="projectInfoDescription">${projectObject.projectDescription}</div>`)
+            }
+            $('#projectInfoDescription').css("margin-left", "-10%")
+            $('#projectInfoDescription').animate({
+                "opacity": "100%",
+                "margin-left": "0%",
+            }, 500)
+        }
+    })
 }
 
 function generateProjectsAndEvents(projectArray) {
     $('#projectMiniColumn').empty()
     $('#projectCarouselLeft').hide()
     $('#projectCarouselRight').hide()
+
+    $('#projectInfoContainer').html(`
+    <div class="d-flex mb-3" id="projectInfoHeader">
+    This is where i keep all my projects
+    </div>
+    <hr class="divider" id="headerDivider">
+    <div id="projectInfoDescription">Description Description</div>
+    <div id="projectImageContainer" class="d-flex my-5 flex-column">
+      <div id="projectsCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators" id="projectCarouselIndicators">
+        </ol>
+        <div id="projectCarouselContent" class="carousel-inner">
+          <!--Data is set inside here-->
+        </div>
+        <!--Bootstrap 5 uses data-bs instead of data-mdb -->
+        <button id="projectCarouselLeft" class="carousel-control-prev" type="button"
+          data-bs-target="#projectsCarouselExampleControls" data-bs-slide="prev" id="projectGalleryPrev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button id="projectCarouselRight" class="carousel-control-next" type="button"
+          data-bs-target="#projectsCarouselExampleControls" data-bs-slide="next" id="projectGalleryNext">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>`
+    )
+
     for (let x = 0; projectArray.length > x; x++) {
 
         $('#projectMiniColumn').append(`
@@ -188,122 +322,19 @@ function generateProjectsAndEvents(projectArray) {
             ${projectArray[x].projectSubTitle}
           </div>
         </div>
-    </div>`)
+        </div>`)
 
-        if (projectArray[x].projectID == selectedProjectID) {
-            generateProjectMiniColumn(x)
+        if (selectedProjectID && projectArray[x].projectID == selectedProjectID) {//Handles when nothing is selected
+            generateSelectedProjectMiniColumn(x)
+            generateSelectedProjectDescription(projectArray[x])
         }
 
         $('#project' + x).click(() => {
-            //This handles the Colour change on Click
-
             selectedProjectID = projectArray[x].projectID
 
-            generateProjectMiniColumn(x)
-
+            generateSelectedProjectMiniColumn(x)
+            generateSelectedProjectDescription(projectArray[x])
             //Handles animating in the content
-            $('#projectImageContainer').animate({
-                "margin-left": "50%",
-                "opacity": "0%"
-            }, {
-                duration: 500,
-                queue: false,
-                complete: function () {
-
-                    $('#projectCarouselContent').empty()
-                    $('#projectCarouselIndicators').empty()
-                    for (let y = 0; projectArray[x].projectImageArray.length > y; y++) {
-                        if (!y) {
-                            $('#projectCarouselIndicators').append(`
-                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
-                            `)
-                        } else {
-                            $('#projectCarouselIndicators').append(`
-                            <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
-                           `)
-                        }
-                        $('#projectCarouselContent').append(`
-                            <div class="carousel-item ${y == 0 ? "active" : ""}">
-                        <img src="${bucketLink + projectArray[x].projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5 class="carouselImageTitle">${projectArray[x].projectImageArray[y].imageTitle}</h5>
-                            <p class="carouselImageSubtitle">${projectArray[x].projectImageArray[y].imageSubTitle}</p>
-                        </div>
-                    </div>`)
-                    }
-
-                    $('#projectImageContainer').css("margin-left", "-10%")
-                    $('#projectImageContainer').animate({
-                        "opacity": "100%",
-                        "margin-left": "0%",
-                    }, 500)
-                }
-            })
-
-            $('#projectInfoHeader').animate({
-                "margin-left": "50%",
-                "opacity": "0%"
-            }, {
-                duration: 500,
-                queue: false,
-                complete: function () {
-                    $(`#projectInfoHeader`).html(`
-                    <div id="selectedImageContainer">
-                    <img
-                      src="${bucketLink + projectArray[x].projectSource}"
-                      height="120rem" width="120rem" style="border-radius: 10%;background: grey;">
-                  </div>
-                  <div id="selectedText" class="mx-4">
-                    <div id="selectedTitle">
-                        ${projectArray[x].projectTitle}
-                    </div>
-                    <div id="selectedSubText">
-                        ${projectArray[x].projectSubTitle}
-                    </div>
-                    </div>`)
-                    $('#projectInfoHeader').css("margin-left", "-10%")
-                    $('#projectInfoHeader').animate({
-                        "opacity": "100%",
-                        "margin-left": "0%",
-                    }, 500)
-                }
-            })
-
-            $('#headerDivider').animate({
-                "margin-left": "50%",
-                "opacity": "0%"
-            }, {
-                duration: 600,
-                queue: false,
-                complete: function () {
-                    $('#headerDivider').css("margin-left", "-10%")
-                    $('#headerDivider').animate({
-                        "opacity": "25%",
-                        "margin-left": ".75rem",
-                    }, 500)
-                }
-            })
-
-            $('#projectInfoDescription').animate({
-                "margin-left": "50%",
-                "opacity": "0%"
-            }, {
-                duration: 700,
-                queue: false,
-                complete: function () {
-                    $('#projectCarouselLeft').show()
-                    $('#projectCarouselRight').show()
-                    $(`#projectInfoDescription`).html(`
-                    <div id="projectInfoDescription">Description Description Description Description Description Description
-                    Description Description Description
-                  </div>`)
-                    $('#projectInfoDescription').css("margin-left", "-10%")
-                    $('#projectInfoDescription').animate({
-                        "opacity": "100%",
-                        "margin-left": "0%",
-                    }, 500)
-                }
-            })
         })
     }
 }
@@ -321,6 +352,10 @@ function generateSpinnersForTab(tab) {
         case "projectsTab":
             $(`#projectMiniColumn`).html(`
             <div id="projectMiniColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
+            `)
+
+            $(`#projectInfoContainer`).html(`
+            <div class="spinner-grow text-muted mx-auto my-5"></div>
             `)
             break;
         case "timelineTab":
@@ -350,9 +385,9 @@ function generateCardIconColor(type) {
     return returnColor
 }
 
-function generateCursorPointerAndClickEvent(type){
+function generateCursorPointerAndClickEvent(type) {
     let returnStyle;
-    if(type == "project"){
+    if (type == "project") {
         return "cursor:pointer"
     }
 
@@ -360,18 +395,21 @@ function generateCursorPointerAndClickEvent(type){
 }
 
 function generateTimeline(timelineArray) {
-    console.log(timelineArray)
-    
+    $(".apland-timeline-area").empty()
     for (let x = 0; timelineArray.length > x; x++) {
-        timelineHTML += `
-        <div class="single-timeline-area">
-                  <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
-                      <p>${timelineArray[x].year}</p>
-                  </div>
-            <div class="row">`
+        $(".apland-timeline-area").append(
+            `<div class="single-timeline-area">
+                      <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInLeft;">
+                          <p>${timelineArray[x].year}</p>
+                      </div>
+                <div class="row" id="timelineYear${timelineArray[x].year}">
+                    
+                </div>
+            </div>`)
         for (let y = 0; timelineArray[x].events.length > y; y++) {
-            timelineHTML += `<div class="col-12 col-md-6 col-lg-4">
-                     <div class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
+            $("#timelineYear" + timelineArray[x].year).append(
+                `<div class="col-12 col-md-6 col-lg-4">
+                     <div id="event${x}" class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
                        <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
                        <i class="fa fa-briefcase" aria-hidden="true"></i>
                         </div>
@@ -381,13 +419,18 @@ function generateTimeline(timelineArray) {
                         </div>
                     </div>
                 </div>`
+            )
+            if (timelineArray[x].events[y].type == "project") {
+                $(`#event${x}`).click(() => {
+                    $('.navbar-nav li a').trigger("click")//How does this take me to projects? I dont know but im not changing the code
+                    selectedProjectID = timelineArray[x].events[y].projectID
+                })
+            }
         }
-        timelineHTML += `
-                <hr class="timelineDivider divider mx-auto my-2"></hr>
-            </div>
-        </div>`
+        $("#timelineYear" + timelineArray[x].year).append(
+            `<hr class="timelineDivider divider mx-auto my-2"></hr>`
+        )
     }
-    $(".apland-timeline-area").html(timelineHTML)
 }
 
 $(document).ready(function () {
@@ -418,7 +461,7 @@ $(document).ready(function () {
         for (let x = 0; cssColorVariablesKeyArray.length > x; x++) {
             styleNavbarBackgroundString +=
                 `--${cssColorVariablesKeyArray[x]}:
-            ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])};`
+            ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])}; `
         }
         $("html").attr("style", styleNavbarBackgroundString)
     });
@@ -452,13 +495,11 @@ $(document).ready(function () {
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
         if ($(this).hasClass('inactive')) { //this is the start of our condition 
-            //Literally super ineffecient but wtv
             $('.navbar-nav li a').removeClass('active')
             $('.navbar-nav li a').addClass('inactive');
 
             $(this).addClass(`active`)
             $(this).removeClass('inactive')
-            //iNeffecivency ends here
 
             $('.contentContainer').hide();
             $('.divider').css({ width: '0%' })
@@ -494,7 +535,6 @@ $(document).ready(function () {
                             if (snapshot.exists()) {
                                 let projectArray = snapshot.val().projects
                                 generateProjectsAndEvents(projectArray)
-
                             } else {
                                 throw new Error("Data does not exist!")
                             }
