@@ -67,7 +67,7 @@ function changeLargeTextHeader(content) {
 function returnProficiencyHTML(proficiency) {
     let returnString = ``;
     for (var x = 0; 5 > x; x++) {
-        returnString += (proficiency > x ? `<div class="bar col-md-1"></div>` : `<div class="inactivebar col-md-1"></div>`)
+        returnString += (proficiency > x ? `<div class="bar col-2"></div>` : `<div class="inactivebar col-2"></div>`)
     }
     return returnString;
 }
@@ -79,8 +79,13 @@ function generateNavbarContactIcons(contactArray) {
         <img src="${bucketLink + contactArray[x].iconSource}"
           height="35rem" width="35rem" class="contactIcon">
       </a>`
+      navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
+        <img src="${bucketLink + contactArray[x].iconSource}"
+          height="35rem" width="35rem" class="contactIcon">
+      </a>`
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
+    
 }
 
 function generateDescription(description) {
@@ -106,10 +111,10 @@ function generateSkills(skillObject) {
         for (let y = 0; y < currentSkillObject.length; y++) {
 
             skillHTML += `<div class="skillRow row d-flex my-3 justify-content-end">
-              <div class="skillTitle col-md-4">
+              <div class="skillTitle col-4">
                 ${currentSkillObject[y].skillTitle}
               </div>
-              <div class="skillBar row col-md-8">
+              <div class="skillBar d-flex col-8">
                 ${returnProficiencyHTML(currentSkillObject[y].skillProficiency)}
               </div>
             </div>`
@@ -470,6 +475,11 @@ $(document).ready(function () {
     get(child(database, "navbar")).then((snapshot) => {
         if (snapshot.exists()) {
             generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+            $("#navbarToggler").click(()=>{
+                $("#navbarContactIconContainer").remove()
+                $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
+                generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+            })
         } else {
             throw new Error("Data does not exist!")
         }
@@ -572,7 +582,6 @@ $(document).ready(function () {
     //==========================Handling Normal Startup=============================
     //On normal Startup, start animations and call stuff for me page
     $('.contentContainer').hide();
-    $('.contentContainer').height($(window).height() - $(`.navbar`).height());
 
     $('.divider').css({ width: '0%' })
     $('#meTabContent').fadeIn('slow')
@@ -595,6 +604,7 @@ $(document).ready(function () {
         }).catch((error) => {
             console.error(error);
         }).finally(() => {
+            $('.contentContainer').height($(window).height() - $(`.navbar`).height());
         });
     }, 1000)
 

@@ -20,9 +20,9 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-ligh navbar-fixed-top">
-    <div class="col-md-1">
-      <div class="d-flex flex-row ms-3" id="lightModeSwitchContainer">
+  <nav class="navbar navbar-expand-sm navbar-light navbar-fixed-top" id="navbar">
+    <div class="mx-2 d-flex justify-content-center">
+      <div class="d-flex flex-row justify-content-center" id="lightModeSwitchContainer">
         <div id="lightModeIcon">
           ☀️
         </div>
@@ -30,52 +30,30 @@
           <input type="checkbox" class="form-check-input" id="lightMode">
         </div>
         <div id="darkModeIcon">
-          <!--bootstrap's input already has ms-2 added to it, no need to add here-->
           🌑
         </div>
       </div>
     </div>
+    <button id="navbarToggler" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
       <ul class="navbar-nav">
-        <li class="nav-item mx-5" id="timelineTab">
+        <li class="nav-item mx-5 text-center" id="timelineTab">
           <a class="nav-link inactive" id="timelineTabLink" href="#">Timeline</a>
         </li>
-        <li class="nav-item mx-5" id="meTab">
+        <li class="nav-item mx-5 text-center" id="meTab">
           <a class="nav-link active" id="meTabLink" href="#">Me</a>
         </li>
-        <li class="nav-item mx-5" id="projectsTab">
+        <li class="nav-item mx-5 text-center" id="projectsTab">
           <a class="nav-link inactive" id="projectsTabLink" href="#">Projects</a>
         </li>
       </ul>
     </div>
+    <div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer">
+    </div>
     <!--animate this increasing/decreasing to fit items at the start of the page-->
 
-    <div class="col-md-1 mx-1 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer">
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-      <a class="m-1" href="#">
-        <img src="https://cliply.co/wp-content/uploads/2021/02/372102050_LINKEDIN_ICON_TRANSPARENT_1080.gif"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>
-    </div>
   </nav>
   <div class="row g-0 contentContainer" id="projectsTabContent">
     <div id="leftMeContainer" class="col-md-4">
@@ -99,7 +77,6 @@
         </div>
       </div>
     </div>
-  </div>
   </div>
   <div class="row g-0 contentContainer" id="meTabContent">
     <div id="leftMeContainer" class="col-md-9">
@@ -128,7 +105,7 @@
         <hr id="descDivider" class="divider" style="margin-left: 0.75rem;">
         <!--had to set style like this as boostrap 5 has a bug :( -->
       </div>
-      <div class="row mx-5 mb-4 mt-2">
+      <div class="row mx-5 mb-4 mt-2 justify-content-center">
         <div id="leftImageGalleryContainer" class="row">
           <div id="leftImageGallerySpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
         </div>
@@ -138,7 +115,7 @@
       <div id="personalImageContainer" class="my-4 row mx-auto">
         <img class="m-auto" id="personalImage" src="https://media0.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif">
       </div>
-      <div id="rightSkillContainer" class='row g-0'>
+      <div id="rightSkillContainer" class='row g-0 my-5'>
         <div class="spinner-grow text-muted mx-auto my-5"></div>
       </div>
     </div>

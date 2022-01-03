@@ -94,6 +94,12 @@ html {
     overflow:hidden
   }
 
+
+  .carousel {
+    max-width: 85%;
+    margin: 0 auto;
+  }
+
   .contentContainer{
     overflow-y:scroll;
     /*prime variable for animation*/
@@ -120,6 +126,7 @@ html {
     transition: background-color var(--lightingModeAnim);
     background-color: var(--navbarContactIconContainerBackgroundColor);
     border-radius:1rem 1rem 10px 10px;
+    max-width:91.94px/*same as the lighting Mode*/
   }
 
   .contactIcon{
