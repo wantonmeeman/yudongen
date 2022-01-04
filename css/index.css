@@ -212,6 +212,8 @@ html {
 
   .skillTitle{
     font-weight: 300;
+    width:75px;
+    overflow: hidden;
     -webkit-transition: color var(--lightingModeAnim);
     -moz-transition: color var(--lightingModeAnim);
     -o-transition: color var(--lightingModeAnim);
@@ -334,7 +336,9 @@ html {
     transition: background-color var(--lightingModeAnim);
     background-color: var(--skillBarActiveColor);
     border-radius: 100%;
-    margin-right: 2%;
+    margin-right: 1%;
+    width:25px;
+    height:25px
   }
 
   .inactivebar{
@@ -345,6 +349,8 @@ html {
     background-color: var(--skillBarInactive);
     border-radius: 100%;
     margin-right: 1%;
+    width:25px;
+    height:25px
   }
 
   #personalImage{

@@ -110,17 +110,19 @@ function generateSkills(skillObject) {
         let currentSkillObject = skillObject[keysArray[x].toString()];
         for (let y = 0; y < currentSkillObject.length; y++) {
 
-            skillHTML += `<div class="skillRow row d-flex my-3 justify-content-end">
-              <div class="skillTitle col-4">
+            skillHTML += `<div class="skillRowContainer d-flex my-3 justify-content-center">
+            <div class="skillRow d-flex">
+              <div class="skillTitle col-4 me-2">
                 ${currentSkillObject[y].skillTitle}
               </div>
-              <div class="skillBar d-flex col-8">
+              <div class="skillBar col-8 d-flex justify-content-start">
                 ${returnProficiencyHTML(currentSkillObject[y].skillProficiency)}
+              </div>
               </div>
             </div>`
         }
     }
-    $('#rightSkillContainer').html(skillHTML)
+ $('#rightSkillContainer').html(skillHTML)
 }
 
 function generateMeCarouselImages(meImageArray) {
@@ -475,11 +477,20 @@ $(document).ready(function () {
     get(child(database, "navbar")).then((snapshot) => {
         if (snapshot.exists()) {
             generateNavbarContactIcons(snapshot.val().navbarContactIcons)
-            $("#navbarToggler").click(()=>{
+
+            $("#navbarToggler").click(()=>{//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
                 $("#navbarContactIconContainer").remove()
                 $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
                 generateNavbarContactIcons(snapshot.val().navbarContactIcons)
             })
+
+            $( window ).resize(()=>{//Handles after navbar toggler is clicked, makes contact icons go back to the original place
+                if($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer"){
+                    $("#navbarContactIconContainer").remove()
+                    $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
+                    generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+                }
+            })  
         } else {
             throw new Error("Data does not exist!")
         }
@@ -487,6 +498,8 @@ $(document).ready(function () {
         console.error(error);
     }).finally(() => {
     });
+
+    
 
     $('.nav-link').mouseenter(
         (x) => {
@@ -588,7 +601,6 @@ $(document).ready(function () {
     $('#descDivider').animate({ width: "97%" }, 1000)
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
-
 
     //loading Information from mePage
     setTimeout(() => {
