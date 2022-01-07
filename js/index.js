@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from "firebase/database";
 
+const backendServerURL = "https://yudongen-backend.herokuapp.com"
 const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
@@ -43,7 +44,10 @@ var titleArray = [
     "Hai"
 ]
 
+
 var selectedProjectID;
+
+var secretMeClickCounter = 0;
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -79,13 +83,13 @@ function generateNavbarContactIcons(contactArray) {
         <img src="${bucketLink + contactArray[x].iconSource}"
           height="35rem" width="35rem" class="contactIcon">
       </a>`
-      navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
+        navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
         <img src="${bucketLink + contactArray[x].iconSource}"
           height="35rem" width="35rem" class="contactIcon">
       </a>`
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
-    
+
 }
 
 function generateDescription(description) {
@@ -122,7 +126,7 @@ function generateSkills(skillObject) {
             </div>`
         }
     }
- $('#rightSkillContainer').html(skillHTML)
+    $('#rightSkillContainer').html(skillHTML)
 }
 
 function generateMeCarouselImages(meImageArray) {
@@ -440,6 +444,108 @@ function generateTimeline(timelineArray) {
     }
 }
 
+function generateAdminPagination(pageArray) {
+
+    let paginationHTML = ``
+    for (var x = 0; pageArray.length > x; x++) {
+        let uncapString = (pageArray[x].slice(0, pageArray[x].length - 4))
+        paginationHTML += `<li class="page-item"><a class="page-link" href="#" id="${uncapString}">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)
+            }</a></li>`
+        //Do Button programming TODO
+    }
+    $("#paginationList").html(paginationHTML)
+}
+
+function generateAdminPage(pageObject, pageTitle) {
+    let pageArray = Object.keys(pageObject)
+
+    let adminHTML = ``
+
+    switch (pageTitle) {
+        case "me":
+            adminHTML += `
+        <div class="col-12 d-flex align-items-center justify-content-center">
+            <img class="profilePicture" id="profilePicture" src="https://image.shutterstock.com/image-vector/circle-icon-black-white-linear-260nw-1247479555.jpg" alt="your image" />
+            <input class="mx-2" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+          </div>
+            <div class="mt-2 col-6">
+          <label class="form-label">Description</label>
+          <textarea name="description" type="email" class="form-control" id="meDescription"></textarea>
+        </div>
+       
+        <div class="mt-2 col-6">
+          <label class="form-label">Image Carousel</label>
+          <div id="adminPictureArrayContainer" class="d-flex flex-row">
+        <div class="d-flex flex-column adminPictureItem">
+          <img class="adminPicture" src="https://image.shutterstock.com/image-vector/circle-icon-black-white-linear-260nw-1247479555.jpg" id="meCarouselImg1"/>
+          <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg1').src = window.URL.createObjectURL(this.files[0])" />
+        </div>
+        <div class="d-flex adminPictureItem" id="addCarouselItem">
+          <img class="my-auto addNewImageIcon" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png"/>
+        </div>
+          </div>
+        </div>
+        <div class="mt-2 col-12">
+          <label class="form-label">Skills</label>
+          <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Skill Name</th>
+              <th scope="col">Skill Prof</th>
+            </tr>
+            <tr>
+              <th>Skill Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td><input type='text'></td>
+                <td><input type='text'></td>
+            </tr>
+            <tr>
+              <td><input type='text'></td>
+              <td><input type='text'></td>
+            </tr>
+            <tr>
+            <td><input type='text'></td>
+              <td><input type='text'></td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+            <th>Skill Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td><input type='text'></td>
+                <td><input type='text'></td>
+            </tr>
+            <tr>
+              <td><input type='text'></td>
+              <td><input type='text'></td>
+            </tr>
+            <tr>
+            <td><input type='text'></td>
+              <td><input type='text'></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+            `
+
+            break;
+        case "projects":
+            break;
+        case "timeline":
+            break;
+
+    }
+    $(`#editContainer`).html(adminHTML + `<button type="submit" class="btn btn-primary col-1 mb-1">Save</button>`)
+
+
+}
+
 $(document).ready(function () {
     const firebaseConfig = {
         apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
@@ -476,21 +582,21 @@ $(document).ready(function () {
     //===NavBar===
     get(child(database, "navbar")).then((snapshot) => {
         if (snapshot.exists()) {
-            generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+            generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
 
-            $("#navbarToggler").click(()=>{//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
+            $("#navbarToggler").click(() => {//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
                 $("#navbarContactIconContainer").remove()
                 $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
                 generateNavbarContactIcons(snapshot.val().navbarContactIcons)
             })
 
-            $( window ).resize(()=>{//Handles after navbar toggler is clicked, makes contact icons go back to the original place
-                if($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer"){
+            $(window).resize(() => {//Handles after navbar toggler is clicked, makes contact icons go back to the original place
+                if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
                     $("#navbarContactIconContainer").remove()
                     $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
                     generateNavbarContactIcons(snapshot.val().navbarContactIcons)
                 }
-            })  
+            })
         } else {
             throw new Error("Data does not exist!")
         }
@@ -498,8 +604,6 @@ $(document).ready(function () {
         console.error(error);
     }).finally(() => {
     });
-
-    
 
     $('.nav-link').mouseenter(
         (x) => {
@@ -517,7 +621,61 @@ $(document).ready(function () {
 
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
-        if ($(this).hasClass('inactive')) { //this is the start of our condition 
+        if (clickedID.slice(0, clickedID.length - 4) == "meTab") {
+            secretMeClickCounter++;
+            if (secretMeClickCounter >= 5) {
+                secretMeClickCounter = 0;
+                //Do animating
+                let password = prompt("Enter the secret password");
+                if (password) {
+                    fetch(backendServerURL + "/password", {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            "password": password
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    })
+                        .then((result) => {
+                            if (result.ok) {
+                                return result.text()
+                            } else {
+                                switch (result.status) {
+                                    case 401:
+                                        throw new Error("Wrong Password")
+                                        break;
+                                    case 500:
+                                        throw new Error("Server Error")
+                                        break;
+                                }
+                            }
+                        }).then((text) => {
+                            if (text == "Success") {
+                                $('.contentContainer').hide();
+                                $('.divider').css({ width: '0%' })
+                                $('#adminTabContent').fadeIn('slow')
+
+                                get(database).then((snapshot) => {
+                                    let pageArray = (Object.keys(snapshot.val())).filter((item) => {
+                                        return item.includes("Page")
+                                    })
+                                    generateAdminPagination(pageArray)
+                                    generateAdminPage(snapshot.val().mePage, "me")
+                                })
+
+                            } else {
+                                throw new Error("Invalid Response")
+                            }
+                        }).catch((error) => {
+                            alert(error)
+                        })
+                }
+            }
+        } else {
+            secretMeClickCounter = 0;
+        }
+        if ($(this).hasClass('inactive')) {
             $('.navbar-nav li a').removeClass('active')
             $('.navbar-nav li a').addClass('inactive');
 
@@ -536,7 +694,7 @@ $(document).ready(function () {
                     setTimeout(() => {
                         get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
                             if (snapshot.exists()) {
-                                generateMeCarouselImages(snapshot.val().meCarouselImages)
+                                generateMeCarouselImages(snapshot.val().meImageArray)
                                 generateSkills(snapshot.val().meSkillObject)
                                 generatePersonalImage(snapshot.val().meImage)
                                 generateDescription(snapshot.val().meDescription)
@@ -597,16 +755,24 @@ $(document).ready(function () {
     $('.contentContainer').hide();
 
     $('.divider').css({ width: '0%' })
-    $('#meTabContent').fadeIn('slow')
-    $('#descDivider').animate({ width: "97%" }, 1000)
-    $('#titleDivider').animate({ width: "40%" }, 1000)
-    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+    $('#adminTabContent').fadeIn('slow')
+    get(database).then((snapshot) => {
+        let pageArray = (Object.keys(snapshot.val())).filter((item) => {
+            return item.includes("Page")
+        })
+        generateAdminPagination(pageArray)
+        generateAdminPage(snapshot.val().mePage, "me")
+    })
+    // $('#meTabContent').fadeIn('slow')
+    // $('#descDivider').animate({ width: "97%" }, 1000)
+    // $('#titleDivider').animate({ width: "40%" }, 1000)
+    // $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
     //loading Information from mePage
     setTimeout(() => {
         get(child(database, "mePage")).then((snapshot) => {
             if (snapshot.exists()) {
-                generateMeCarouselImages(snapshot.val().meCarouselImages)
+                generateMeCarouselImages(snapshot.val().meImageArray)
                 generateSkills(snapshot.val().meSkillObject)
                 generatePersonalImage(snapshot.val().meImage)
                 generateDescription(snapshot.val().meDescription)

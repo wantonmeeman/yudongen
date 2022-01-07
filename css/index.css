@@ -353,14 +353,16 @@ html {
     height:25px
   }
 
-  #personalImage{
+  .profilePicture{
     height: 150px;
     width:  150px;
-    padding: 0px;/*Important! will not a be circle*/
+    padding: 0px;/*Important! will not a be circle without*/
     display: inline-block;
     border-radius: 50%;
     border: 6px solid var(--personalImageBorderColor); 
   }
+
+
 /*Timeline*/
 
 .timeline_area {
@@ -502,6 +504,48 @@ html {
 .single-timeline-area .single-timeline-content:focus .timeline-text h6 {
     color: var(--timelineCardTextHoverColor);
 }
+
+/*admin*/
+#adminPictureArrayContainer{
+  height:200px;
+  width:100%;
+  overflow-x:scroll;
+}
   
+.adminPictureItem{
+  height:180px;
+  width:25%;
+}
+
+.adminPicture{
+  height:150px;
+  width:100%
+}
+
+.addNewImageIcon{
+  height:75px;
+  width:75px
+}
+
+#adminSkillArrayContainer{  
+  width:100%;
+  overflow:scroll;
+}
+
+.skillCategory{
+  width:200px;
+  overflow: scroll;
+}
+
+.skillName{
+  width:50%;
+}
+
+.skillProficency{
+  width:25%;
+}
+
+
+
 
 
