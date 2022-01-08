@@ -323,7 +323,7 @@ function generateProjectsAndEvents(projectArray) {
           <!--Photos should be Square with slight border radius or circles-->
           <img
             src="${bucketLink + projectArray[x].projectSource}"
-            height="90rem" width="90rem" style="border-radius: 10%;background: grey;">
+            height="90rem" width="90rem" id="projectImage">
         </div>
         <div class="textContainer my-3">
           <div class="projectMiniTitle">
@@ -444,20 +444,150 @@ function generateTimeline(timelineArray) {
     }
 }
 
-function generateAdminPagination(pageArray) {
-
+//Admin Page
+function generateAdminPagination(pageArray) {//Move this to the under the database scope belowg jyf
     let paginationHTML = ``
+
     for (var x = 0; pageArray.length > x; x++) {
         let uncapString = (pageArray[x].slice(0, pageArray[x].length - 4))
-        paginationHTML += `<li class="page-item"><a class="page-link" href="#" id="${uncapString}">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)
-            }</a></li>`
+        paginationHTML += `<li class="page-item inactive" id="${uncapString}Btn"><a class="page-link" href="#">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)}</a></li>`
         //Do Button programming TODO
     }
+
     $("#paginationList").html(paginationHTML)
+
 }
 
 function generateAdminPage(pageObject, pageTitle) {
-    let pageArray = Object.keys(pageObject)
+    console.log(pageObject, pageTitle)
+
+    function generateSkillCategory(skillCategoryObject) {
+
+        let skillKeyArray = Object.keys(skillCategoryObject)
+
+        let skillHTML = ``
+
+        function generateSkill(skillObject) {
+            let skillHTML = ``
+
+            for (let x = 0; skillObject.length > x; x++) {
+                skillHTML += `
+                <tr>
+                <td><input type='text' value="${skillObject[x].skillTitle}"></td>
+                <td><input type='text' value="${skillObject[x].skillProficiency}">/5</td>
+                <td><button type="button" class="close" >
+                <span>&times;</span>
+                </button>
+                </td>
+            </tr>`
+            }
+
+            return skillHTML
+        }
+
+        for (let x = 0; x < skillKeyArray.length; x++) {
+            skillHTML += `
+        <thead>
+        <tr>
+        <th>${skillKeyArray[x]}</th>
+        <th><button type="button" class="close" >
+        <span>&times;</span>
+        </button>
+        </th>
+        </td>
+        </tr>
+      </thead>
+      <tbody>
+      ${generateSkill(skillCategoryObject[skillKeyArray[x]])}
+      </tbody>`
+        }
+
+        return skillHTML
+    }
+
+    function generateImageArray(imageArray) {
+        let imageHTML = ""
+        for (let x = 0; imageArray.length > x; x++) {
+            imageHTML += `
+            <div class="d-flex me-3">
+            <div class="d-flex flex-column adminPictureItem">
+             <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="meCarouselImg${x}"/>
+            <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${x}').src = window.URL.createObjectURL(this.files[0])" />
+            </div>
+            <div class="d-flex flex-column adminPictureItem">
+             <input type="text" value="${imageArray[x].imageTitle}"/>
+             <textarea class="textArea">${imageArray[x].imageSubTitle}</textarea>
+             </div><button type="button" class="close" >
+             <span>&times;</span>
+        </div>`
+        }
+        return imageHTML + `<div class="d-flex adminPictureItem" id="addCarouselItem">
+        <img class="my-auto addNewImageIcon" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png"/>
+        </div>`;
+    }
+
+    function generateProjectArray(projectArray) {
+        let projectHTML = ""
+        for (let x = 0; projectArray.length > x; x++) {
+            projectHTML += `        
+            <div class="projectContainer d-flex flex-column px-5">
+                <div class="d-flex justify-content-start">
+                <img id="projectImage" height="90rem" width="90rem" src="${projectArray[x].projectSource}">
+                <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('projectImage').src = window.URL.createObjectURL(this.files[0])" />
+                </div>
+                <label>Title</label>
+                <input type="text" value="${projectArray[x].projectTitle}">
+                <label>SubTitle</label>
+                <input type="text" value="${projectArray[x].projectSubTitle}">
+                <label>Description</label>
+                <input type="text" value="${projectArray[x].projectDescription}">
+                <label>Image Array</label>
+                <div id="adminPictureArrayContainer" class="d-flex flex-row">
+                ${generateImageArray(projectArray[x].projectImageArray)}
+                </div>
+                <div> <label>Link to Timeline?</label>
+                <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
+                <button type="button" class="close" >
+                <span>&times;</span>
+                </button>
+            </div>`
+        }
+        return projectHTML
+    }
+
+    function generateTimelineArray(timelineArray) {
+        let timelineHTML = ""
+
+        for (let x = 0; timelineArray.length > x; x++) {
+            timelineHTML += `        
+            <div class="timelineContainer d-flex flex-row px-5 mt-3">
+                <div class="justify-content-center">${timelineArray[x].year}</div>`
+
+            for (let y = 0; timelineArray[x].events.length > y; y++) {
+                timelineHTML += `
+                <div class="d-flex flex-column ms-3">
+                    <label>Title</label>
+                    <input type="text" value="${timelineArray[x].events[y].title}">
+                    <label>Description</label>
+                    <input type="text" value="${timelineArray[x].events[y].description}">
+                    <label>Type</label>
+                    <select id="type" name="type">
+                        <option value="project" ${timelineArray[x].events[y].type == "project" ? "Selected" : ""}>Project</option>
+                        <option value="job" ${timelineArray[x].events[y].type == "job" ? "Selected" : ""}>Job</option>
+                    </select>
+                    <button type="button" class="close" >
+                    <span>&times;</span>
+                    </button>
+                </div>
+                `//Hard code type(Project/Job)
+
+            }
+
+            timelineHTML += `</div>`
+        }
+
+        return timelineHTML
+    }
 
     let adminHTML = ``
 
@@ -465,27 +595,22 @@ function generateAdminPage(pageObject, pageTitle) {
         case "me":
             adminHTML += `
         <div class="col-12 d-flex align-items-center justify-content-center">
-            <img class="profilePicture" id="profilePicture" src="https://image.shutterstock.com/image-vector/circle-icon-black-white-linear-260nw-1247479555.jpg" alt="your image" />
+            <img class="profilePicture" id="profilePicture" src="${bucketLink + pageObject.meImage}" alt="your image" />
             <input class="mx-2" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
           </div>
-            <div class="mt-2 col-6">
+            <div class="mt-2">
           <label class="form-label">Description</label>
-          <textarea name="description" type="email" class="form-control" id="meDescription"></textarea>
+          <textarea name="description" type="email" class="form-control textArea" id="meDescription">${pageObject.meDescription}</textarea>
         </div>
        
-        <div class="mt-2 col-6">
+        <div class="mt-2">
           <label class="form-label">Image Carousel</label>
           <div id="adminPictureArrayContainer" class="d-flex flex-row">
-        <div class="d-flex flex-column adminPictureItem">
-          <img class="adminPicture" src="https://image.shutterstock.com/image-vector/circle-icon-black-white-linear-260nw-1247479555.jpg" id="meCarouselImg1"/>
-          <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg1').src = window.URL.createObjectURL(this.files[0])" />
-        </div>
-        <div class="d-flex adminPictureItem" id="addCarouselItem">
-          <img class="my-auto addNewImageIcon" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png"/>
+            ${generateImageArray(pageObject.meImageArray)}
         </div>
           </div>
         </div>
-        <div class="mt-2 col-12">
+        <div class="mt-2">
           <label class="form-label">Skills</label>
           <table class="table">
           <thead>
@@ -493,55 +618,29 @@ function generateAdminPage(pageObject, pageTitle) {
               <th scope="col">Skill Name</th>
               <th scope="col">Skill Prof</th>
             </tr>
-            <tr>
-              <th>Skill Category</th>
-            </tr>
           </thead>
-          <tbody>
-            <tr>
-                <td><input type='text'></td>
-                <td><input type='text'></td>
-            </tr>
-            <tr>
-              <td><input type='text'></td>
-              <td><input type='text'></td>
-            </tr>
-            <tr>
-            <td><input type='text'></td>
-              <td><input type='text'></td>
-            </tr>
-          </tbody>
-          <thead>
-            <tr>
-            <th>Skill Category</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td><input type='text'></td>
-                <td><input type='text'></td>
-            </tr>
-            <tr>
-              <td><input type='text'></td>
-              <td><input type='text'></td>
-            </tr>
-            <tr>
-            <td><input type='text'></td>
-              <td><input type='text'></td>
-            </tr>
-          </tbody>
+          ${generateSkillCategory(pageObject.meSkillObject)}
         </table>
         </div>
             `
 
             break;
         case "projects":
+            adminHTML += `
+            <div class="d-flex flex-row mt-2" id="projectsContainer">
+                ${generateProjectArray(pageObject.projectArray)}
+            </div>`
             break;
         case "timeline":
+            adminHTML += `
+            <div class="d-flex flex-column mt-2" id="timelineContainer">
+                ${generateTimelineArray(pageObject.timelineArray)}
+            </div>`
             break;
 
     }
-    $(`#editContainer`).html(adminHTML + `<button type="submit" class="btn btn-primary col-1 mb-1">Save</button>`)
+
+    $(`#editContainer`).html(adminHTML + `<div class="row justify-content-center"><button type="submit" class="btn btn-primary col-1 mb-1">Save</button><div>`)
 
 
 }
@@ -656,13 +755,37 @@ $(document).ready(function () {
                                 $('.divider').css({ width: '0%' })
                                 $('#adminTabContent').fadeIn('slow')
 
-                                get(database).then((snapshot) => {
+                                get(database).then((snapshot) => {//Normal Startup
                                     let pageArray = (Object.keys(snapshot.val())).filter((item) => {
                                         return item.includes("Page")
                                     })
+                                    //Always start with me page
                                     generateAdminPagination(pageArray)
                                     generateAdminPage(snapshot.val().mePage, "me")
+                                    $("#meBtn").addClass(`active`)
+                                    $("#meBtn").removeClass('inactive')
+
+                                    $(".pagination li").click((x) => {
+                                        if ($(x.currentTarget).hasClass('inactive')) {
+                                            $(".pagination li").removeClass('active')
+                                            $(".pagination li").addClass('inactive');
+
+                                            $(x.currentTarget).addClass(`active`)
+                                            $(x.currentTarget).removeClass('inactive')
+
+                                            let clickedID = $(x.currentTarget).attr("id")
+                                            console.log(clickedID.substring(0, clickedID.length - 3))
+                                            get(child(database, clickedID.substring(0, clickedID.length - 3) + "Page")).then((snapshot) => {//Normal Startup
+                                                console.log(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
+                                                generateAdminPage(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
+                                            })
+
+                                        }
+                                    })
+
                                 })
+
+
 
                             } else {
                                 throw new Error("Invalid Response")
@@ -714,7 +837,7 @@ $(document).ready(function () {
                     setTimeout(() => {
                         get(child(database, "projectsPage")).then((snapshot) => {
                             if (snapshot.exists()) {
-                                let projectArray = snapshot.val().projects
+                                let projectArray = snapshot.val().projectArray
                                 generateProjectsAndEvents(projectArray)
                             } else {
                                 throw new Error("Data does not exist!")
@@ -731,7 +854,7 @@ $(document).ready(function () {
                     setTimeout(() => {
                         get(child(database, "timelinePage")).then((snapshot) => {
                             if (snapshot.exists()) {
-                                let timelineArray = snapshot.val().timeline
+                                let timelineArray = snapshot.val().timelineArray
                                 generateTimeline(timelineArray)
                             } else {
                                 throw new Error("Data does not exist!")
@@ -755,18 +878,10 @@ $(document).ready(function () {
     $('.contentContainer').hide();
 
     $('.divider').css({ width: '0%' })
-    $('#adminTabContent').fadeIn('slow')
-    get(database).then((snapshot) => {
-        let pageArray = (Object.keys(snapshot.val())).filter((item) => {
-            return item.includes("Page")
-        })
-        generateAdminPagination(pageArray)
-        generateAdminPage(snapshot.val().mePage, "me")
-    })
-    // $('#meTabContent').fadeIn('slow')
-    // $('#descDivider').animate({ width: "97%" }, 1000)
-    // $('#titleDivider').animate({ width: "40%" }, 1000)
-    // $('#softSkillDivider').animate({ width: "82%" }, 1000)
+    $('#meTabContent').fadeIn('slow')
+    $('#descDivider').animate({ width: "97%" }, 1000)
+    $('#titleDivider').animate({ width: "40%" }, 1000)
+    $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
     //loading Information from mePage
     setTimeout(() => {
@@ -804,6 +919,7 @@ $(document).ready(function () {
     $(window).blur(function () {
         clearInterval(changeGreetingInterval)
     })
+
 
 
 });

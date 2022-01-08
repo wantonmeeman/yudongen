@@ -241,6 +241,11 @@ html {
     color: var(--mainTextColor);
   }
 
+  #projectImage{
+    border-radius: 10%;
+    background: grey;
+  }
+
   #projectMiniColumn{
     height: 90vh;/*100vh has a scrollbar at the side, ugly*/
     overflow: scroll;
@@ -513,8 +518,9 @@ html {
 }
   
 .adminPictureItem{
+  cursor: pointer;
   height:180px;
-  width:25%;
+  width:50%;
 }
 
 .adminPicture{
@@ -543,6 +549,24 @@ html {
 
 .skillProficency{
   width:25%;
+}
+
+.textArea{
+  height:75%
+}
+
+.projectContainer{
+  width:50%;
+  height:500px
+}
+
+#projectsContainer{
+  overflow-x: scroll;
+}
+
+.timelineContainer{
+  height:250px;
+  overflow-y: scroll;
 }
 
 
