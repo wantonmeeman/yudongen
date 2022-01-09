@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, child } from "firebase/database";
+import { getDatabase, ref, set, get, child, update } from "firebase/database";
 
 const backendServerURL = "https://yudongen-backend.herokuapp.com"
 const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
@@ -44,10 +44,13 @@ var titleArray = [
     "Hai"
 ]
 
-
 var selectedProjectID;
 
 var secretMeClickCounter = 0;
+
+function generateRandomNumber(bottom, top) {
+    return Math.floor( Math.random() * ( 1 + top - bottom ) ) + bottom;
+}
 
 function changeLargeTextHeader(content) {
     $('#meHeaderLargeText').animate({
@@ -451,7 +454,6 @@ function generateAdminPagination(pageArray) {//Move this to the under the databa
     for (var x = 0; pageArray.length > x; x++) {
         let uncapString = (pageArray[x].slice(0, pageArray[x].length - 4))
         paginationHTML += `<li class="page-item inactive" id="${uncapString}Btn"><a class="page-link" href="#">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)}</a></li>`
-        //Do Button programming TODO
     }
 
     $("#paginationList").html(paginationHTML)
@@ -459,77 +461,128 @@ function generateAdminPagination(pageArray) {//Move this to the under the databa
 }
 
 function generateAdminPage(pageObject, pageTitle) {
-    console.log(pageObject, pageTitle)
 
-    function generateSkillCategory(skillCategoryObject) {
+    function generateAdminSkillCategory(skillCategoryObject) {
 
         let skillKeyArray = Object.keys(skillCategoryObject)
 
-        let skillHTML = ``
-
-        function generateSkill(skillObject) {
-            let skillHTML = ``
+        function generateAdminSkill(skillObject, adminSkillName) {
 
             for (let x = 0; skillObject.length > x; x++) {
-                skillHTML += `
-                <tr>
-                <td><input type='text' value="${skillObject[x].skillTitle}"></td>
-                <td><input type='text' value="${skillObject[x].skillProficiency}">/5</td>
-                <td><button type="button" class="close" >
-                <span>&times;</span>
-                </button>
-                </td>
-            </tr>`
+                console.log("skillTableBody" + adminSkillName,$("#skillTableBody" + adminSkillName))
+                
+                $("#skillTableBody" + adminSkillName).append(`
+                <tr id="${adminSkillName+x}">
+                    <td><input type='text' value="${skillObject[x].skillTitle}"></td>
+                    <td><input type='text' value="${skillObject[x].skillProficiency}">/5</td>
+                    <td>
+                        <button type="button" class="close" id="adminSkillDelete${adminSkillName+x}">
+                            <span>&times;</span>
+                        </button>
+                    </td>
+                </tr>`)
+
+                $("#adminSkillDelete"+adminSkillName+x).click(()=>{
+                    $("#"+adminSkillName+x).remove()
+                })
+
             }
 
-            return skillHTML
+            $("#skillTableBody" + adminSkillName).append(`
+            <tr id="adminSkillAddRow${adminSkillName}">
+                <td>
+                    <button type="button" class="addBtn" id="adminSkillAdd${adminSkillName}">
+                    <span>+</span>
+                    </button>
+                </td>
+            </tr>`)
+
+            $("#adminSkillAdd"+adminSkillName).click(()=>{
+                let randomNumber = generateRandomNumber(skillObject.length,10000000)//Probability of choosing same number is low, but gets higher if spammed
+                
+                //Probablity of same 2 random numbers out of 1000 runs
+                //1 - 10000000!/(10000000^1000)(10000000-1000)! = roughly 4%, give or take
+                //
+                
+                $(`<tr id="${adminSkillName+randomNumber}">
+                    <td><input type="text" value=""></td>
+                    <td><input type="text" value="">/5</td>
+                    <td>
+                        <button type="button" class="close" id="adminSkillDelete${adminSkillName+randomNumber}">
+                            <span>×</span>
+                        </button>
+                    </td>
+                </tr>
+                `).insertBefore($(`#adminSkillAddRow${adminSkillName}`))
+
+                $("#adminSkillDelete"+adminSkillName+randomNumber).click(()=>{
+                    $("#"+adminSkillName+randomNumber).remove()
+                })
+            })
         }
+
+        $("#skillTable").append(`
+            <thead id="skillHeader">
+                <tr>
+                    <th scope="col">Skill Name</th>
+                    <th scope="col">Skill Prof</th>
+                </tr>
+            </thead>`)
 
         for (let x = 0; x < skillKeyArray.length; x++) {
-            skillHTML += `
-        <thead>
-        <tr>
-        <th>${skillKeyArray[x]}</th>
-        <th><button type="button" class="close" >
-        <span>&times;</span>
-        </button>
-        </th>
-        </td>
-        </tr>
-      </thead>
-      <tbody>
-      ${generateSkill(skillCategoryObject[skillKeyArray[x]])}
-      </tbody>`
+
+            let skillCategoryNameNoSpace = skillKeyArray[x].replace(/ /g,'')
+
+            $("#skillTable").append(`
+                <thead id="skillTableHeader${skillCategoryNameNoSpace}">
+                <tr>
+                    <th>${skillKeyArray[x]}</th>
+                    <th>
+                        <button type="button" class="close" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
+                            <span>&times;</span>
+                        </button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="skillTableBody${skillCategoryNameNoSpace}">
+
+                </tbody>`)
+
+                $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(()=>{
+                    $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()
+                    $(`#skillTableBody${skillCategoryNameNoSpace}`).remove()
+                })
+            //remove spaces as id doesnt parse spaces properly
+            generateAdminSkill(skillCategoryObject[skillKeyArray[x]], skillCategoryNameNoSpace)
         }
 
-        return skillHTML
     }
 
-    function generateImageArray(imageArray) {
-        let imageHTML = ""
+    function generateImageArray(imageArray, containerDiv) {
         for (let x = 0; imageArray.length > x; x++) {
-            imageHTML += `
+            containerDiv.append(`
             <div class="d-flex me-3">
             <div class="d-flex flex-column adminPictureItem">
              <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="meCarouselImg${x}"/>
             <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${x}').src = window.URL.createObjectURL(this.files[0])" />
             </div>
             <div class="d-flex flex-column adminPictureItem">
-             <input type="text" value="${imageArray[x].imageTitle}"/>
-             <textarea class="textArea">${imageArray[x].imageSubTitle}</textarea>
-             </div><button type="button" class="close" >
-             <span>&times;</span>
-        </div>`
+                <input type="text" value="${imageArray[x].imageTitle}" id=""/>
+                <textarea class="textArea" id="">${imageArray[x].imageSubTitle}</textarea>
+                </div><button type="button" class="close" >
+                <span>&times;</span>
+            </div>`)
         }
-        return imageHTML + `<div class="d-flex adminPictureItem" id="addCarouselItem">
+
+        containerDiv.append(`<div class="d-flex adminPictureItem" id="addCarouselItem">
         <img class="my-auto addNewImageIcon" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png"/>
-        </div>`;
+        </div>`)
     }
 
     function generateProjectArray(projectArray) {
-        let projectHTML = ""
+
         for (let x = 0; projectArray.length > x; x++) {
-            projectHTML += `        
+            $(`#projectsContainer`).append(`        
             <div class="projectContainer d-flex flex-column px-5">
                 <div class="d-flex justify-content-start">
                 <img id="projectImage" height="90rem" width="90rem" src="${projectArray[x].projectSource}">
@@ -537,63 +590,63 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div>
                 <label>Title</label>
                 <input type="text" value="${projectArray[x].projectTitle}">
+
                 <label>SubTitle</label>
                 <input type="text" value="${projectArray[x].projectSubTitle}">
+
                 <label>Description</label>
                 <input type="text" value="${projectArray[x].projectDescription}">
+
                 <label>Image Array</label>
-                <div id="adminPictureArrayContainer" class="d-flex flex-row">
-                ${generateImageArray(projectArray[x].projectImageArray)}
+                <div id="projectPictureArray${projectArray[x].projectID}" class="d-flex flex-row adminPictureArrayContainer">
+                    
                 </div>
                 <div> <label>Link to Timeline?</label>
                 <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
-                <button type="button" class="close" >
+                <button type="button" class="close">
                 <span>&times;</span>
                 </button>
-            </div>`
+            </div>`)
+            generateImageArray(projectArray[x].projectImageArray, $(`#projectPictureArray${projectArray[x].projectID}`))
         }
-        return projectHTML
     }
 
     function generateTimelineArray(timelineArray) {
-        let timelineHTML = ""
 
         for (let x = 0; timelineArray.length > x; x++) {
-            timelineHTML += `        
+            $("#timelineContainer").append(`
             <div class="timelineContainer d-flex flex-row px-5 mt-3">
-                <div class="justify-content-center">${timelineArray[x].year}</div>`
+                <div class="d-flex justify-content-center timelineYearArray${timelineArray[x].year}">${timelineArray[x].year}</div>
+            </div>`)
+            generateTimelineEvents(timelineArray[x])
+        }
+    }
 
-            for (let y = 0; timelineArray[x].events.length > y; y++) {
-                timelineHTML += `
+    function generateTimelineEvents(timelineEventArray) {
+
+        for (let x = 0; timelineEventArray.events.length > x; x++) {
+            $(`.timelineYearArray${timelineEventArray.year}`).append(`
                 <div class="d-flex flex-column ms-3">
                     <label>Title</label>
-                    <input type="text" value="${timelineArray[x].events[y].title}">
+                    <input type="text" value="${timelineEventArray.events[x].title}">
                     <label>Description</label>
-                    <input type="text" value="${timelineArray[x].events[y].description}">
+                    <input type="text" value="${timelineEventArray.events[x].description}">
                     <label>Type</label>
                     <select id="type" name="type">
-                        <option value="project" ${timelineArray[x].events[y].type == "project" ? "Selected" : ""}>Project</option>
-                        <option value="job" ${timelineArray[x].events[y].type == "job" ? "Selected" : ""}>Job</option>
+                        <option value="project" ${timelineEventArray.events[x].type == "project" ? "Selected" : ""}>Project</option>
+                        <option value="job" ${timelineEventArray.events[x].type == "job" ? "Selected" : ""}>Job</option>
                     </select>
                     <button type="button" class="close" >
                     <span>&times;</span>
                     </button>
-                </div>
-                `//Hard code type(Project/Job)
-
-            }
-
-            timelineHTML += `</div>`
+                </div>`)//Hard code type(Project/Job)
         }
-
-        return timelineHTML
     }
 
-    let adminHTML = ``
-
+    $(`#editContainer`).empty()
     switch (pageTitle) {
         case "me":
-            adminHTML += `
+            $(`#editContainer`).append(`
         <div class="col-12 d-flex align-items-center justify-content-center">
             <img class="profilePicture" id="profilePicture" src="${bucketLink + pageObject.meImage}" alt="your image" />
             <input class="mx-2" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
@@ -605,44 +658,43 @@ function generateAdminPage(pageObject, pageTitle) {
        
         <div class="mt-2">
           <label class="form-label">Image Carousel</label>
-          <div id="adminPictureArrayContainer" class="d-flex flex-row">
-            ${generateImageArray(pageObject.meImageArray)}
-        </div>
+            <div id="mePictureArray" class="d-flex flex-row adminPictureArrayContainer">
+            </div>
           </div>
         </div>
         <div class="mt-2">
           <label class="form-label">Skills</label>
-          <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Skill Name</th>
-              <th scope="col">Skill Prof</th>
-            </tr>
-          </thead>
-          ${generateSkillCategory(pageObject.meSkillObject)}
-        </table>
-        </div>
-            `
+          <table class="table" id="skillTable">
 
+          </table>
+        </div>
+        <div class="row justify-content-center">
+        <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+    <div>`)
+            generateAdminSkillCategory(pageObject.meSkillObject)
+            generateImageArray(pageObject.meImageArray, $(`#mePictureArray`))
             break;
         case "projects":
-            adminHTML += `
+            $(`#editContainer`).append(`
             <div class="d-flex flex-row mt-2" id="projectsContainer">
-                ${generateProjectArray(pageObject.projectArray)}
-            </div>`
+
+            </div>
+            <div class="row justify-content-center">
+                <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+            <div>`)
+            generateProjectArray(pageObject.projectArray)
             break;
         case "timeline":
-            adminHTML += `
-            <div class="d-flex flex-column mt-2" id="timelineContainer">
-                ${generateTimelineArray(pageObject.timelineArray)}
-            </div>`
+            $(`#editContainer`).append(`
+                <div class="d-flex flex-column mt-2" id="timelineContainer">
+
+                </div>
+                <div class="row justify-content-center">
+                    <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+                <div>`)
+            generateTimelineArray(pageObject.timelineArray)
             break;
-
     }
-
-    $(`#editContainer`).html(adminHTML + `<div class="row justify-content-center"><button type="submit" class="btn btn-primary col-1 mb-1">Save</button><div>`)
-
-
 }
 
 $(document).ready(function () {
@@ -659,6 +711,37 @@ $(document).ready(function () {
     initializeApp(firebaseConfig)
 
     var database = ref(getDatabase())
+
+    function postAdminData(clickedID) {
+        $("#submitAdminDataBtn").click(() => {
+            let adminData = {}
+            switch (clickedID) {
+                case "me":
+                    adminData.meDescription = $("#meDescription").text()
+                    // adminData.meImage = $("#meDescription").text()
+                    // adminData.meImageArray = 
+                    adminData.meSkillArray = $("#meDescription").text()
+                    break;
+                case "projects":
+                    break;
+                case "timeline":
+                    break;
+            }
+
+            let skillObjects = $("thead").find("th").prevObject
+
+            for (let x = 1; x < skillObjects.length; x++) {
+                console.log(skillObjects[x])
+            }
+            console.log(skillObjects)
+            // update(child(database,clickedID + "Page"),adminData).then(() => {
+
+            //   })
+            //   .catch((error) => {
+
+            //   });
+        })
+    }
 
     $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
@@ -717,6 +800,7 @@ $(document).ready(function () {
                 }, 300)
                 // console.log(x.target.id)
             });
+
 
     $('.navbar-nav li a').click(function () {
         var clickedID = $(this).attr('id');
@@ -778,6 +862,7 @@ $(document).ready(function () {
                                             get(child(database, clickedID.substring(0, clickedID.length - 3) + "Page")).then((snapshot) => {//Normal Startup
                                                 console.log(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
                                                 generateAdminPage(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
+                                                postAdminData(clickedID.substring(0, clickedID.length - 3))
                                             })
 
                                         }

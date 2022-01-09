@@ -511,7 +511,7 @@ html {
 }
 
 /*admin*/
-#adminPictureArrayContainer{
+.adminPictureArrayContainer{
   height:200px;
   width:100%;
   overflow-x:scroll;
@@ -564,7 +564,7 @@ html {
   overflow-x: scroll;
 }
 
-.timelineContainer{
+.timelineYearArray{
   height:250px;
   overflow-y: scroll;
 }
