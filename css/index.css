@@ -517,8 +517,7 @@ html {
   overflow-x:scroll;
 }
   
-.adminPictureItem{
-  cursor: pointer;
+.adminImageItem{
   height:180px;
   width:50%;
 }
@@ -526,11 +525,6 @@ html {
 .adminPicture{
   height:150px;
   width:100%
-}
-
-.addNewImageIcon{
-  height:75px;
-  width:75px
 }
 
 #adminSkillArrayContainer{  
@@ -561,6 +555,10 @@ html {
 }
 
 #projectsContainer{
+  overflow-x: scroll;
+}
+
+#timelineContainer{
   overflow-x: scroll;
 }
 

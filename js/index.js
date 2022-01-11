@@ -49,7 +49,7 @@ var selectedProjectID;
 var secretMeClickCounter = 0;
 
 function generateRandomNumber(bottom, top) {
-    return Math.floor( Math.random() * ( 1 + top - bottom ) ) + bottom;
+    return Math.floor(Math.random() * (1 + top - bottom)) + bottom;
 }
 
 function changeLargeTextHeader(content) {
@@ -469,21 +469,21 @@ function generateAdminPage(pageObject, pageTitle) {
         function generateAdminSkill(skillObject, adminSkillName) {
 
             for (let x = 0; skillObject.length > x; x++) {
-                console.log("skillTableBody" + adminSkillName,$("#skillTableBody" + adminSkillName))
-                
+                console.log("skillTableBody" + adminSkillName, $("#skillTableBody" + adminSkillName))
+
                 $("#skillTableBody" + adminSkillName).append(`
-                <tr id="${adminSkillName+x}">
+                <tr id="${adminSkillName + x}">
                     <td><input type='text' value="${skillObject[x].skillTitle}"></td>
                     <td><input type='text' value="${skillObject[x].skillProficiency}">/5</td>
                     <td>
-                        <button type="button" class="close" id="adminSkillDelete${adminSkillName+x}">
+                        <button type="button" class="close" id="adminSkillDelete${adminSkillName + x}">
                             <span>&times;</span>
                         </button>
                     </td>
                 </tr>`)
 
-                $("#adminSkillDelete"+adminSkillName+x).click(()=>{
-                    $("#"+adminSkillName+x).remove()
+                $("#adminSkillDelete" + adminSkillName + x).click(() => {
+                    $("#" + adminSkillName + x).remove()
                 })
 
             }
@@ -497,26 +497,26 @@ function generateAdminPage(pageObject, pageTitle) {
                 </td>
             </tr>`)
 
-            $("#adminSkillAdd"+adminSkillName).click(()=>{
-                let randomNumber = generateRandomNumber(skillObject.length,10000000)//Probability of choosing same number is low, but gets higher if spammed
-                
+            $("#adminSkillAdd" + adminSkillName).click(() => {
+                let randomNumber = generateRandomNumber(skillObject.length, 10000000)//Probability of choosing same number is low, but gets higher if spammed
+
                 //Probablity of same 2 random numbers out of 1000 runs
                 //1 - 10000000!/(10000000^1000)(10000000-1000)! = roughly 4%, give or take
                 //
-                
-                $(`<tr id="${adminSkillName+randomNumber}">
+
+                $(`<tr id="${adminSkillName + randomNumber}">
                     <td><input type="text" value=""></td>
                     <td><input type="text" value="">/5</td>
                     <td>
-                        <button type="button" class="close" id="adminSkillDelete${adminSkillName+randomNumber}">
+                        <button type="button" class="close" id="adminSkillDelete${adminSkillName + randomNumber}">
                             <span>×</span>
                         </button>
                     </td>
                 </tr>
                 `).insertBefore($(`#adminSkillAddRow${adminSkillName}`))
 
-                $("#adminSkillDelete"+adminSkillName+randomNumber).click(()=>{
-                    $("#"+adminSkillName+randomNumber).remove()
+                $("#adminSkillDelete" + adminSkillName + randomNumber).click(() => {
+                    $("#" + adminSkillName + randomNumber).remove()
                 })
             })
         }
@@ -531,7 +531,7 @@ function generateAdminPage(pageObject, pageTitle) {
 
         for (let x = 0; x < skillKeyArray.length; x++) {
 
-            let skillCategoryNameNoSpace = skillKeyArray[x].replace(/ /g,'')
+            let skillCategoryNameNoSpace = skillKeyArray[x].replace(/ /g, '')
 
             $("#skillTable").append(`
                 <thead id="skillTableHeader${skillCategoryNameNoSpace}">
@@ -548,10 +548,10 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 </tbody>`)
 
-                $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(()=>{
-                    $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()
-                    $(`#skillTableBody${skillCategoryNameNoSpace}`).remove()
-                })
+            $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(() => {
+                $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()
+                $(`#skillTableBody${skillCategoryNameNoSpace}`).remove()
+            })
             //remove spaces as id doesnt parse spaces properly
             generateAdminSkill(skillCategoryObject[skillKeyArray[x]], skillCategoryNameNoSpace)
         }
@@ -561,29 +561,56 @@ function generateAdminPage(pageObject, pageTitle) {
     function generateImageArray(imageArray, containerDiv) {
         for (let x = 0; imageArray.length > x; x++) {
             containerDiv.append(`
-            <div class="d-flex me-3">
-            <div class="d-flex flex-column adminPictureItem">
+            <div class="d-flex me-3" id="adminImageCarousel${x}">
+            <div class="d-flex flex-column adminImageItem">
              <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="meCarouselImg${x}"/>
             <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${x}').src = window.URL.createObjectURL(this.files[0])" />
             </div>
-            <div class="d-flex flex-column adminPictureItem">
-                <input type="text" value="${imageArray[x].imageTitle}" id=""/>
-                <textarea class="textArea" id="">${imageArray[x].imageSubTitle}</textarea>
-                </div><button type="button" class="close" >
+            <div class="d-flex flex-column adminImageItem">
+                <input type="text" value="${imageArray[x].imageTitle}" id="adminImageTitle"/>
+                <textarea class="textArea" id="adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
+                </div><button type="button" class="close" id="adminImageCarouselDelete${x}" >
                 <span>&times;</span>
             </div>`)
+
+            $(`#adminImageCarouselDelete${x}`).click(() => {
+                $(`#adminImageCarousel${x}`).remove()
+            })
         }
 
-        containerDiv.append(`<div class="d-flex adminPictureItem" id="addCarouselItem">
-        <img class="my-auto addNewImageIcon" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png"/>
-        </div>`)
+        containerDiv.append(`
+            <button type="button" class="close" id="addNewImageIcon" >
+                <span>+</span>
+            </button>`)
+
+        $(`#addNewImageIcon`).click(() => {
+            let randomNumber = generateRandomNumber(imageArray.length, 10000000);
+
+            $(`<div class="d-flex me-3" id="adminImageCarousel${randomNumber}">
+            <div class="d-flex flex-column adminImageItem">
+             <img class="adminPicture" src="" id="meCarouselImg${randomNumber}"/>
+            <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${randomNumber}').src = window.URL.createObjectURL(this.files[0])" />
+            </div>
+            <div class="d-flex flex-column adminImageItem">
+                <input type="text" id="adminImageTitle"/>
+                <textarea class="textArea" id="adminImageSubTitle"></textarea>
+                </div><button type="button" class="close" id="adminImageCarouselDelete${randomNumber}" >
+                <span>&times;</span>
+            </div>`).insertBefore($(`#addNewImageIcon`))
+
+            $(`#adminImageCarouselDelete${randomNumber}`).click(() => {
+                $(`#adminImageCarousel${randomNumber}`).remove()
+            })
+
+        })
+
     }
 
     function generateProjectArray(projectArray) {
 
         for (let x = 0; projectArray.length > x; x++) {
             $(`#projectsContainer`).append(`        
-            <div class="projectContainer d-flex flex-column px-5">
+            <div class="projectContainer d-flex flex-column px-5" id="adminProject${x}">
                 <div class="d-flex justify-content-start">
                 <img id="projectImage" height="90rem" width="90rem" src="${projectArray[x].projectSource}">
                 <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('projectImage').src = window.URL.createObjectURL(this.files[0])" />
@@ -603,19 +630,65 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div>
                 <div> <label>Link to Timeline?</label>
                 <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
-                <button type="button" class="close">
+                <button type="button" class="close" id="adminProjectDelete${x}">
                 <span>&times;</span>
                 </button>
             </div>`)
+
             generateImageArray(projectArray[x].projectImageArray, $(`#projectPictureArray${projectArray[x].projectID}`))
+
+            $(`#adminProjectDelete${x}`).click(() => {
+                $(`#adminProject${x}`).remove()
+            })
         }
+
+        $(`#projectsContainer`).append(`
+        <button type="button" class="me-3" id="addNewProjectIcon" >
+            <span>+</span>
+        </button>`)
+
+        $(`#addNewProjectIcon`).click(() => {
+            let randomNumber = generateRandomNumber(projectArray.length, 10000000);
+
+            $(`<div class="projectContainer d-flex flex-column px-5" id="adminProject${randomNumber}">
+                <div class="d-flex justify-content-start">
+                <img id="projectImage" height="90rem" width="90rem" src="">
+                <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('projectImage').src = window.URL.createObjectURL(this.files[0])" />
+                </div>
+                <label>Title</label>
+                <input type="text" >
+
+                <label>SubTitle</label>
+                <input type="text" >
+
+                <label>Description</label>
+                <input type="text" >
+
+                <label>Image Array</label>
+                <div id="projectPictureArray${randomNumber}" class="d-flex flex-row adminPictureArrayContainer">
+                    
+                </div>
+                <div> <label>Link to Timeline?</label>
+                <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
+                <button type="button" class="close" id="adminProjectDelete${randomNumber}">
+                <span>&times;</span>
+                </button>
+            </div>`).insertBefore($(`#addNewProjectIcon`))
+
+            generateImageArray([], $(`#projectPictureArray${randomNumber}`))
+
+            $(`#adminProjectDelete${randomNumber}`).click(() => {
+                $(`#adminProject${randomNumber}`).remove()
+            })
+
+        })
     }
 
     function generateTimelineArray(timelineArray) {
 
         for (let x = 0; timelineArray.length > x; x++) {
             $("#timelineContainer").append(`
-            <div class="timelineContainer d-flex flex-row px-5 mt-3">
+            <div id="timelineContainer${timelineArray[x].year}" class="d-flex flex-row px-5 mt-3">
                 <div class="d-flex justify-content-center timelineYearArray${timelineArray[x].year}">${timelineArray[x].year}</div>
             </div>`)
             generateTimelineEvents(timelineArray[x])
@@ -626,7 +699,7 @@ function generateAdminPage(pageObject, pageTitle) {
 
         for (let x = 0; timelineEventArray.events.length > x; x++) {
             $(`.timelineYearArray${timelineEventArray.year}`).append(`
-                <div class="d-flex flex-column ms-3">
+                <div class="d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
                     <input type="text" value="${timelineEventArray.events[x].title}">
                     <label>Description</label>
@@ -636,11 +709,46 @@ function generateAdminPage(pageObject, pageTitle) {
                         <option value="project" ${timelineEventArray.events[x].type == "project" ? "Selected" : ""}>Project</option>
                         <option value="job" ${timelineEventArray.events[x].type == "job" ? "Selected" : ""}>Job</option>
                     </select>
-                    <button type="button" class="close" >
-                    <span>&times;</span>
+                    <button type="button" class="close" id="adminTimelineEventDelete${timelineEventArray.year}${x}">
+                        <span>&times;</span>
                     </button>
                 </div>`)//Hard code type(Project/Job)
+
+                $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
+                    $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
+                })
         }
+
+        $(`#timelineContainer${timelineEventArray.year}`).append(`
+        <button type="button" class="close" id="addNewTimelineEvent${timelineEventArray.year}" >
+            <span>+</span>
+        </button>`)
+
+        $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
+            let randomNumber = generateRandomNumber(timelineEventArray.events.length, 10000000);
+            $(`
+            <div class="d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
+            <label>Title</label>
+            <input type="text" >
+            <label>Description</label>
+            <input type="text">
+            <label>Type</label>
+            <select id="type" name="type">
+                <option value="project">Project</option>
+                <option value="job">Job</option>
+            </select>
+            <button type="button" class="close" id="adminTimelineEventDelete${timelineEventArray.year}${randomNumber}">
+            <span>&times;</span>
+            </button>
+            </div> 
+            `).insertBefore($(`#addNewTimelineEvent${timelineEventArray.year}`))
+
+            $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
+                $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
+            })
+        })
+
+
     }
 
     $(`#editContainer`).empty()
