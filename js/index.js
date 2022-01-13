@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, child, update } from "firebase/database";
+import { getDatabase, ref, get, child, update } from "firebase/database";
 
 const backendServerURL = "https://yudongen-backend.herokuapp.com"
 const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
@@ -473,8 +473,8 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 $("#skillTableBody" + adminSkillName).append(`
                 <tr id="${adminSkillName + x}">
-                    <td><input type='text' value="${skillObject[x].skillTitle}"></td>
-                    <td><input type='text' value="${skillObject[x].skillProficiency}">/5</td>
+                    <td><input class="skillName" type='text' value="${skillObject[x].skillTitle}"></td>
+                    <td><input class="skillProficiency" type='text' value="${skillObject[x].skillProficiency}">/5</td>
                     <td>
                         <button type="button" class="close" id="adminSkillDelete${adminSkillName + x}">
                             <span>&times;</span>
@@ -505,8 +505,8 @@ function generateAdminPage(pageObject, pageTitle) {
                 //
 
                 $(`<tr id="${adminSkillName + randomNumber}">
-                    <td><input type="text" value=""></td>
-                    <td><input type="text" value="">/5</td>
+                    <td><input class="skillName" type="text" value=""></td>
+                    <td><input class="skillProficiency" type="text" value="">/5</td>
                     <td>
                         <button type="button" class="close" id="adminSkillDelete${adminSkillName + randomNumber}">
                             <span>×</span>
@@ -536,7 +536,7 @@ function generateAdminPage(pageObject, pageTitle) {
             $("#skillTable").append(`
                 <thead id="skillTableHeader${skillCategoryNameNoSpace}">
                 <tr>
-                    <th>${skillKeyArray[x]}</th>
+                    <th class="skillTableHeader">${skillKeyArray[x]}</th>
                     <th>
                         <button type="button" class="close" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
                             <span>&times;</span>
@@ -688,8 +688,8 @@ function generateAdminPage(pageObject, pageTitle) {
 
         for (let x = 0; timelineArray.length > x; x++) {
             $("#timelineContainer").append(`
-            <div id="timelineContainer${timelineArray[x].year}" class="d-flex flex-row px-5 mt-3">
-                <div class="d-flex justify-content-center timelineYearArray${timelineArray[x].year}">${timelineArray[x].year}</div>
+            <div id="timelineContainer${timelineArray[x].year}" class="timelineYearRow d-flex flex-row px-5 mt-3">
+                <div class="d-flex justify-content-center timelineYear" id="timelineYearArray${timelineArray[x].year}">${timelineArray[x].year}</div>
             </div>`)
             generateTimelineEvents(timelineArray[x])
         }
@@ -698,14 +698,14 @@ function generateAdminPage(pageObject, pageTitle) {
     function generateTimelineEvents(timelineEventArray) {
 
         for (let x = 0; timelineEventArray.events.length > x; x++) {
-            $(`.timelineYearArray${timelineEventArray.year}`).append(`
-                <div class="d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
+            $(`#timelineYearArray${timelineEventArray.year}`).append(`
+                <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
-                    <input type="text" value="${timelineEventArray.events[x].title}">
+                    <input type="text" value="${timelineEventArray.events[x].title}" class="eventTitle">
                     <label>Description</label>
-                    <input type="text" value="${timelineEventArray.events[x].description}">
+                    <input type="text" value="${timelineEventArray.events[x].description}" class="eventDescription">
                     <label>Type</label>
-                    <select id="type" name="type">
+                    <select class="eventType" name="type">
                         <option value="project" ${timelineEventArray.events[x].type == "project" ? "Selected" : ""}>Project</option>
                         <option value="job" ${timelineEventArray.events[x].type == "job" ? "Selected" : ""}>Job</option>
                     </select>
@@ -729,11 +729,11 @@ function generateAdminPage(pageObject, pageTitle) {
             $(`
             <div class="d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
             <label>Title</label>
-            <input type="text" >
+            <input type="text" class="eventTitle">
             <label>Description</label>
-            <input type="text">
+            <input type="text" class="eventDescription">
             <label>Type</label>
-            <select id="type" name="type">
+            <select class="eventType" name="type">
                 <option value="project">Project</option>
                 <option value="job">Job</option>
             </select>
@@ -781,6 +781,28 @@ function generateAdminPage(pageObject, pageTitle) {
     <div>`)
             generateAdminSkillCategory(pageObject.meSkillObject)
             generateImageArray(pageObject.meImageArray, $(`#mePictureArray`))
+            
+            $("#submitAdminDataBtn").click(()=>{
+                let postData = {}
+
+                postData.meDescription = $(`#meDescription`).html()//use html instead of val
+                postData.meSkillObject = {}
+
+                //Possibly Combine with bottom
+                $(`.skillTableHeader`).map(function() {
+                    postData.meSkillObject[this.innerHTML] = [];
+
+                    let HTMLNoSpace = this.innerHTML.replace(/ /g, '')
+
+                    for(let y = 0;y < $(`#skillTableBody${HTMLNoSpace} tr`).length - 1;y++){
+                        postData.meSkillObject[this.innerHTML][y] = {}
+                        postData.meSkillObject[this.innerHTML][y].skillTitle = $(`#${HTMLNoSpace+y} .skillName`).val()
+                        postData.meSkillObject[this.innerHTML][y].skillProficiency = $(`#${HTMLNoSpace+y} .skillProficiency`).val()
+                    }
+                })
+                console.log(postData)
+            })
+
             break;
         case "projects":
             $(`#editContainer`).append(`
@@ -792,6 +814,7 @@ function generateAdminPage(pageObject, pageTitle) {
             <div>`)
             generateProjectArray(pageObject.projectArray)
             break;
+
         case "timeline":
             $(`#editContainer`).append(`
                 <div class="d-flex flex-column mt-2" id="timelineContainer">
@@ -801,6 +824,28 @@ function generateAdminPage(pageObject, pageTitle) {
                     <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
                 <div>`)
             generateTimelineArray(pageObject.timelineArray)
+            $("#submitAdminDataBtn").click(()=>{
+                let postData = {}
+                postData.timelineArray = []
+
+                $(`.timelineYear`).map(function() {
+                    let newYear = {}
+                    newYear.year = this.id.substring(17,21)
+                    newYear.events = []
+                    for(let x = 0;x < $(`#timelineYearArray${newYear.year} .timelineEvent`).length;x++){
+                        console.log(newYear.year+x)
+                        newYear.events.push({
+                            description: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventTitle`).val(),
+                            // IF CHECKED ? : projectID:"",
+                            title:$(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventDescription`).val(),
+                            type:$(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventType`).val(),
+                        })
+                    }
+
+                    postData.timelineArray.push(newYear)
+                })
+                console.log(postData)
+            })
             break;
     }
 }
@@ -820,36 +865,36 @@ $(document).ready(function () {
 
     var database = ref(getDatabase())
 
-    function postAdminData(clickedID) {
-        $("#submitAdminDataBtn").click(() => {
-            let adminData = {}
-            switch (clickedID) {
-                case "me":
-                    adminData.meDescription = $("#meDescription").text()
-                    // adminData.meImage = $("#meDescription").text()
-                    // adminData.meImageArray = 
-                    adminData.meSkillArray = $("#meDescription").text()
-                    break;
-                case "projects":
-                    break;
-                case "timeline":
-                    break;
-            }
+    // function postAdminData(clickedID) {
+    //     $("#submitAdminDataBtn").click(() => {
+    //         let adminData = {}
+    //         switch (clickedID) {
+    //             case "me":
+    //                 adminData.meDescription = $("#meDescription").text()
+    //                 // adminData.meImage = $("#meDescription").text()
+    //                 // adminData.meImageArray = 
+    //                 adminData.meSkillArray = $("#meDescription").text()
+    //                 break;
+    //             case "projects":
+    //                 break;
+    //             case "timeline":
+    //                 break;
+    //         }
 
-            let skillObjects = $("thead").find("th").prevObject
+    //         let skillObjects = $("thead").find("th").prevObject
 
-            for (let x = 1; x < skillObjects.length; x++) {
-                console.log(skillObjects[x])
-            }
-            console.log(skillObjects)
-            // update(child(database,clickedID + "Page"),adminData).then(() => {
+    //         for (let x = 1; x < skillObjects.length; x++) {
+    //             console.log(skillObjects[x])
+    //         }
+    //         console.log(skillObjects)
+    //         // update(child(database,clickedID + "Page"),adminData).then(() => {
 
-            //   })
-            //   .catch((error) => {
+    //         //   })
+    //         //   .catch((error) => {
 
-            //   });
-        })
-    }
+    //         //   });
+    //     })
+    // }
 
     $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
@@ -970,7 +1015,6 @@ $(document).ready(function () {
                                             get(child(database, clickedID.substring(0, clickedID.length - 3) + "Page")).then((snapshot) => {//Normal Startup
                                                 console.log(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
                                                 generateAdminPage(snapshot.val(), clickedID.substring(0, clickedID.length - 3))
-                                                postAdminData(clickedID.substring(0, clickedID.length - 3))
                                             })
 
                                         }
