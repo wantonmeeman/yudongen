@@ -1,8 +1,36 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, get, child, update } from "firebase/database";
+const { CognitoIdentityClient } = require("@aws-sdk/client-cognito-identity");
+const { fromCognitoIdentityPool } = require("@aws-sdk/credential-provider-cognito-identity");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 const backendServerURL = "https://yudongen-backend.herokuapp.com"
 const bucketLink = "https://dongenpersonalwebsite.s3.ap-southeast-1.amazonaws.com/"
+
+const REGION = "ap-southeast-1"; //REGION
+
+// Initialize the Amazon Cognito credentials provider
+const s3 = new S3Client({
+    region: REGION,
+    credentials: fromCognitoIdentityPool({
+        client: new CognitoIdentityClient({ region: REGION }),
+        identityPoolId: 'ap-southeast-1:54f83292-219d-488c-8dd6-e142dbb52d87',
+    }),
+});
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
+    authDomain: "personalwebsite-b90a5.firebaseapp.com",
+    databaseURL: "https://personalwebsite-b90a5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "personalwebsite-b90a5",
+    storageBucket: "personalwebsite-b90a5.appspot.com",
+    messagingSenderId: "890357492051",
+    appId: "1:890357492051:web:4e13b85be606badd5bd9a6"
+};
+
+initializeApp(firebaseConfig)
+
+var database = ref(getDatabase())
 
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
     mainTextColor: ["#000000", "#919191"],
@@ -47,6 +75,10 @@ var titleArray = [
 var selectedProjectID;
 
 var secretMeClickCounter = 0;
+
+async function uploadImage(uploadObject) {
+    await s3.send(new PutObjectCommand(uploadObject));
+}
 
 function generateRandomNumber(bottom, top) {
     return Math.floor(Math.random() * (1 + top - bottom)) + bottom;
@@ -714,9 +746,9 @@ function generateAdminPage(pageObject, pageTitle) {
                     </button>
                 </div>`)//Hard code type(Project/Job)
 
-                $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
-                    $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
-                })
+            $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
+                $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
+            })
         }
 
         $(`#timelineContainer${timelineEventArray.year}`).append(`
@@ -781,26 +813,40 @@ function generateAdminPage(pageObject, pageTitle) {
     <div>`)
             generateAdminSkillCategory(pageObject.meSkillObject)
             generateImageArray(pageObject.meImageArray, $(`#mePictureArray`))
-            
-            $("#submitAdminDataBtn").click(()=>{
+
+            $("#submitAdminDataBtn").click(() => {
                 let postData = {}
 
                 postData.meDescription = $(`#meDescription`).html()//use html instead of val
                 postData.meSkillObject = {}
 
+                if ($("#profileImageInput").prop('files').length) {
+                    uploadImage({
+                        Bucket: `dongenpersonalwebsite`,
+                        Key: $("#profileImageInput").prop('files')[0].name,
+                        Body: $("#profileImageInput").prop('files')[0]
+                    })
+                    postData.meImage = $("#profileImageInput").prop('files')[0].name
+                }
+
                 //Possibly Combine with bottom
-                $(`.skillTableHeader`).map(function() {
+                $(`.skillTableHeader`).map(function () {
                     postData.meSkillObject[this.innerHTML] = [];
 
                     let HTMLNoSpace = this.innerHTML.replace(/ /g, '')
 
-                    for(let y = 0;y < $(`#skillTableBody${HTMLNoSpace} tr`).length - 1;y++){
+                    for (let y = 0; y < $(`#skillTableBody${HTMLNoSpace} tr`).length - 1; y++) {
                         postData.meSkillObject[this.innerHTML][y] = {}
-                        postData.meSkillObject[this.innerHTML][y].skillTitle = $(`#${HTMLNoSpace+y} .skillName`).val()
-                        postData.meSkillObject[this.innerHTML][y].skillProficiency = $(`#${HTMLNoSpace+y} .skillProficiency`).val()
+                        postData.meSkillObject[this.innerHTML][y].skillTitle = $(`#${HTMLNoSpace + y} .skillName`).val()
+                        postData.meSkillObject[this.innerHTML][y].skillProficiency = $(`#${HTMLNoSpace + y} .skillProficiency`).val()
                     }
                 })
                 console.log(postData)
+                update(child(database,"mePage"),postData).then(() => {
+
+                }).catch((error) => {
+                    console.log(error)
+                });
             })
 
             break;
@@ -824,21 +870,21 @@ function generateAdminPage(pageObject, pageTitle) {
                     <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
                 <div>`)
             generateTimelineArray(pageObject.timelineArray)
-            $("#submitAdminDataBtn").click(()=>{
+            $("#submitAdminDataBtn").click(() => {
                 let postData = {}
                 postData.timelineArray = []
 
-                $(`.timelineYear`).map(function() {
+                $(`.timelineYear`).map(function () {
                     let newYear = {}
-                    newYear.year = this.id.substring(17,21)
+                    newYear.year = this.id.substring(17, 21)
                     newYear.events = []
-                    for(let x = 0;x < $(`#timelineYearArray${newYear.year} .timelineEvent`).length;x++){
-                        console.log(newYear.year+x)
+                    for (let x = 0; x < $(`#timelineYearArray${newYear.year} .timelineEvent`).length; x++) {
+                        console.log(newYear.year + x)
                         newYear.events.push({
-                            description: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventTitle`).val(),
+                            description: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventTitle`).val(),
                             // IF CHECKED ? : projectID:"",
-                            title:$(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventDescription`).val(),
-                            type:$(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year+x} .eventType`).val(),
+                            title: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventDescription`).val(),
+                            type: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventType`).val(),
                         })
                     }
 
@@ -851,51 +897,6 @@ function generateAdminPage(pageObject, pageTitle) {
 }
 
 $(document).ready(function () {
-    const firebaseConfig = {
-        apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
-        authDomain: "personalwebsite-b90a5.firebaseapp.com",
-        databaseURL: "https://personalwebsite-b90a5-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "personalwebsite-b90a5",
-        storageBucket: "personalwebsite-b90a5.appspot.com",
-        messagingSenderId: "890357492051",
-        appId: "1:890357492051:web:4e13b85be606badd5bd9a6"
-    };
-
-    initializeApp(firebaseConfig)
-
-    var database = ref(getDatabase())
-
-    // function postAdminData(clickedID) {
-    //     $("#submitAdminDataBtn").click(() => {
-    //         let adminData = {}
-    //         switch (clickedID) {
-    //             case "me":
-    //                 adminData.meDescription = $("#meDescription").text()
-    //                 // adminData.meImage = $("#meDescription").text()
-    //                 // adminData.meImageArray = 
-    //                 adminData.meSkillArray = $("#meDescription").text()
-    //                 break;
-    //             case "projects":
-    //                 break;
-    //             case "timeline":
-    //                 break;
-    //         }
-
-    //         let skillObjects = $("thead").find("th").prevObject
-
-    //         for (let x = 1; x < skillObjects.length; x++) {
-    //             console.log(skillObjects[x])
-    //         }
-    //         console.log(skillObjects)
-    //         // update(child(database,clickedID + "Page"),adminData).then(() => {
-
-    //         //   })
-    //         //   .catch((error) => {
-
-    //         //   });
-    //     })
-    // }
-
     $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
 
