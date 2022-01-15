@@ -60,7 +60,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardBackgroundColor: ["#d2d2d2", "#2d2d2d"],
     timelineCardShadowColor: ["#00000026", "#FFFFFF26"],
     timelineCardBorderColor: ["#ebebeb", "#1f1f1f"],
-    timelineCardTextHoverColor: ["#363636", "#b8b8b8"]
+    timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
+    inputTextArea: ["#d1d1d1","#363636"]
 }
 
 var titleArrayIterable = 0;
@@ -178,7 +179,7 @@ function generateMeCarouselImages(meImageArray) {
 
         meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${bucketLink + meImageArray[x].imageSource}" class="d-block w-100" alt="..." />
+                <img id="imageCarouselItem" src="${bucketLink + meImageArray[x].imageSource}" class="d-block" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
@@ -505,8 +506,8 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 $("#skillTableBody" + adminSkillName).append(`
                 <tr id="${adminSkillName + x}">
-                    <td><input class="skillName" type='text' value="${skillObject[x].skillTitle}"></td>
-                    <td><input class="skillProficiency" type='text' value="${skillObject[x].skillProficiency}">/5</td>
+                    <td><input class="form-control skillName" type='text' value="${skillObject[x].skillTitle}"></td>
+                    <td><input class="form-control skillProficiency" type='text' value="${skillObject[x].skillProficiency}"></td>
                     <td>
                         <button type="button" class="close" id="adminSkillDelete${adminSkillName + x}">
                             <span>&times;</span>
@@ -537,10 +538,10 @@ function generateAdminPage(pageObject, pageTitle) {
                 //
 
                 $(`<tr id="${adminSkillName + randomNumber}">
-                    <td><input class="skillName" type="text" value=""></td>
-                    <td><input class="skillProficiency" type="text" value="">/5</td>
+                    <td><input class="form-control skillName" type="text"></td>
+                    <td><input class="form-control skillProficiency" type="text"></td>
                     <td>
-                        <button type="button" class="close" id="adminSkillDelete${adminSkillName + randomNumber}">
+                        <button type="button" class="form-control close" id="adminSkillDelete${adminSkillName + randomNumber}">
                             <span>×</span>
                         </button>
                     </td>
@@ -557,7 +558,7 @@ function generateAdminPage(pageObject, pageTitle) {
             <thead id="skillHeader">
                 <tr>
                     <th scope="col">Skill Name</th>
-                    <th scope="col">Skill Prof</th>
+                    <th scope="col">Skill Proficiency</th>
                 </tr>
             </thead>`)
 
@@ -593,14 +594,14 @@ function generateAdminPage(pageObject, pageTitle) {
     function generateImageArray(imageArray, containerDiv) {
         for (let x = 0; imageArray.length > x; x++) {
             containerDiv.append(`
-            <div class="d-flex me-3" id="adminImageCarousel${x}">
+            <div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${x}">
             <div class="d-flex flex-column adminImageItem">
-             <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="meCarouselImg${x}"/>
-            <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${x}').src = window.URL.createObjectURL(this.files[0])" />
+             <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="carouselImg${x}"/>
+            <input accept="image/*" type='file' class="imageArrayFormControl carouselInput" id="carousel${x}" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageItem #carouselImg${x}').attr('src',window.URL.createObjectURL(this.files[0]))" />
             </div>
             <div class="d-flex flex-column adminImageItem">
-                <input type="text" value="${imageArray[x].imageTitle}" id="adminImageTitle"/>
-                <textarea class="textArea" id="adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
+                <input type="text" class="imageArrayFormControl" value="${imageArray[x].imageTitle}" id="adminImageTitle${x}"/>
+                <textarea class="imageArrayFormControl textArea" id="adminImageSubTitle${x}">${imageArray[x].imageSubTitle}</textarea>
                 </div><button type="button" class="close" id="adminImageCarouselDelete${x}" >
                 <span>&times;</span>
             </div>`)
@@ -615,46 +616,45 @@ function generateAdminPage(pageObject, pageTitle) {
                 <span>+</span>
             </button>`)
 
-        $(`#addNewImageIcon`).click(() => {
+        $(`#${containerDiv.attr('id')} #addNewImageIcon`).click(() => {
             let randomNumber = generateRandomNumber(imageArray.length, 10000000);
 
-            $(`<div class="d-flex me-3" id="adminImageCarousel${randomNumber}">
+            $(`<div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${randomNumber}">
             <div class="d-flex flex-column adminImageItem">
-             <img class="adminPicture" src="" id="meCarouselImg${randomNumber}"/>
-            <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('meCarouselImg${randomNumber}').src = window.URL.createObjectURL(this.files[0])" />
+             <img class="adminPicture" src="" id="carouselImg${randomNumber}"/>
+            <input accept="image/*" type='file' class="imageArrayFormControl carouselInput" id="carousel${randomNumber}" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${randomNumber} .adminImageItem #carouselImg${randomNumber}').attr('src',window.URL.createObjectURL(this.files[0]))" />
             </div>
             <div class="d-flex flex-column adminImageItem">
-                <input type="text" id="adminImageTitle"/>
-                <textarea class="textArea" id="adminImageSubTitle"></textarea>
+                <input class="imageArrayFormControl" type="text" id="adminImageTitle${randomNumber}"/>
+                <textarea class="textArea" id="adminImageSubTitle${randomNumber}"></textarea>
                 </div><button type="button" class="close" id="adminImageCarouselDelete${randomNumber}" >
                 <span>&times;</span>
-            </div>`).insertBefore($(`#addNewImageIcon`))
+            </div>`).insertBefore($(`#${containerDiv.attr('id')} #addNewImageIcon`))
 
             $(`#adminImageCarouselDelete${randomNumber}`).click(() => {
                 $(`#adminImageCarousel${randomNumber}`).remove()
             })
 
         })
-
     }
 
     function generateProjectArray(projectArray) {
-
         for (let x = 0; projectArray.length > x; x++) {
             $(`#projectsContainer`).append(`        
             <div class="projectContainer d-flex flex-column px-5" id="adminProject${x}">
                 <div class="d-flex justify-content-start">
-                <img id="projectImage" height="90rem" width="90rem" src="${projectArray[x].projectSource}">
-                <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('projectImage').src = window.URL.createObjectURL(this.files[0])" />
+                <img id="projectImage${x}" height="90rem" width="90rem" src="${bucketLink+projectArray[x].projectSource}">
+                <input accept="image/*" type='file' class="form-control projectImageInput" onchange="document.getElementById('projectImage${x}').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
                 <label>Title</label>
-                <input type="text" value="${projectArray[x].projectTitle}">
+                <input type="text" class="form-control projectTitle" value="${projectArray[x].projectTitle}">
 
                 <label>SubTitle</label>
-                <input type="text" value="${projectArray[x].projectSubTitle}">
+                <input type="text" class="form-control projectSubTitle" value="${projectArray[x].projectSubTitle}">
 
                 <label>Description</label>
-                <input type="text" value="${projectArray[x].projectDescription}">
+                <input type="text" class="form-control projectDescription" value="${projectArray[x].projectDescription}">
+                <input type="hidden" class="projectID" value="${projectArray[x].projectID}">
 
                 <label>Image Array</label>
                 <div id="projectPictureArray${projectArray[x].projectID}" class="d-flex flex-row adminPictureArrayContainer">
@@ -684,17 +684,18 @@ function generateAdminPage(pageObject, pageTitle) {
 
             $(`<div class="projectContainer d-flex flex-column px-5" id="adminProject${randomNumber}">
                 <div class="d-flex justify-content-start">
-                <img id="projectImage" height="90rem" width="90rem" src="">
-                <input accept="image/*" type='file' id="meCarousel" onchange="document.getElementById('projectImage').src = window.URL.createObjectURL(this.files[0])" />
+                <img id="projectImage${randomNumber}" height="90rem" width="90rem" src="">
+                <input accept="image/*" type='file' class="projectImageInput form-control" onchange="document.getElementById('projectImage${randomNumber}').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
                 <label>Title</label>
-                <input type="text" >
+                <input class="form-control projectTitle" type="text" >
 
                 <label>SubTitle</label>
-                <input type="text" >
+                <input class="form-control projectSubTitle" type="text" >
 
                 <label>Description</label>
-                <input type="text" >
+                <input class="form-control projectDescription" type="text" >
+                <input type="hidden" class="projectID" value="${randomNumber}">
 
                 <label>Image Array</label>
                 <div id="projectPictureArray${randomNumber}" class="d-flex flex-row adminPictureArrayContainer">
@@ -733,11 +734,11 @@ function generateAdminPage(pageObject, pageTitle) {
             $(`#timelineYearArray${timelineEventArray.year}`).append(`
                 <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
-                    <input type="text" value="${timelineEventArray.events[x].title}" class="eventTitle">
+                    <input type="text" value="${timelineEventArray.events[x].title}" class="form-control eventTitle">
                     <label>Description</label>
-                    <input type="text" value="${timelineEventArray.events[x].description}" class="eventDescription">
+                    <input type="text" value="${timelineEventArray.events[x].description}" class="form-control eventDescription">
                     <label>Type</label>
-                    <select class="eventType" name="type">
+                    <select class="form-select eventType" name="type">
                         <option value="project" ${timelineEventArray.events[x].type == "project" ? "Selected" : ""}>Project</option>
                         <option value="job" ${timelineEventArray.events[x].type == "job" ? "Selected" : ""}>Job</option>
                     </select>
@@ -758,14 +759,14 @@ function generateAdminPage(pageObject, pageTitle) {
 
         $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
             let randomNumber = generateRandomNumber(timelineEventArray.events.length, 10000000);
-            $(`
-            <div class="d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
+            $(`#timelineYearArray${timelineEventArray.year}`).append(`
+            <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
             <label>Title</label>
-            <input type="text" class="eventTitle">
+            <input type="text" class="form-control eventTitle">
             <label>Description</label>
-            <input type="text" class="eventDescription">
+            <input type="text" class="form-control eventDescription">
             <label>Type</label>
-            <select class="eventType" name="type">
+            <select class="form-select eventType" name="type">
                 <option value="project">Project</option>
                 <option value="job">Job</option>
             </select>
@@ -773,14 +774,12 @@ function generateAdminPage(pageObject, pageTitle) {
             <span>&times;</span>
             </button>
             </div> 
-            `).insertBefore($(`#addNewTimelineEvent${timelineEventArray.year}`))
+            `)
 
             $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
                 $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
             })
         })
-
-
     }
 
     $(`#editContainer`).empty()
@@ -789,11 +788,11 @@ function generateAdminPage(pageObject, pageTitle) {
             $(`#editContainer`).append(`
         <div class="col-12 d-flex align-items-center justify-content-center">
             <img class="profilePicture" id="profilePicture" src="${bucketLink + pageObject.meImage}" alt="your image" />
-            <input class="mx-2" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
+            <input class="mx-2 imageArrayFormControl" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
           </div>
             <div class="mt-2">
           <label class="form-label">Description</label>
-          <textarea name="description" type="email" class="form-control textArea" id="meDescription">${pageObject.meDescription}</textarea>
+          <textarea class="form-control textArea" id="adminMeDescription">${pageObject.meDescription}</textarea>
         </div>
        
         <div class="mt-2">
@@ -808,17 +807,20 @@ function generateAdminPage(pageObject, pageTitle) {
 
           </table>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" id="submitAdminRow">
         <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+        <div id="adminBtnSpinner" class="spinner-grow mx-auto text-muted my-5"></div>
     <div>`)
             generateAdminSkillCategory(pageObject.meSkillObject)
             generateImageArray(pageObject.meImageArray, $(`#mePictureArray`))
+            $(`#adminBtnSpinner`).hide()
 
             $("#submitAdminDataBtn").click(() => {
+                $("#submitAdminDataBtn").hide()
+                $("#adminBtnSpinner").show()
                 let postData = {}
 
-                postData.meDescription = $(`#meDescription`).html()//use html instead of val
-                postData.meSkillObject = {}
+                postData.meDescription = $(`#adminMeDescription`).val()//use html instead of val
 
                 if ($("#profileImageInput").prop('files').length) {
                     uploadImage({
@@ -829,6 +831,29 @@ function generateAdminPage(pageObject, pageTitle) {
                     postData.meImage = $("#profileImageInput").prop('files')[0].name
                 }
 
+                postData.meImageArray = []
+                
+                $(`#mePictureArray .adminImageCarouselItem`).map(function () {
+                    let imageObject = {}
+                    if($(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files").length){
+                        uploadImage({
+                            Bucket: `dongenpersonalwebsite`,
+                            Key: $(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name,
+                            Body: $(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0]
+                        })
+                        imageObject.imageSource = $(`.adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name
+                    }else{
+                        imageObject.imageSource = ($(`.adminImageCarouselItem .adminImageItem #carouselImg${this.id.replace("adminImageCarousel","")}`).attr("src")).replace(bucketLink,'')
+                    }
+
+                    imageObject.imageTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageTitle${this.id.replace("adminImageCarousel","")}`).val(),
+                    imageObject.imageSubTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageSubTitle${this.id.replace("adminImageCarousel","")}`).val()
+                    
+                    postData.meImageArray.push(imageObject)
+                })
+
+                postData.meSkillObject = {}
+
                 //Possibly Combine with bottom
                 $(`.skillTableHeader`).map(function () {
                     postData.meSkillObject[this.innerHTML] = [];
@@ -836,16 +861,23 @@ function generateAdminPage(pageObject, pageTitle) {
                     let HTMLNoSpace = this.innerHTML.replace(/ /g, '')
 
                     for (let y = 0; y < $(`#skillTableBody${HTMLNoSpace} tr`).length - 1; y++) {
+                        let tableRowID = $(`#skillTableBody${HTMLNoSpace} tr`)[y].id
+
                         postData.meSkillObject[this.innerHTML][y] = {}
-                        postData.meSkillObject[this.innerHTML][y].skillTitle = $(`#${HTMLNoSpace + y} .skillName`).val()
-                        postData.meSkillObject[this.innerHTML][y].skillProficiency = $(`#${HTMLNoSpace + y} .skillProficiency`).val()
+                        postData.meSkillObject[this.innerHTML][y].skillTitle = $(`#${tableRowID} .skillName`).val()
+                        postData.meSkillObject[this.innerHTML][y].skillProficiency = $(`#${tableRowID} .skillProficiency`).val()
                     }
                 })
-                console.log(postData)
-                update(child(database,"mePage"),postData).then(() => {
 
+                console.log(postData)
+
+                update(child(database,"mePage"),postData).then(() => {
+                    alert("Succesfully Saved")
                 }).catch((error) => {
                     console.log(error)
+                }).finally(()=>{
+                    $(`#adminBtnSpinner`).hide()
+                    $("#submitAdminDataBtn").show()
                 });
             })
 
@@ -857,8 +889,74 @@ function generateAdminPage(pageObject, pageTitle) {
             </div>
             <div class="row justify-content-center">
                 <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+                <div id="adminBtnSpinner" class="spinner-grow mx-auto text-muted my-5"></div>
             <div>`)
             generateProjectArray(pageObject.projectArray)
+            $(`#adminBtnSpinner`).hide()
+
+            $("#submitAdminDataBtn").click(() => {
+                $("#submitAdminDataBtn").hide()
+                $("#adminBtnSpinner").show()
+                let postData = {}
+
+                postData.projectArray = []
+
+                $("#projectsContainer .projectContainer").map((index,element)=>{
+                    let projectObject = {}
+                    let projectID = element.id
+
+                    projectObject.projectDescription = $(`#projectsContainer #${projectID} .projectDescription`).val()
+                    projectObject.projectTitle = $(`#projectsContainer #${projectID} .projectTitle`).val()
+                    projectObject.projectSubTitle = $(`#projectsContainer #${projectID} .projectSubTitle`).val()
+                    projectObject.projectID =  $(`#projectsContainer #${projectID} .projectID`).val()
+
+                    if( $(`#projectsContainer #${projectID} .projectImageInput`).prop("files").length ){
+                        uploadImage({
+                            Bucket: `dongenpersonalwebsite`,
+                            Key: $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0].name,
+                            Body: $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0]
+                        })
+                        projectObject.projectSource = $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0].name
+                    }else{
+                        projectObject.projectSource = ($(`#projectsContainer #${projectID} #projectImage${projectID.replace("adminProject","")}`).attr("src")).replace(bucketLink,'')
+                    }
+
+                    projectObject.projectImageArray = []
+
+                    $(`#${projectID} .adminImageCarouselItem`).map(function() {
+                        let imageObject = {}
+                        
+                        if($(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files").length){
+                            uploadImage({
+                                Bucket: `dongenpersonalwebsite`,
+                                Key: $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name,
+                                Body: $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0]
+                            })
+                            imageObject.imageSource = $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name
+                        }else{
+                            imageObject.imageSource = ($(`#${projectID} .adminImageCarouselItem .adminImageItem #carouselImg${this.id.replace("adminImageCarousel","")}`).attr("src")).replace(bucketLink,'')
+                        }
+    
+                        imageObject.imageTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageTitle${this.id.replace("adminImageCarousel","")}`).val(),
+                        imageObject.imageSubTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageSubTitle${this.id.replace("adminImageCarousel","")}`).val()
+                        
+                        projectObject.projectImageArray.push(imageObject)
+                    })
+
+                    postData.projectArray.push(projectObject)
+                })
+
+                console.log(postData)
+
+                update(child(database,"projectsPage"),postData).then(() => {
+                    alert("Succesfully Saved")
+                }).catch((error) => {
+                    console.log(error)
+                }).finally(()=>{
+                    $(`#adminBtnSpinner`).hide()
+                    $("#submitAdminDataBtn").show()
+                });
+            })
             break;
 
         case "timeline":
@@ -868,9 +966,15 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div>
                 <div class="row justify-content-center">
                     <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
+                    <div id="adminBtnSpinner" class="spinner-grow mx-auto text-muted my-5"></div>
                 <div>`)
             generateTimelineArray(pageObject.timelineArray)
+            $(`#adminBtnSpinner`).hide()
+
             $("#submitAdminDataBtn").click(() => {
+                $("#submitAdminDataBtn").hide()
+                $("#adminBtnSpinner").show()
+
                 let postData = {}
                 postData.timelineArray = []
 
@@ -879,24 +983,34 @@ function generateAdminPage(pageObject, pageTitle) {
                     newYear.year = this.id.substring(17, 21)
                     newYear.events = []
                     for (let x = 0; x < $(`#timelineYearArray${newYear.year} .timelineEvent`).length; x++) {
-                        console.log(newYear.year + x)
+                        let timelineEventID = $(`#timelineYearArray${newYear.year} .timelineEvent`)[x].id
                         newYear.events.push({
-                            description: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventTitle`).val(),
+                            description: $(`#timelineYearArray${newYear.year} #${timelineEventID} .eventDescription`).val(),
                             // IF CHECKED ? : projectID:"",
-                            title: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventDescription`).val(),
-                            type: $(`#timelineYearArray${newYear.year} #adminTimelineEvent${newYear.year + x} .eventType`).val(),
+                            title: $(`#timelineYearArray${newYear.year} #${timelineEventID} .eventTitle`).val(),
+                            type: $(`#timelineYearArray${newYear.year} #${timelineEventID} .eventType`).val(),
                         })
                     }
 
                     postData.timelineArray.push(newYear)
                 })
                 console.log(postData)
+
+                update(child(database,"timelinePage"),postData).then(() => {
+                    alert("Succesfully Saved")
+                }).catch((error) => {
+                    console.log(error)
+                }).finally(()=>{
+                    $(`#adminBtnSpinner`).hide()
+                    $("#submitAdminDataBtn").show()
+                });
             })
             break;
     }
 }
 
 $(document).ready(function () {
+    
     $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
 
