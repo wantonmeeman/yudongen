@@ -179,7 +179,7 @@ function generateMeCarouselImages(meImageArray) {
 
         meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img id="imageCarouselItem" src="${bucketLink + meImageArray[x].imageSource}" class="d-block" alt="..." />
+                <img src="${bucketLink + meImageArray[x].imageSource}" class="imageCarouselItem d-block" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
@@ -237,7 +237,7 @@ function generateSelectedProjectDescription(projectObject) {
                 }
                 $('#projectCarouselContent').append(`
                     <div class="carousel-item ${y == 0 ? "active" : ""}">
-                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="d-block w-100" alt="..." />
+                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem d-block" alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${projectObject.projectImageArray[y].imageSubTitle}</p>
@@ -596,23 +596,24 @@ function generateAdminPage(pageObject, pageTitle) {
             containerDiv.append(`
             <div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${x}">
             <div class="d-flex flex-column adminImageItem">
-             <img class="adminPicture" src="${bucketLink + imageArray[x].imageSource}" id="carouselImg${x}"/>
-            <input accept="image/*" type='file' class="imageArrayFormControl carouselInput" id="carousel${x}" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageItem #carouselImg${x}').attr('src',window.URL.createObjectURL(this.files[0]))" />
+                 <img class="adminCarouselPicture" src="${bucketLink + imageArray[x].imageSource}"/>
+                 <input accept="image/*" type='file' class="adminCarouselPictureInput imageArrayFormControl" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageItem .adminCarouselPicture').attr('src',window.URL.createObjectURL(this.files[0]))" />
             </div>
-            <div class="d-flex flex-column adminImageItem">
-                <input type="text" class="imageArrayFormControl" value="${imageArray[x].imageTitle}" id="adminImageTitle${x}"/>
-                <textarea class="imageArrayFormControl textArea" id="adminImageSubTitle${x}">${imageArray[x].imageSubTitle}</textarea>
-                </div><button type="button" class="close" id="adminImageCarouselDelete${x}" >
+                <div class="d-flex flex-column adminImageItem">
+                    <input type="text" class="imageArrayFormControl adminImageTitle" value="${imageArray[x].imageTitle}"/>
+                    <textarea class="imageArrayFormControl textArea adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
+            </div>
+                <button type="button" class="adminImageCarouselDelete" >
                 <span>&times;</span>
             </div>`)
 
-            $(`#adminImageCarouselDelete${x}`).click(() => {
-                $(`#adminImageCarousel${x}`).remove()
+            $(`#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageCarouselDelete`).click(() => {
+                $(`#${containerDiv.attr('id')} #adminImageCarousel${x}`).remove()
             })
         }
 
         containerDiv.append(`
-            <button type="button" class="close" id="addNewImageIcon" >
+            <button type="button" class="adminImageCarouselDelete" id="addNewImageIcon" >
                 <span>+</span>
             </button>`)
 
@@ -621,18 +622,18 @@ function generateAdminPage(pageObject, pageTitle) {
 
             $(`<div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${randomNumber}">
             <div class="d-flex flex-column adminImageItem">
-             <img class="adminPicture" src="" id="carouselImg${randomNumber}"/>
-            <input accept="image/*" type='file' class="imageArrayFormControl carouselInput" id="carousel${randomNumber}" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${randomNumber} .adminImageItem #carouselImg${randomNumber}').attr('src',window.URL.createObjectURL(this.files[0]))" />
+             <img class="adminCarouselPicture" src=""/>
+            <input accept="image/*" type='file' class="adminCarouselPictureInput imageArrayFormControl" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${randomNumber} .adminImageItem .adminCarouselPicture').attr('src',window.URL.createObjectURL(this.files[0]))" />
             </div>
             <div class="d-flex flex-column adminImageItem">
-                <input class="imageArrayFormControl" type="text" id="adminImageTitle${randomNumber}"/>
-                <textarea class="textArea" id="adminImageSubTitle${randomNumber}"></textarea>
-                </div><button type="button" class="close" id="adminImageCarouselDelete${randomNumber}" >
+                <input type="text" class="imageArrayFormControl adminImageTitle"/>
+                <textarea class="imageArrayFormControl textArea adminImageSubTitle"></textarea>
+                </div><button type="button" class="adminImageCarouselDelete" >
                 <span>&times;</span>
             </div>`).insertBefore($(`#${containerDiv.attr('id')} #addNewImageIcon`))
 
-            $(`#adminImageCarouselDelete${randomNumber}`).click(() => {
-                $(`#adminImageCarousel${randomNumber}`).remove()
+            $(`#${containerDiv.attr('id')} #adminImageCarousel${randomNumber} .adminImageCarouselDelete`).click(() => {
+                $(`#${containerDiv.attr('id')} #adminImageCarousel${randomNumber}`).remove()
             })
 
         })
@@ -833,21 +834,21 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 postData.meImageArray = []
                 
-                $(`#mePictureArray .adminImageCarouselItem`).map(function () {
+                $(`#mePictureArray .adminImageCarouselItem`).map(function (index,element) {
                     let imageObject = {}
-                    if($(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files").length){
+                    if($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length){
                         uploadImage({
                             Bucket: `dongenpersonalwebsite`,
-                            Key: $(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name,
-                            Body: $(`#mePictureArray .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0]
+                            Key: $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name,
+                            Body: $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0]
                         })
-                        imageObject.imageSource = $(`.adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name
+                        imageObject.imageSource = $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name
                     }else{
-                        imageObject.imageSource = ($(`.adminImageCarouselItem .adminImageItem #carouselImg${this.id.replace("adminImageCarousel","")}`).attr("src")).replace(bucketLink,'')
+                        imageObject.imageSource = ($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink,'')
                     }
 
-                    imageObject.imageTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageTitle${this.id.replace("adminImageCarousel","")}`).val(),
-                    imageObject.imageSubTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageSubTitle${this.id.replace("adminImageCarousel","")}`).val()
+                    imageObject.imageTitle = $(`#mePictureArray #${this.id} .adminImageItem .adminImageTitle`).val(),
+                    imageObject.imageSubTitle = $(`#mePictureArray #${this.id} .adminImageItem .adminImageSubTitle`).val()
                     
                     postData.meImageArray.push(imageObject)
                 })
@@ -871,14 +872,14 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 console.log(postData)
 
-                update(child(database,"mePage"),postData).then(() => {
-                    alert("Succesfully Saved")
-                }).catch((error) => {
-                    console.log(error)
-                }).finally(()=>{
-                    $(`#adminBtnSpinner`).hide()
-                    $("#submitAdminDataBtn").show()
-                });
+                // update(child(database,"mePage"),postData).then(() => {
+                //     alert("Succesfully Saved")
+                // }).catch((error) => {
+                //     console.log(error)
+                // }).finally(()=>{
+                //     $(`#adminBtnSpinner`).hide()
+                //     $("#submitAdminDataBtn").show()
+                // });
             })
 
             break;
@@ -922,31 +923,28 @@ function generateAdminPage(pageObject, pageTitle) {
                     }
 
                     projectObject.projectImageArray = []
-
-                    $(`#${projectID} .adminImageCarouselItem`).map(function() {
+                    $(`#projectsContainer #${projectID} .adminImageCarouselItem`).map(function() {
                         let imageObject = {}
                         
-                        if($(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files").length){
+                        if($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length){
                             uploadImage({
                                 Bucket: `dongenpersonalwebsite`,
-                                Key: $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name,
-                                Body: $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0]
+                                Key: $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name,
+                                Body: $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0]
                             })
-                            imageObject.imageSource = $(`#${projectID} .adminImageCarouselItem .adminImageItem #carousel${this.id.replace("adminImageCarousel","")}`).prop("files")[0].name
+                            imageObject.imageSource = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name
                         }else{
-                            imageObject.imageSource = ($(`#${projectID} .adminImageCarouselItem .adminImageItem #carouselImg${this.id.replace("adminImageCarousel","")}`).attr("src")).replace(bucketLink,'')
+                            imageObject.imageSource = ($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink,'')
                         }
     
-                        imageObject.imageTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageTitle${this.id.replace("adminImageCarousel","")}`).val(),
-                        imageObject.imageSubTitle = $(`.adminImageCarouselItem .adminImageItem #adminImageSubTitle${this.id.replace("adminImageCarousel","")}`).val()
+                        imageObject.imageTitle = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminImageTitle`).val(),
+                        imageObject.imageSubTitle = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminImageSubTitle`).val()
                         
                         projectObject.projectImageArray.push(imageObject)
                     })
 
                     postData.projectArray.push(projectObject)
                 })
-
-                console.log(postData)
 
                 update(child(database,"projectsPage"),postData).then(() => {
                     alert("Succesfully Saved")
