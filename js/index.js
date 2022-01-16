@@ -487,7 +487,7 @@ function generateAdminPagination(pageArray) {//Move this to the under the databa
 
     for (var x = 0; pageArray.length > x; x++) {
         let uncapString = (pageArray[x].slice(0, pageArray[x].length - 4))
-        paginationHTML += `<li class="page-item inactive" id="${uncapString}Btn"><a class="page-link" href="#">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)}</a></li>`
+        paginationHTML += `<li class="page-item inactive" id="${uncapString}Btn"><a class="text-center page-link" href="#">${uncapString.charAt(0).toUpperCase() + uncapString.slice(1)}</a></li>`
     }
 
     $("#paginationList").html(paginationHTML)
@@ -503,13 +503,12 @@ function generateAdminPage(pageObject, pageTitle) {
         function generateAdminSkill(skillObject, adminSkillName) {
 
             for (let x = 0; skillObject.length > x; x++) {
-                console.log("skillTableBody" + adminSkillName, $("#skillTableBody" + adminSkillName))
 
                 $("#skillTableBody" + adminSkillName).append(`
                 <tr id="${adminSkillName + x}">
                     <td><input class="form-control skillName" type='text' value="${skillObject[x].skillTitle}"></td>
                     <td><input class="form-control skillProficiency" type='text' value="${skillObject[x].skillProficiency}"></td>
-                    <td>
+                    <td class="align-middle">
                         <button type="button" class="addBtn" id="adminSkillDelete${adminSkillName + x}">
                             <span>&times;</span>
                         </button>
@@ -517,6 +516,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 </tr>`)
 
                 $("#adminSkillDelete" + adminSkillName + x).click(() => {
+                    
                     $("#" + adminSkillName + x).remove()
                 })
 
@@ -541,7 +541,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 $(`<tr id="${adminSkillName + randomNumber}">
                     <td><input class="form-control skillName" type="text"></td>
                     <td><input class="form-control skillProficiency" type="text"></td>
-                    <td>
+                    <td class="align-middle">
                         <button type="button" class="closeBtn" id="adminSkillDelete${adminSkillName + randomNumber}">
                             <span>×</span>
                         </button>
@@ -567,7 +567,63 @@ function generateAdminPage(pageObject, pageTitle) {
 
             let skillCategoryNameNoSpace = skillKeyArray[x].replace(/ /g, '')
 
-            $("#skillTable").append(`
+            if(skillKeyArray.length - 1 == x){
+                $("#skillTable").append(`
+                <thead id="skillTableHeader${skillCategoryNameNoSpace}">
+                <tr>
+                    <th class="skillTableHeader">${skillKeyArray[x]}</th>
+                    <th>
+                        <button type="button" class="closeBtn" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
+                            <span>&times;</span>
+                        </button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="skillTableBody${skillCategoryNameNoSpace}">
+
+                </tbody>
+                <tbody id="addSkillCategoryContainer">
+                    <tr>
+                        <td><input class="form-control" id="skillCategoryName" type='text'></td>
+                        <td class="align-middle">
+                            <button type="button" id="addSkillCategory" class="addBtn" >
+                                <span>+</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>`)
+
+                $(`#addSkillCategory`).click(()=>{
+
+                    let skillCategoryName = $(`#skillCategoryName`).val()
+                    console.log(skillCategoryName)
+                    let skillCategoryNameNoSpace = skillCategoryName.replace(/ /g, '')
+                    console.log(skillCategoryName,skillCategoryNameNoSpace)
+
+                    $(`<thead id="skillTableHeader${skillCategoryNameNoSpace}">
+                    <tr>
+                        <th class="skillTableHeader">${skillCategoryName}</th>
+                        <th>
+                            <button type="button" class="closeBtn" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
+                                <span>&times;</span>
+                            </button>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="skillTableBody${skillCategoryNameNoSpace}">
+
+                    </tbody>`).insertBefore(`#addSkillCategoryContainer`)
+
+                    generateAdminSkill([], skillCategoryNameNoSpace)
+                    
+                    $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(() => {
+                        $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()
+                        $(`#skillTableBody${skillCategoryNameNoSpace}`).remove()
+                    })
+                })
+
+            }else{
+                $("#skillTable").append(`
                 <thead id="skillTableHeader${skillCategoryNameNoSpace}">
                 <tr>
                     <th class="skillTableHeader">${skillKeyArray[x]}</th>
@@ -581,6 +637,8 @@ function generateAdminPage(pageObject, pageTitle) {
                 <tbody id="skillTableBody${skillCategoryNameNoSpace}">
 
                 </tbody>`)
+            }
+
 
             $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(() => {
                 $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()

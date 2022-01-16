@@ -513,6 +513,11 @@ html {
 }
 
 /*admin*/
+
+.pagination .page-item .page-link{
+  width:150px;
+}
+
 textArea{
   height:100%;
 }
