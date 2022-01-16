@@ -27,20 +27,12 @@ html {
  --timelineCardShadowColor:#00000026;
  --timelineCardBorderColor:#ebebeb;
  --timelineCardTextHoverColor:#363636;
- --lightingModeAnim: .75s ease-out;
  --inputTextArea: #d1d1d1;
+ --tableHeaderBorder: #000000; 
+ --lightingModeAnim: .75s ease-out;
  --hoverAnim: .25s linear;
 }
 
-
-input[type="text"], textarea, #adminMeDescription {
-  -webkit-transition: background-color var(--lightingModeAnim);
-  -moz-transition: background-color var(--lightingModeAnim);
-  -o-transition: background-color var(--lightingModeAnim);
-  transition: background-color var(--lightingModeAnim);
-  background-color: var(--scrollBarHoverColor);
-
-}
 /* width */
   ::-webkit-scrollbar {
     width: 12px;
@@ -521,6 +513,76 @@ input[type="text"], textarea, #adminMeDescription {
 }
 
 /*admin*/
+textArea{
+  height:100%;
+}
+
+.imageArrayFormControl{
+  display: block;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: .25rem;
+  /* -webkit-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -moz-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -o-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  background-color: var(--inputTextArea);
+  color:var(--mainTextColor) */
+}
+
+.formSelect{
+  display: block;
+  width: 100%;
+  padding: .375rem 2.25rem .375rem .75rem;
+  -moz-padding-start: calc(0.75rem - 3px);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  background-position: right .75rem center;
+  background-size: 16px 12px;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  /* -webkit-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -moz-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -o-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  background-color: var(--inputTextArea);
+  color:var(--mainTextColor) */
+}
+
+.closeBtn,.addBtn{
+  border: 1px solid #ced4da;
+  text-align: center;
+  font-size: 16px;
+  border-radius: .25rem;
+  -webkit-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -moz-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -o-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  background-color: var(--inputTextArea);
+  color:var(--mainTextColor)
+}
+
+select, input[type="file"], input[type="text"], textarea, #adminMeDescription {
+  -webkit-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -moz-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  -o-transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  transition: background-color var(--lightingModeAnim) , color var(--lightingModeAnim);
+  background-color: var(--inputTextArea);
+  color:var(--mainTextColor)
+}
+
+.adminImageItem input[type="file"]{
+  border-radius: 0 0 .25rem .25rem;
+}
+
 .adminPictureArrayContainer{
   height:220px;
   width:100%;
@@ -528,8 +590,27 @@ input[type="text"], textarea, #adminMeDescription {
 }
   
 .adminImageItem{
-  height:210px;
+  height:100%;
   width:50%;
+}
+
+.adminImageItem textarea{
+  margin-top: 10px;
+}
+
+.adminImageCarouselItem>:not(:first-child){
+  margin-left: 10px;
+}
+
+.projectImageInput{
+  border-radius:  0 .25rem .25rem 0 ;
+}
+
+.adminImageCarouselItem{
+  background-color: grey;
+  padding: 5px;
+  border-radius: 5px;
+  /* border: 1px solid red; */
 }
 
 .adminCarouselPicture{
@@ -555,9 +636,6 @@ input[type="text"], textarea, #adminMeDescription {
   width:25%;
 }
 
-.textArea{
-  height:100%
-}
 
 .projectContainer{
   width:50%;
@@ -586,22 +664,27 @@ input[type="text"], textarea, #adminMeDescription {
   height:400px;
 }
 
-.imageArrayFormControl{
-  display: block;
-  padding: .375rem .75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border-radius: .25rem;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+#paginationList .inactive a{
+  -webkit-transition: background-color var(--lightingModeAnim);
+  -moz-transition: background-color var(--lightingModeAnim);
+  -o-transition: background-color var(--lightingModeAnim);
+  transition: background-color var(--lightingModeAnim);
+  background-color:var(--mainBackgroundColor)
 }
+
+th,label{
+  -webkit-transition: color var(--lightingModeAnim);
+  -moz-transition: color var(--lightingModeAnim);
+  -o-transition: color var(--lightingModeAnim);
+  transition: color var(--lightingModeAnim);
+  color:var(--mainTextColor)
+}
+
+.table>:not(:first-child) {
+    border-top: 2px solid var(--tableHeaderBorder);
+}
+
+
 
 
 

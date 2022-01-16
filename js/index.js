@@ -61,7 +61,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardShadowColor: ["#00000026", "#FFFFFF26"],
     timelineCardBorderColor: ["#ebebeb", "#1f1f1f"],
     timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
-    inputTextArea: ["#d1d1d1","#363636"]
+    inputTextArea: ["#d1d1d1","#363636"],
+    tableHeaderBorder: ["#000000","#a1a1a1"] 
 }
 
 var titleArrayIterable = 0;
@@ -509,7 +510,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     <td><input class="form-control skillName" type='text' value="${skillObject[x].skillTitle}"></td>
                     <td><input class="form-control skillProficiency" type='text' value="${skillObject[x].skillProficiency}"></td>
                     <td>
-                        <button type="button" class="close" id="adminSkillDelete${adminSkillName + x}">
+                        <button type="button" class="addBtn" id="adminSkillDelete${adminSkillName + x}">
                             <span>&times;</span>
                         </button>
                     </td>
@@ -541,7 +542,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     <td><input class="form-control skillName" type="text"></td>
                     <td><input class="form-control skillProficiency" type="text"></td>
                     <td>
-                        <button type="button" class="form-control close" id="adminSkillDelete${adminSkillName + randomNumber}">
+                        <button type="button" class="closeBtn" id="adminSkillDelete${adminSkillName + randomNumber}">
                             <span>×</span>
                         </button>
                     </td>
@@ -571,7 +572,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 <tr>
                     <th class="skillTableHeader">${skillKeyArray[x]}</th>
                     <th>
-                        <button type="button" class="close" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
+                        <button type="button" class="closeBtn" id="adminSkillCategoryDelete${skillCategoryNameNoSpace}">
                             <span>&times;</span>
                         </button>
                     </th>
@@ -603,7 +604,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     <input type="text" class="imageArrayFormControl adminImageTitle" value="${imageArray[x].imageTitle}"/>
                     <textarea class="imageArrayFormControl textArea adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
             </div>
-                <button type="button" class="adminImageCarouselDelete" >
+                <button type="button" class="closeBtn adminImageCarouselDelete" >
                 <span>&times;</span>
             </div>`)
 
@@ -613,7 +614,7 @@ function generateAdminPage(pageObject, pageTitle) {
         }
 
         containerDiv.append(`
-            <button type="button" class="adminImageCarouselDelete" id="addNewImageIcon" >
+            <button type="button" class="addBtn" id="addNewImageIcon" >
                 <span>+</span>
             </button>`)
 
@@ -628,7 +629,7 @@ function generateAdminPage(pageObject, pageTitle) {
             <div class="d-flex flex-column adminImageItem">
                 <input type="text" class="imageArrayFormControl adminImageTitle"/>
                 <textarea class="imageArrayFormControl textArea adminImageSubTitle"></textarea>
-                </div><button type="button" class="adminImageCarouselDelete" >
+                </div><button type="button" class="closeBtn adminImageCarouselDelete" >
                 <span>&times;</span>
             </div>`).insertBefore($(`#${containerDiv.attr('id')} #addNewImageIcon`))
 
@@ -645,7 +646,7 @@ function generateAdminPage(pageObject, pageTitle) {
             <div class="projectContainer d-flex flex-column px-5" id="adminProject${x}">
                 <div class="d-flex justify-content-start">
                 <img id="projectImage${x}" height="90rem" width="90rem" src="${bucketLink+projectArray[x].projectSource}">
-                <input accept="image/*" type='file' class="form-control projectImageInput" onchange="document.getElementById('projectImage${x}').src = window.URL.createObjectURL(this.files[0])" />
+                <input accept="image/*" type='file' class="imageArrayFormControl projectImageInput" onchange="document.getElementById('projectImage${x}').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
                 <label>Title</label>
                 <input type="text" class="form-control projectTitle" value="${projectArray[x].projectTitle}">
@@ -663,7 +664,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div>
                 <div> <label>Link to Timeline?</label>
                 <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
-                <button type="button" class="close" id="adminProjectDelete${x}">
+                <button type="button" class="closeBtn" id="adminProjectDelete${x}">
                 <span>&times;</span>
                 </button>
             </div>`)
@@ -676,7 +677,7 @@ function generateAdminPage(pageObject, pageTitle) {
         }
 
         $(`#projectsContainer`).append(`
-        <button type="button" class="me-3" id="addNewProjectIcon" >
+        <button type="button" class="me-3 addBtn" id="addNewProjectIcon" >
             <span>+</span>
         </button>`)
 
@@ -686,7 +687,7 @@ function generateAdminPage(pageObject, pageTitle) {
             $(`<div class="projectContainer d-flex flex-column px-5" id="adminProject${randomNumber}">
                 <div class="d-flex justify-content-start">
                 <img id="projectImage${randomNumber}" height="90rem" width="90rem" src="">
-                <input accept="image/*" type='file' class="projectImageInput form-control" onchange="document.getElementById('projectImage${randomNumber}').src = window.URL.createObjectURL(this.files[0])" />
+                <input accept="image/*" type='file' class="projectImageInput imageArrayFormControl" onchange="document.getElementById('projectImage${randomNumber}').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
                 <label>Title</label>
                 <input class="form-control projectTitle" type="text" >
@@ -704,7 +705,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div>
                 <div> <label>Link to Timeline?</label>
                 <input class="form-check-input" type="checkbox" value="" id="linkProject"></div>
-                <button type="button" class="close" id="adminProjectDelete${randomNumber}">
+                <button type="button" class="closeBtn" id="adminProjectDelete${randomNumber}">
                 <span>&times;</span>
                 </button>
             </div>`).insertBefore($(`#addNewProjectIcon`))
@@ -739,11 +740,11 @@ function generateAdminPage(pageObject, pageTitle) {
                     <label>Description</label>
                     <input type="text" value="${timelineEventArray.events[x].description}" class="form-control eventDescription">
                     <label>Type</label>
-                    <select class="form-select eventType" name="type">
+                    <select class="formSelect eventType" name="type">
                         <option value="project" ${timelineEventArray.events[x].type == "project" ? "Selected" : ""}>Project</option>
                         <option value="job" ${timelineEventArray.events[x].type == "job" ? "Selected" : ""}>Job</option>
                     </select>
-                    <button type="button" class="close" id="adminTimelineEventDelete${timelineEventArray.year}${x}">
+                    <button type="button" class="closeBtn" id="adminTimelineEventDelete${timelineEventArray.year}${x}">
                         <span>&times;</span>
                     </button>
                 </div>`)//Hard code type(Project/Job)
@@ -754,7 +755,7 @@ function generateAdminPage(pageObject, pageTitle) {
         }
 
         $(`#timelineContainer${timelineEventArray.year}`).append(`
-        <button type="button" class="close" id="addNewTimelineEvent${timelineEventArray.year}" >
+        <button type="button" class="addBtn" id="addNewTimelineEvent${timelineEventArray.year}" >
             <span>+</span>
         </button>`)
 
@@ -767,11 +768,11 @@ function generateAdminPage(pageObject, pageTitle) {
             <label>Description</label>
             <input type="text" class="form-control eventDescription">
             <label>Type</label>
-            <select class="form-select eventType" name="type">
+            <select class="formSelect eventType" name="type">
                 <option value="project">Project</option>
                 <option value="job">Job</option>
             </select>
-            <button type="button" class="close" id="adminTimelineEventDelete${timelineEventArray.year}${randomNumber}">
+            <button type="button" class="closeBtn" id="adminTimelineEventDelete${timelineEventArray.year}${randomNumber}">
             <span>&times;</span>
             </button>
             </div> 
