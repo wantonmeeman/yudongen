@@ -596,9 +596,9 @@ function generateAdminPage(pageObject, pageTitle) {
                 $(`#addSkillCategory`).click(()=>{
 
                     let skillCategoryName = $(`#skillCategoryName`).val()
-                    console.log(skillCategoryName)
+
                     let skillCategoryNameNoSpace = skillCategoryName.replace(/ /g, '')
-                    console.log(skillCategoryName,skillCategoryNameNoSpace)
+
 
                     $(`<thead id="skillTableHeader${skillCategoryNameNoSpace}">
                     <tr>
@@ -614,8 +614,10 @@ function generateAdminPage(pageObject, pageTitle) {
 
                     </tbody>`).insertBefore(`#addSkillCategoryContainer`)
 
+                    $(`#skillCategoryName`).val(" ")
+
                     generateAdminSkill([], skillCategoryNameNoSpace)
-                    
+
                     $(`#adminSkillCategoryDelete${skillCategoryNameNoSpace}`).click(() => {
                         $(`#skillTableHeader${skillCategoryNameNoSpace}`).remove()
                         $(`#skillTableBody${skillCategoryNameNoSpace}`).remove()
@@ -931,14 +933,14 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 console.log(postData)
 
-                // update(child(database,"mePage"),postData).then(() => {
-                //     alert("Succesfully Saved")
-                // }).catch((error) => {
-                //     console.log(error)
-                // }).finally(()=>{
-                //     $(`#adminBtnSpinner`).hide()
-                //     $("#submitAdminDataBtn").show()
-                // });
+                update(child(database,"mePage"),postData).then(() => {
+                    alert("Succesfully Saved")
+                }).catch((error) => {
+                    console.log(error)
+                }).finally(()=>{
+                    $(`#adminBtnSpinner`).hide()
+                    $("#submitAdminDataBtn").show()
+                });
             })
 
             break;
