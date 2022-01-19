@@ -61,8 +61,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardShadowColor: ["#00000026", "#FFFFFF26"],
     timelineCardBorderColor: ["#ebebeb", "#1f1f1f"],
     timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
-    inputTextArea: ["#d1d1d1","#363636"],
-    tableHeaderBorder: ["#000000","#a1a1a1"] 
+    inputTextArea: ["#d1d1d1", "#363636"],
+    tableHeaderBorder: ["#000000", "#a1a1a1"]
 }
 
 var titleArrayIterable = 0;
@@ -407,13 +407,7 @@ function generateSpinnersForTab(tab) {
             `)
             break;
         case "timelineTab":
-            $(`#timelineRow`).html(`<div id="timelineSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
-            <div class="col-12">
-              <!-- Timeline Area-->
-              <div class="apland-timeline-area">
-                <!-- Single Timeline Content-->
-              </div>
-            </div>`)
+            $(`#timelineRow`).html(`<div id="timelineSpinner" class="spinner-grow text-muted mx-auto my-5"></div>`)
             break;
     }
 }
@@ -443,7 +437,14 @@ function generateCursorPointerAndClickEvent(type) {
 }
 
 function generateTimeline(timelineArray) {
-    $(".apland-timeline-area").empty()
+
+    // $(".apland-timeline-area").empty()
+    $(`#timelineRow`).html(`<div class="col-12">
+    <!-- Timeline Area-->
+    <div class="apland-timeline-area">
+      <!-- Single Timeline Content-->
+    </div>
+  </div>`)
     for (let x = 0; timelineArray.length > x; x++) {
         $(".apland-timeline-area").append(
             `<div class="single-timeline-area">
@@ -516,7 +517,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 </tr>`)
 
                 $("#adminSkillDelete" + adminSkillName + x).click(() => {
-                    
+
                     $("#" + adminSkillName + x).remove()
                 })
 
@@ -567,7 +568,7 @@ function generateAdminPage(pageObject, pageTitle) {
 
             let skillCategoryNameNoSpace = skillKeyArray[x].replace(/ /g, '')
 
-            if(skillKeyArray.length - 1 == x){
+            if (skillKeyArray.length - 1 == x) {
                 $("#skillTable").append(`
                 <thead id="skillTableHeader${skillCategoryNameNoSpace}">
                 <tr>
@@ -593,7 +594,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     </tr>
                 </tbody>`)
 
-                $(`#addSkillCategory`).click(()=>{
+                $(`#addSkillCategory`).click(() => {
 
                     let skillCategoryName = $(`#skillCategoryName`).val()
 
@@ -624,7 +625,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     })
                 })
 
-            }else{
+            } else {
                 $("#skillTable").append(`
                 <thead id="skillTableHeader${skillCategoryNameNoSpace}">
                 <tr>
@@ -705,7 +706,7 @@ function generateAdminPage(pageObject, pageTitle) {
             $(`#projectsContainer`).append(`        
             <div class="projectContainer d-flex flex-column px-5" id="adminProject${x}">
                 <div class="d-flex justify-content-start">
-                <img id="projectImage${x}" height="90rem" width="90rem" src="${bucketLink+projectArray[x].projectSource}">
+                <img id="projectImage${x}" height="90rem" width="90rem" src="${bucketLink + projectArray[x].projectSource}">
                 <input accept="image/*" type='file' class="imageArrayFormControl projectImageInput" onchange="document.getElementById('projectImage${x}').src = window.URL.createObjectURL(this.files[0])" />
                 </div>
                 <label>Title</label>
@@ -894,23 +895,23 @@ function generateAdminPage(pageObject, pageTitle) {
                 }
 
                 postData.meImageArray = []
-                
-                $(`#mePictureArray .adminImageCarouselItem`).map(function (index,element) {
+
+                $(`#mePictureArray .adminImageCarouselItem`).map(function (index, element) {
                     let imageObject = {}
-                    if($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length){
+                    if ($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length) {
                         uploadImage({
                             Bucket: `dongenpersonalwebsite`,
                             Key: $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name,
                             Body: $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0]
                         })
                         imageObject.imageSource = $(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name
-                    }else{
-                        imageObject.imageSource = ($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink,'')
+                    } else {
+                        imageObject.imageSource = ($(`#mePictureArray #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink, '')
                     }
 
                     imageObject.imageTitle = $(`#mePictureArray #${this.id} .adminImageItem .adminImageTitle`).val(),
-                    imageObject.imageSubTitle = $(`#mePictureArray #${this.id} .adminImageItem .adminImageSubTitle`).val()
-                    
+                        imageObject.imageSubTitle = $(`#mePictureArray #${this.id} .adminImageItem .adminImageSubTitle`).val()
+
                     postData.meImageArray.push(imageObject)
                 })
 
@@ -933,11 +934,11 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 console.log(postData)
 
-                update(child(database,"mePage"),postData).then(() => {
+                update(child(database, "mePage"), postData).then(() => {
                     alert("Succesfully Saved")
                 }).catch((error) => {
                     console.log(error)
-                }).finally(()=>{
+                }).finally(() => {
                     $(`#adminBtnSpinner`).hide()
                     $("#submitAdminDataBtn").show()
                 });
@@ -963,55 +964,55 @@ function generateAdminPage(pageObject, pageTitle) {
 
                 postData.projectArray = []
 
-                $("#projectsContainer .projectContainer").map((index,element)=>{
+                $("#projectsContainer .projectContainer").map((index, element) => {
                     let projectObject = {}
                     let projectID = element.id
 
                     projectObject.projectDescription = $(`#projectsContainer #${projectID} .projectDescription`).val()
                     projectObject.projectTitle = $(`#projectsContainer #${projectID} .projectTitle`).val()
                     projectObject.projectSubTitle = $(`#projectsContainer #${projectID} .projectSubTitle`).val()
-                    projectObject.projectID =  $(`#projectsContainer #${projectID} .projectID`).val()
+                    projectObject.projectID = $(`#projectsContainer #${projectID} .projectID`).val()
 
-                    if( $(`#projectsContainer #${projectID} .projectImageInput`).prop("files").length ){
+                    if ($(`#projectsContainer #${projectID} .projectImageInput`).prop("files").length) {
                         uploadImage({
                             Bucket: `dongenpersonalwebsite`,
                             Key: $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0].name,
                             Body: $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0]
                         })
                         projectObject.projectSource = $(`#projectsContainer #${projectID} .projectImageInput`).prop("files")[0].name
-                    }else{
-                        projectObject.projectSource = ($(`#projectsContainer #${projectID} #projectImage${projectID.replace("adminProject","")}`).attr("src")).replace(bucketLink,'')
+                    } else {
+                        projectObject.projectSource = ($(`#projectsContainer #${projectID} #projectImage${projectID.replace("adminProject", "")}`).attr("src")).replace(bucketLink, '')
                     }
 
                     projectObject.projectImageArray = []
-                    $(`#projectsContainer #${projectID} .adminImageCarouselItem`).map(function() {
+                    $(`#projectsContainer #${projectID} .adminImageCarouselItem`).map(function () {
                         let imageObject = {}
-                        
-                        if($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length){
+
+                        if ($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files").length) {
                             uploadImage({
                                 Bucket: `dongenpersonalwebsite`,
                                 Key: $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name,
                                 Body: $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0]
                             })
                             imageObject.imageSource = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPictureInput`).prop("files")[0].name
-                        }else{
-                            imageObject.imageSource = ($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink,'')
+                        } else {
+                            imageObject.imageSource = ($(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminCarouselPicture`).attr("src")).replace(bucketLink, '')
                         }
-    
+
                         imageObject.imageTitle = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminImageTitle`).val(),
-                        imageObject.imageSubTitle = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminImageSubTitle`).val()
-                        
+                            imageObject.imageSubTitle = $(`#projectsContainer #${projectID} #${this.id} .adminImageItem .adminImageSubTitle`).val()
+
                         projectObject.projectImageArray.push(imageObject)
                     })
 
                     postData.projectArray.push(projectObject)
                 })
 
-                update(child(database,"projectsPage"),postData).then(() => {
+                update(child(database, "projectsPage"), postData).then(() => {
                     alert("Succesfully Saved")
                 }).catch((error) => {
                     console.log(error)
-                }).finally(()=>{
+                }).finally(() => {
                     $(`#adminBtnSpinner`).hide()
                     $("#submitAdminDataBtn").show()
                 });
@@ -1055,11 +1056,11 @@ function generateAdminPage(pageObject, pageTitle) {
                 })
                 console.log(postData)
 
-                update(child(database,"timelinePage"),postData).then(() => {
+                update(child(database, "timelinePage"), postData).then(() => {
                     alert("Succesfully Saved")
                 }).catch((error) => {
                     console.log(error)
-                }).finally(()=>{
+                }).finally(() => {
                     $(`#adminBtnSpinner`).hide()
                     $("#submitAdminDataBtn").show()
                 });
@@ -1069,7 +1070,7 @@ function generateAdminPage(pageObject, pageTitle) {
 }
 
 $(document).ready(function () {
-    
+
     $('#lightModeInputForm').change(function (checkbox) {//Dark/Light Mode Handling
         /*You cant animate css variable changes in Jquery, so we set an animation if a property changes in css, thenwe change that property here*/
 
@@ -1096,14 +1097,14 @@ $(document).ready(function () {
             $("#navbarToggler").click(() => {//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
                 $("#navbarContactIconContainer").remove()
                 $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
-                generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+                generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
             })
 
             $(window).resize(() => {//Handles after navbar toggler is clicked, makes contact icons go back to the original place
                 if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
                     $("#navbarContactIconContainer").remove()
                     $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
-                    generateNavbarContactIcons(snapshot.val().navbarContactIcons)
+                    generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
                 }
             })
         } else {
