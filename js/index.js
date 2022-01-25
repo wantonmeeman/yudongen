@@ -142,6 +142,7 @@ function generateSkills(skillObject) {
     //I have decided to use .html and 1 single skillHTML string instead of clear->appending for simplicity
     let keysArray = Object.keys(skillObject)
     let skillHTML = "";
+
     for (let x = 0; x < keysArray.length; x++) {
         if (x) {
             skillHTML += `<hr id="softSkillDivider" class="divider mx-auto my-2" style="margin-right: 0.75rem;"></hr>`

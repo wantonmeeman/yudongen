@@ -193,6 +193,7 @@ html {
 
   #meDescription {
     font-size: 15px;
+    white-space: pre-wrap;
     -webkit-transition: color var(--lightingModeAnim);
     -moz-transition: color var(--lightingModeAnim);
     -o-transition: color var(--lightingModeAnim);
@@ -215,7 +216,8 @@ html {
 
   .skillTitle{
     font-weight: 300;
-    width:75px;
+    font-size:15px;
+    width:125px;
     overflow: hidden;
     -webkit-transition: color var(--lightingModeAnim);
     -moz-transition: color var(--lightingModeAnim);
@@ -666,8 +668,10 @@ select, input[type="file"], input[type="text"], textarea, #adminMeDescription {
 }
 
 .imageCarouselItem{
-  width:100%;
-  height:400px;
+  max-width:230px;
+  max-height:95px;
+  width: auto;
+  height: auto;
 }
 
 #paginationList .inactive a{
