@@ -790,12 +790,32 @@ function generateAdminPage(pageObject, pageTitle) {
             </div>`)
             generateTimelineEvents(timelineArray[x])
         }
+        $("#timelineContainer").append(`
+        <input type="text" class="form-control newYear">
+        <button type="button" class="addBtn" id="addNewTimelineYear" >
+            <span>+</span>
+        </button>`)
+
+        $(`#addNewTimelineYear`).click(() => {
+            let newYear = $('#newYear').val()
+            $("#timelineContainer").append(`
+            <div id="timelineContainer${newYear}" class="timelineYearRow d-flex flex-row px-5 mt-3">
+                <div class="d-flex justify-content-center timelineYear" id="timelineYearArray${newYear}">${newYear}</div>
+            </div>`)
+            generateTimelineEvents([])
+            $("#timelineContainer").append(`
+        <input type="text" class="form-control newYear">
+        <button type="button" class="addBtn" id="addNewTimelineYear" >
+            <span>+</span>
+        </button>`)
+        })
     }
 
     function generateTimelineEvents(timelineEventArray) {
+        if (timelineEventArray.events || timelineEventArray.events.length) {
 
-        for (let x = 0; timelineEventArray.events.length > x; x++) {
-            $(`#timelineYearArray${timelineEventArray.year}`).append(`
+            for (let x = 0; timelineEventArray.events.length > x; x++) {
+                $(`#timelineYearArray${timelineEventArray.year}`).append(`
                 <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
                     <input type="text" value="${timelineEventArray.events[x].title}" class="form-control eventTitle">
@@ -811,19 +831,19 @@ function generateAdminPage(pageObject, pageTitle) {
                     </button>
                 </div>`)//Hard code type(Project/Job)
 
-            $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
-                $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
-            })
-        }
+                $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
+                    $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
+                })
+            }
 
-        $(`#timelineContainer${timelineEventArray.year}`).append(`
+            $(`#timelineContainer${timelineEventArray.year}`).append(`
         <button type="button" class="addBtn" id="addNewTimelineEvent${timelineEventArray.year}" >
             <span>+</span>
         </button>`)
 
-        $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
-            let randomNumber = generateRandomNumber(timelineEventArray.events.length, 10000000);
-            $(`#timelineYearArray${timelineEventArray.year}`).append(`
+            $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
+                let randomNumber = generateRandomNumber(timelineEventArray.events.length, 10000000);
+                $(`#timelineYearArray${timelineEventArray.year}`).append(`
             <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
             <label>Title</label>
             <input type="text" class="form-control eventTitle">
@@ -840,10 +860,11 @@ function generateAdminPage(pageObject, pageTitle) {
             </div> 
             `)
 
-            $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
-                $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
+                $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
+                    $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
+                })
             })
-        })
+        }
     }
 
     $(`#editContainer`).empty()
