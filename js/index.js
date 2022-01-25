@@ -62,7 +62,9 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardBorderColor: ["#ebebeb", "#1f1f1f"],
     timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
     inputTextArea: ["#d1d1d1", "#363636"],
-    tableHeaderBorder: ["#000000", "#a1a1a1"]
+    tableHeaderBorder: ["#000000", "#a1a1a1"],
+    carouselPrevIcon:[`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`,`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`],
+    carouselNextIcon:[`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`,`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
 }
 
 var titleArrayIterable = 0;
@@ -200,12 +202,12 @@ function generateMeCarouselImages(meImageArray) {
             <!--Bootstrap 5 uses data-bs instead of data-mdb -->
             <button class="carousel-control-prev" type="button" data-bs-target="#meCarouselExampleControls"
               data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="carousel-control-prev-icon"  ></span>
               <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#meCarouselExampleControls"
               data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="carousel-control-next-icon"  ></span>
               <span class="visually-hidden">Next</span>
             </button>
           </div>`
@@ -341,12 +343,12 @@ function generateProjectsAndEvents(projectArray) {
         <!--Bootstrap 5 uses data-bs instead of data-mdb -->
         <button id="projectCarouselLeft" class="carousel-control-prev" type="button"
           data-bs-target="#projectsCarouselExampleControls" data-bs-slide="prev" id="projectGalleryPrev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="carousel-control-prev-icon"  ></span>
           <span class="visually-hidden">Previous</span>
         </button>
         <button id="projectCarouselRight" class="carousel-control-next" type="button"
           data-bs-target="#projectsCarouselExampleControls" data-bs-slide="next" id="projectGalleryNext">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="carousel-control-next-icon"  ></span>
           <span class="visually-hidden">Next</span>
         </button>
       </div>
@@ -614,7 +616,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     </thead>
                     <tbody id="skillTableBody${skillCategoryNameNoSpace}">
 
-                    </tbody>`).insertBefore(`#addSkillCategoryContainer`)
+                    </tbody>`).insertBefore($(`#addSkillCategoryContainer`))
 
                     $(`#skillCategoryName`).val(" ")
 
@@ -790,32 +792,36 @@ function generateAdminPage(pageObject, pageTitle) {
             </div>`)
             generateTimelineEvents(timelineArray[x])
         }
+
         $("#timelineContainer").append(`
-        <input type="text" class="form-control newYear">
+        <input type="text" class="form-control" id="newYear">
         <button type="button" class="addBtn" id="addNewTimelineYear" >
             <span>+</span>
         </button>`)
 
         $(`#addNewTimelineYear`).click(() => {
-            let newYear = $('#newYear').val()
-            $("#timelineContainer").append(`
-            <div id="timelineContainer${newYear}" class="timelineYearRow d-flex flex-row px-5 mt-3">
+            let newYear = $(`#newYear`).val()
+            $(`<div id="timelineContainer${newYear}" class="timelineYearRow d-flex flex-row px-5 mt-3">
                 <div class="d-flex justify-content-center timelineYear" id="timelineYearArray${newYear}">${newYear}</div>
-            </div>`)
-            generateTimelineEvents([])
-            $("#timelineContainer").append(`
-        <input type="text" class="form-control newYear">
-        <button type="button" class="addBtn" id="addNewTimelineYear" >
-            <span>+</span>
-        </button>`)
+            </div>`).insertBefore($('#newYear'))
+            generateTimelineEvents({ year: newYear, events: [] })
+            $(`#newYear`).val(" ")
         })
     }
 
     function generateTimelineEvents(timelineEventArray) {
-        if (timelineEventArray.events || timelineEventArray.events.length) {
 
-            for (let x = 0; timelineEventArray.events.length > x; x++) {
-                $(`#timelineYearArray${timelineEventArray.year}`).append(`
+        $(`#timelineYearArray${timelineEventArray.year}`).append(`
+        <button type="button" class="closeBtn" id="adminDeleteTimelineEvent${timelineEventArray.year}" >
+            <span>&times;</span>
+        </button>`)
+
+        $(`#adminDeleteTimelineEvent${timelineEventArray.year}`).click(() => {
+            $(`#timelineContainer${timelineEventArray.year}`).remove()
+        })
+
+        for (let x = 0; timelineEventArray.events.length > x; x++) {
+            $(`#timelineYearArray${timelineEventArray.year}`).append(`
                 <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
                     <input type="text" value="${timelineEventArray.events[x].title}" class="form-control eventTitle">
@@ -831,19 +837,19 @@ function generateAdminPage(pageObject, pageTitle) {
                     </button>
                 </div>`)//Hard code type(Project/Job)
 
-                $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
-                    $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
-                })
-            }
+            $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
+                $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
+            })
+        }
 
-            $(`#timelineContainer${timelineEventArray.year}`).append(`
+        $(`#timelineContainer${timelineEventArray.year}`).append(`
         <button type="button" class="addBtn" id="addNewTimelineEvent${timelineEventArray.year}" >
             <span>+</span>
         </button>`)
 
-            $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
-                let randomNumber = generateRandomNumber(timelineEventArray.events.length, 10000000);
-                $(`#timelineYearArray${timelineEventArray.year}`).append(`
+        $(`#addNewTimelineEvent${timelineEventArray.year}`).click(() => {
+            let randomNumber = generateRandomNumber(timelineEventArray.events.length ? timelineEventArray.events.length : 0, 10000000);
+            $(`#timelineYearArray${timelineEventArray.year}`).append(`
             <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${randomNumber}">
             <label>Title</label>
             <input type="text" class="form-control eventTitle">
@@ -860,11 +866,10 @@ function generateAdminPage(pageObject, pageTitle) {
             </div> 
             `)
 
-                $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
-                    $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
-                })
+            $(`#adminTimelineEventDelete${timelineEventArray.year}${randomNumber}`).click(() => {
+                $(`#adminTimelineEvent${timelineEventArray.year}${randomNumber}`).remove()
             })
-        }
+        })
     }
 
     $(`#editContainer`).empty()
@@ -891,6 +896,9 @@ function generateAdminPage(pageObject, pageTitle) {
           <table class="table" id="skillTable">
 
           </table>
+        </div>
+        <div class="mt-2">
+            
         </div>
         <div class="row justify-content-center" id="submitAdminRow">
         <button type="submit" id="submitAdminDataBtn" class="btn btn-primary col-1 mb-1">Save</button>
@@ -1129,9 +1137,6 @@ $(document).ready(function () {
                     $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
                     generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
                 }
-
-                $(`.imageCarouselItem`).height($(`.imageCarouselItem`).width() * 0.4435)
-
             })
         } else {
             throw new Error("Data does not exist!")
@@ -1357,7 +1362,5 @@ $(document).ready(function () {
     $(window).blur(function () {
         clearInterval(changeGreetingInterval)
     })
-
-
 
 });
