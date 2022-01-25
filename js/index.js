@@ -1101,12 +1101,16 @@ $(document).ready(function () {
                 generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
             })
 
-            $(window).resize(() => {//Handles after navbar toggler is clicked, makes contact icons go back to the original place
+            $(window).resize(() => {
+                //Handles after navbar toggler is clicked, makes contact icons go back to the original place
                 if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
                     $("#navbarContactIconContainer").remove()
                     $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
                     generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
                 }
+
+                $(`.imageCarouselItem`).height($(`.imageCarouselItem`).width() * 0.4435)
+
             })
         } else {
             throw new Error("Data does not exist!")
