@@ -508,7 +508,6 @@ html {
     margin-bottom: 0;
     color:var(--mainTextColor);
     word-break:break-word;
-    white-space: nowrap;
 }
 .single-timeline-area .single-timeline-content:hover .timeline-icon,
 .single-timeline-area .single-timeline-content:focus .timeline-icon {

@@ -448,6 +448,7 @@ function generateTimeline(timelineArray) {
       <!-- Single Timeline Content-->
     </div>
   </div>`)
+    timelineArray = timelineArray.sort((a, b) => b.year - a.year)
     for (let x = 0; timelineArray.length > x; x++) {
         $(".apland-timeline-area").append(
             `<div class="single-timeline-area">
