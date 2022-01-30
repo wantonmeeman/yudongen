@@ -507,7 +507,8 @@ html {
     font-size: 13px;
     margin-bottom: 0;
     color:var(--mainTextColor);
-    word-break:break-all;
+    word-break:break-word;
+    white-space: nowrap;
 }
 .single-timeline-area .single-timeline-content:hover .timeline-icon,
 .single-timeline-area .single-timeline-content:focus .timeline-icon {
@@ -722,6 +723,14 @@ th,label{
 
 .newYear{
   margin-bottom: 5px;
+}
+
+.timelineYear{
+  -webkit-transition: color var(--lightingModeAnim);
+  -moz-transition: color var(--lightingModeAnim);
+  -o-transition: color var(--lightingModeAnim);
+  transition: color var(--lightingModeAnim);
+  color:var(--mainTextColor)
 }
 
 

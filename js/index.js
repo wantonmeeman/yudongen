@@ -63,8 +63,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
     inputTextArea: ["#d1d1d1", "#363636"],
     tableHeaderBorder: ["#000000", "#a1a1a1"],
-    carouselPrevIcon:[`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`,`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`],
-    carouselNextIcon:[`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`,`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
+    carouselPrevIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`],
+    carouselNextIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
 }
 
 var titleArrayIterable = 0;
@@ -467,7 +467,7 @@ function generateTimeline(timelineArray) {
                         </div>
                          <div class="timeline-text">
                            <h6>${timelineArray[x].events[y].title}</h6>
-                           <p>${timelineArray[x].events[y].description}</p>
+                           <p class="timelineDescription">${timelineArray[x].events[y].description}</p>
                         </div>
                     </div>
                 </div>`
@@ -788,7 +788,11 @@ function generateAdminPage(pageObject, pageTitle) {
         for (let x = 0; timelineArray.length > x; x++) {
             $("#timelineContainer").append(`
             <div id="timelineContainer${timelineArray[x].year}" class="timelineYearRow d-flex flex-row px-5 mt-3">
-                <div class="d-flex justify-content-center timelineYear" id="timelineYearArray${timelineArray[x].year}">${timelineArray[x].year}</div>
+                <div class="d-flex justify-content-center timelineYear" id="timelineYearArray${timelineArray[x].year}">
+                    <div class="timelineYear">
+                        ${timelineArray[x].year}
+                    </div>
+                </div>
             </div>`)
             generateTimelineEvents(timelineArray[x])
         }
@@ -819,9 +823,9 @@ function generateAdminPage(pageObject, pageTitle) {
         $(`#adminDeleteTimelineEvent${timelineEventArray.year}`).click(() => {
             $(`#timelineContainer${timelineEventArray.year}`).remove()
         })
-
-        for (let x = 0; timelineEventArray.events.length > x; x++) {
-            $(`#timelineYearArray${timelineEventArray.year}`).append(`
+        if (timelineEventArray.events) {
+            for (let x = 0; timelineEventArray.events.length > x; x++) {
+                $(`#timelineYearArray${timelineEventArray.year}`).append(`
                 <div class="timelineEvent d-flex flex-column ms-3" id="adminTimelineEvent${timelineEventArray.year}${x}">
                     <label>Title</label>
                     <input type="text" value="${timelineEventArray.events[x].title}" class="form-control eventTitle">
@@ -837,9 +841,10 @@ function generateAdminPage(pageObject, pageTitle) {
                     </button>
                 </div>`)//Hard code type(Project/Job)
 
-            $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
-                $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
-            })
+                $(`#adminTimelineEventDelete${timelineEventArray.year}${x}`).click(() => {
+                    $(`#adminTimelineEvent${timelineEventArray.year}${x}`).remove()
+                })
+            }
         }
 
         $(`#timelineContainer${timelineEventArray.year}`).append(`
