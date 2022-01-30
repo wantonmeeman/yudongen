@@ -658,24 +658,26 @@ function generateAdminPage(pageObject, pageTitle) {
     }
 
     function generateImageArray(imageArray, containerDiv) {
-        for (let x = 0; imageArray.length > x; x++) {
-            containerDiv.append(`
-            <div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${x}">
-            <div class="d-flex flex-column adminImageItem">
-                 <img class="adminCarouselPicture" src="${bucketLink + imageArray[x].imageSource}"/>
-                 <input accept="image/*" type='file' class="adminCarouselPictureInput imageArrayFormControl" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageItem .adminCarouselPicture').attr('src',window.URL.createObjectURL(this.files[0]))" />
-            </div>
+        if(imageArray){
+            for (let x = 0; imageArray.length > x; x++) {
+                containerDiv.append(`
+                <div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${x}">
                 <div class="d-flex flex-column adminImageItem">
-                    <input type="text" class="imageArrayFormControl adminImageTitle" value="${imageArray[x].imageTitle}"/>
-                    <textarea class="imageArrayFormControl textArea adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
-            </div>
-                <button type="button" class="closeBtn adminImageCarouselDelete" >
-                <span>&times;</span>
-            </div>`)
-
-            $(`#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageCarouselDelete`).click(() => {
-                $(`#${containerDiv.attr('id')} #adminImageCarousel${x}`).remove()
-            })
+                     <img class="adminCarouselPicture" src="${bucketLink + imageArray[x].imageSource}"/>
+                     <input accept="image/*" type='file' class="adminCarouselPictureInput imageArrayFormControl" onchange="$('#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageItem .adminCarouselPicture').attr('src',window.URL.createObjectURL(this.files[0]))" />
+                </div>
+                    <div class="d-flex flex-column adminImageItem">
+                        <input type="text" class="imageArrayFormControl adminImageTitle" value="${imageArray[x].imageTitle}"/>
+                        <textarea class="imageArrayFormControl textArea adminImageSubTitle">${imageArray[x].imageSubTitle}</textarea>
+                </div>
+                    <button type="button" class="closeBtn adminImageCarouselDelete" >
+                    <span>&times;</span>
+                </div>`)
+    
+                $(`#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageCarouselDelete`).click(() => {
+                    $(`#${containerDiv.attr('id')} #adminImageCarousel${x}`).remove()
+                })
+            }
         }
 
         containerDiv.append(`
