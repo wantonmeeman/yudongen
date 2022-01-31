@@ -462,7 +462,7 @@ function generateTimeline(timelineArray) {
         for (let y = 0; timelineArray[x].events.length > y; y++) {
             $("#timelineYear" + timelineArray[x].year).append(
                 `<div class="col-12 col-md-6 col-lg-4">
-                     <div id="event${x}" class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
+                     <div id="event${y}" class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
                        <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
                        <i class="fa fa-briefcase" aria-hidden="true"></i>
                         </div>
@@ -473,8 +473,8 @@ function generateTimeline(timelineArray) {
                     </div>
                 </div>`
             )
-            if (timelineArray[x].events[y].type == "project") {
-                $(`#event${x}`).click(() => {
+            if (timelineArray[x].events[y].type == "project" && timelineArray[x].events[y].projectID) {
+                $(`#event${y}`).click(() => {
                     $('.navbar-nav li a').trigger("click")//How does this take me to projects? I dont know but im not changing the code
                     selectedProjectID = timelineArray[x].events[y].projectID
                 })
