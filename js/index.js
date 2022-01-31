@@ -43,9 +43,9 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     /*navbarHoverTextColor:"],*/
     navbarContactIconContainerBackgroundColor: ["#e8e8e8", "#3a3a3a"],
     navbarContactIconBackgroundColor: ["#d4d4d4", "#6c6c6c"],
-    carouselImageSubtitle: ['#FFFFFF', '#c8c8c8'],
-    carouselImageTitle: ['#FFFFFF', '#c8c8c8'],
-    carouselIndicators: ['#FFFFFF', '#c8c8c8'],
+    carouselImageSubtitle: ['#d1d1d1', '#c8c8c8'],
+    carouselImageTitle: ['#d1d1d1', '#c8c8c8'],
+    carouselIndicators: ['#d1d1d1', '#c8c8c8'],
     dividerColor: ['#000000', '#FFFFFF'],
     personalImageBorderColor: ["#7d7d7d", "#afafaf"],
     skillBarActiveColor: ["#7d7d7d", "#c3c3c3"],
@@ -63,8 +63,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     timelineCardTextHoverColor: ["#363636", "#b8b8b8"],
     inputTextArea: ["#d1d1d1", "#363636"],
     tableHeaderBorder: ["#000000", "#a1a1a1"],
-    carouselPrevIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`],
-    carouselNextIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FFFFFF'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
+    carouselPrevIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23d1d1d1'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");`],
+    carouselNextIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23d1d1d1'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
 }
 
 var titleArrayIterable = 0;
@@ -169,49 +169,51 @@ function generateSkills(skillObject) {
     $('#rightSkillContainer').html(skillHTML)
 }
 
+
+
 function generateMeCarouselImages(meImageArray) {
-    console.log(`meIMAGEaRRAY`, meImageArray)
     let meCarouselIndicatorHTML = "";
     let meCarouselContentHTML = "";
+    if (meImageArray.length) {
+        for (let x = 0; meImageArray.length > x; x++) {
+            if (!x) {
+                meCarouselIndicatorHTML += `<li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>`
+            } else {
+                meCarouselIndicatorHTML += `<li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}"}></li>`
+            }
 
-    for (let x = 0; meImageArray.length > x; x++) {
-        if (!x) {
-            meCarouselIndicatorHTML += `<li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}" class="active"}></li>`
-        } else {
-            meCarouselIndicatorHTML += `<li data-bs-target="#meCarouselExampleControls" data-bs-slide-to="${x}"}></li>`
-        }
-
-        meCarouselContentHTML += `
+            meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${bucketLink + meImageArray[x].imageSource}" class="imageCarouselItem d-block" alt="..." />
+                <img src="${bucketLink + meImageArray[x].imageSource}" class="imageCarouselItem " alt="..." style="" />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
                 </div>
             </div>`
-    }
+        }
+        $("#leftImageGalleryContainer").html(
+            `<div id="meCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <ol class="carousel-indicators" id="meCarouselIndicators">
+            ${meCarouselIndicatorHTML}
+            </ol>
+                <div id="meCarouselContent" class="carousel-inner">
+                ${meCarouselContentHTML}
+                </div>
+                <!--Bootstrap 5 uses data-bs instead of data-mdb -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#meCarouselExampleControls"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"  ></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#meCarouselExampleControls"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon"  ></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>`
+        )
 
-    $("#leftImageGalleryContainer").html(
-        `<div id="meCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-        <ol class="carousel-indicators" id="meCarouselIndicators">
-        ${meCarouselIndicatorHTML}
-        </ol>
-            <div id="meCarouselContent" class="carousel-inner">
-            ${meCarouselContentHTML}
-            </div>
-            <!--Bootstrap 5 uses data-bs instead of data-mdb -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#meCarouselExampleControls"
-              data-bs-slide="prev">
-              <span class="carousel-control-prev-icon"  ></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#meCarouselExampleControls"
-              data-bs-slide="next">
-              <span class="carousel-control-next-icon"  ></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>`
-    )
+    }
 }
 
 function generateSelectedProjectMiniColumn(x) {
@@ -241,7 +243,7 @@ function generateSelectedProjectDescription(projectObject) {
                 }
                 $('#projectCarouselContent').append(`
                     <div class="carousel-item ${y == 0 ? "active" : ""}">
-                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem d-block" alt="..." />
+                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem " alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
                     <p class="carouselImageSubtitle">${projectObject.projectImageArray[y].imageSubTitle}</p>
@@ -328,32 +330,35 @@ function generateProjectsAndEvents(projectArray) {
     $('#projectCarouselRight').hide()
 
     $('#projectInfoContainer').html(`
-    <div class="d-flex mb-3" id="projectInfoHeader">
-    This is where i keep all my projects
-    </div>
-    <hr class="divider" id="headerDivider">
-    <div id="projectInfoDescription">Description Description</div>
-    <div id="projectImageContainer" class="d-flex my-5 flex-column">
-      <div id="projectsCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-        <ol class="carousel-indicators" id="projectCarouselIndicators">
-        </ol>
-        <div id="projectCarouselContent" class="carousel-inner">
-          <!--Data is set inside here-->
+        <div class="d-flex mb-3" id="projectInfoHeader">
+        This is where i keep all my projects
         </div>
-        <!--Bootstrap 5 uses data-bs instead of data-mdb -->
-        <button id="projectCarouselLeft" class="carousel-control-prev" type="button"
-          data-bs-target="#projectsCarouselExampleControls" data-bs-slide="prev" id="projectGalleryPrev">
-          <span class="carousel-control-prev-icon"  ></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button id="projectCarouselRight" class="carousel-control-next" type="button"
-          data-bs-target="#projectsCarouselExampleControls" data-bs-slide="next" id="projectGalleryNext">
-          <span class="carousel-control-next-icon"  ></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-    </div>`
+        <hr class="divider" id="headerDivider">
+        <div id="projectInfoDescription">Description Description</div>
+        <div id="projectImageContainer" class="d-flex my-5 flex-column">
+          <div id="projectsCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <ol class="carousel-indicators" id="projectCarouselIndicators">
+            </ol>
+            <div id="projectCarouselContent" class="carousel-inner">
+              <!--Data is set inside here-->
+            </div>
+            <!--Bootstrap 5 uses data-bs instead of data-mdb -->
+            <button id="projectCarouselLeft" class="carousel-control-prev" type="button"
+              data-bs-target="#projectsCarouselExampleControls" data-bs-slide="prev" id="projectGalleryPrev">
+              <span class="carousel-control-prev-icon"  ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button id="projectCarouselRight" class="carousel-control-next" type="button"
+              data-bs-target="#projectsCarouselExampleControls" data-bs-slide="next" id="projectGalleryNext">
+              <span class="carousel-control-next-icon"  ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>`
     )
+
+    $("#projectCarouselLeft").hide()
+    $("#projectCarouselRight").hide()
 
     for (let x = 0; projectArray.length > x; x++) {
 
@@ -658,7 +663,7 @@ function generateAdminPage(pageObject, pageTitle) {
     }
 
     function generateImageArray(imageArray, containerDiv) {
-        if(imageArray){
+        if (imageArray) {
             for (let x = 0; imageArray.length > x; x++) {
                 containerDiv.append(`
                 <div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${x}">
@@ -673,7 +678,7 @@ function generateAdminPage(pageObject, pageTitle) {
                     <button type="button" class="closeBtn adminImageCarouselDelete" >
                     <span>&times;</span>
                 </div>`)
-    
+
                 $(`#${containerDiv.attr('id')} #adminImageCarousel${x} .adminImageCarouselDelete`).click(() => {
                     $(`#${containerDiv.attr('id')} #adminImageCarousel${x}`).remove()
                 })
@@ -686,7 +691,7 @@ function generateAdminPage(pageObject, pageTitle) {
             </button>`)
 
         $(`#${containerDiv.attr('id')} #addNewImageIcon`).click(() => {
-            let randomNumber = generateRandomNumber(imageArray.length, 10000000);
+            let randomNumber = generateRandomNumber(imageArray ? imageArray.length : 1, 10000000);
 
             $(`<div class="d-flex me-3 adminImageCarouselItem" id="adminImageCarousel${randomNumber}">
             <div class="d-flex flex-column adminImageItem">
@@ -699,6 +704,8 @@ function generateAdminPage(pageObject, pageTitle) {
                 </div><button type="button" class="closeBtn adminImageCarouselDelete" >
                 <span>&times;</span>
             </div>`).insertBefore($(`#${containerDiv.attr('id')} #addNewImageIcon`))
+
+            console.log(containerDiv.attr('id'))
 
             $(`#${containerDiv.attr('id')} #adminImageCarousel${randomNumber} .adminImageCarouselDelete`).click(() => {
                 $(`#${containerDiv.attr('id')} #adminImageCarousel${randomNumber}`).remove()
@@ -722,7 +729,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 <input type="text" class="form-control projectSubTitle" value="${projectArray[x].projectSubTitle}">
 
                 <label>Description</label>
-                <input type="text" class="form-control projectDescription" value="${projectArray[x].projectDescription}">
+                <textarea class="form-control textArea projectDescription">${projectArray[x].projectDescription}</textarea>
                 <input type="hidden" class="projectID" value="${projectArray[x].projectID}">
 
                 <label>Image Array</label>
