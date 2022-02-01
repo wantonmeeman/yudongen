@@ -127,6 +127,7 @@ function generateNavbarContactIcons(contactArray) {
       <img src="${contactArray[x].iconSource}"
         height="35rem" width="35rem" class="contactIcon">
     </a>`
+    
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
 
@@ -339,7 +340,7 @@ function generateProjectsAndEvents(projectArray) {
         This is where i keep all my projects
         </div>
         <hr class="divider" id="headerDivider">
-        <div id="projectInfoDescription">Description Description</div>
+        <div id="projectInfoDescription">All my Projects that I personally think are good enough and impactful enough to display are shown on the left in no particular order.</div>
         <div id="projectImageContainer" class="d-flex my-5 flex-column">
           <div id="projectsCarouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <ol class="carousel-indicators" id="projectCarouselIndicators">

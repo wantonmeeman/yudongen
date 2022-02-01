@@ -45,7 +45,6 @@ html {
   
   /* Track */
   ::-webkit-scrollbar-track {
-
     border-radius: 10px;
   }
 
@@ -126,7 +125,7 @@ html {
   }
 
   #navbarContactIconContainer{
-    overflow-x: scroll;
+    overflow-x: auto;
     -webkit-transition: background-color var(--lightingModeAnim);
     -moz-transition: background-color var(--lightingModeAnim);
     -o-transition: background-color var(--lightingModeAnim);
