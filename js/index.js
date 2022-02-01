@@ -119,14 +119,14 @@ function returnProficiencyHTML(proficiency) {
 function generateNavbarContactIcons(contactArray) {
     let navbarContactHTML = ""
     for (let x = 0; contactArray.length > x; x++) {
-        navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
+       /* navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
         <img src="${bucketLink + contactArray[x].iconSource}"
           height="35rem" width="35rem" class="contactIcon">
-      </a>`
-        navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
-        <img src="${bucketLink + contactArray[x].iconSource}"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>`
+      </a>`*/
+      navbarContactHTML += ` <a class="m-1" href="${contactArray[x].iconLink}">
+      <img src="${contactArray[x].iconSource}"
+        height="35rem" width="35rem" class="contactIcon">
+    </a>`
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
 
