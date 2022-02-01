@@ -46,6 +46,7 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     carouselImageSubtitle: ['#d1d1d1', '#c8c8c8'],
     carouselImageTitle: ['#d1d1d1', '#c8c8c8'],
     carouselIndicators: ['#d1d1d1', '#c8c8c8'],
+    carouselBackground:['#999999','#3d3d3d'],
     dividerColor: ['#000000', '#FFFFFF'],
     personalImageBorderColor: ["#7d7d7d", "#afafaf"],
     skillBarActiveColor: ["#7d7d7d", "#c3c3c3"],
@@ -184,11 +185,14 @@ function generateMeCarouselImages(meImageArray) {
 
             meCarouselContentHTML += `
             <div class="carousel-item ${x == 0 ? "active" : ""}">
-                <img src="${bucketLink + meImageArray[x].imageSource}" class="imageCarouselItem " alt="..." style="" />
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
-                    <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
+                <div class="d-flex imageCarouselContainer">
+                    <img src="${bucketLink + meImageArray[x].imageSource}" class="imageCarouselItem " alt="..."/>
                 </div>
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="carouselImageTitle">${meImageArray[x].imageTitle}</h5>
+                        <p class="carouselImageSubtitle">${meImageArray[x].imageSubTitle}</p>
+                    </div>
+                
             </div>`
         }
         $("#leftImageGalleryContainer").html(
@@ -243,6 +247,7 @@ function generateSelectedProjectDescription(projectObject) {
                 }
                 $('#projectCarouselContent').append(`
                     <div class="carousel-item ${y == 0 ? "active" : ""}">
+                    <div class="d-flex imageCarouselContainer">
                 <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem " alt="..." />
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
@@ -467,7 +472,7 @@ function generateTimeline(timelineArray) {
         for (let y = 0; timelineArray[x].events.length > y; y++) {
             $("#timelineYear" + timelineArray[x].year).append(
                 `<div class="col-12 col-md-6 col-lg-4">
-                     <div id="event${y}" class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
+                     <div id="event${x}${y}" class="single-timeline-content d-flex wow fadeInLeft" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft; ${generateCursorPointerAndClickEvent(timelineArray[x].events[y].type)};">
                        <div class="timeline-icon" style="background-color:${generateCardIconColor(timelineArray[x].events[y].type)}">
                        <i class="fa fa-briefcase" aria-hidden="true"></i>
                         </div>
@@ -479,7 +484,7 @@ function generateTimeline(timelineArray) {
                 </div>`
             )
             if (timelineArray[x].events[y].type == "project" && timelineArray[x].events[y].projectID) {
-                $(`#event${y}`).click(() => {
+                $(`#event${x}${y}`).click(() => {
                     $('.navbar-nav li a').trigger("click")//How does this take me to projects? I dont know but im not changing the code
                     selectedProjectID = timelineArray[x].events[y].projectID
                 })
