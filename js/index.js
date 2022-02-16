@@ -46,7 +46,7 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     carouselImageSubtitle: ['#d1d1d1', '#c8c8c8'],
     carouselImageTitle: ['#d1d1d1', '#c8c8c8'],
     carouselIndicators: ['#d1d1d1', '#c8c8c8'],
-    carouselBackground:['#999999','#3d3d3d'],
+    carouselBackground: ['#999999', '#3d3d3d'],
     dividerColor: ['#000000', '#FFFFFF'],
     personalImageBorderColor: ["#7d7d7d", "#afafaf"],
     skillBarActiveColor: ["#7d7d7d", "#c3c3c3"],
@@ -79,7 +79,66 @@ var titleArray = [
 
 var selectedProjectID;
 
+var selectedConceptID;
+
+var conceptArray = [
+    {
+        conceptID: 1,
+        conceptTitle: `TestAnimation2`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 2,
+        conceptTitle: `TestAnimation1`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 3,
+        conceptTitle: `TestAnimation2`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 4,
+        conceptTitle: `TestAnimation1`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 5,
+        conceptTitle: `TestAnimation2`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 6,
+        conceptTitle: `TestAnimation1`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 1,
+        conceptTitle: `TestAnimation2`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    },
+    {
+        conceptID: 2,
+        conceptTitle: `TestAnimation1`,
+        conceptSubTitle: `N^O`,
+        conceptDescription: `TestDescription`,
+    }
+]
+
 var secretMeClickCounter = 0;
+
+var graphMapObject = {}//Contains all the data(vertices and edges)
+
+var graphMapObject = {}
+
+var conceptPointer = 0;
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -111,7 +170,7 @@ function changeLargeTextHeader(content) {
 function returnProficiencyHTML(proficiency) {
     let returnString = ``;
     for (var x = 0; 5 > x; x++) {
-        returnString += (proficiency > x ? `<div class="bar col-2"></div>` : `<div class="inactivebar col-2"></div>`)
+        returnString += (proficiency > x ? `<div class="bar"></div>` : `<div class="inactivebar"></div>`)
     }
     return returnString;
 }
@@ -119,15 +178,15 @@ function returnProficiencyHTML(proficiency) {
 function generateNavbarContactIcons(contactArray) {
     let navbarContactHTML = ""
     for (let x = 0; contactArray.length > x; x++) {
-       /* navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
-        <img src="${bucketLink + contactArray[x].iconSource}"
-          height="35rem" width="35rem" class="contactIcon">
-      </a>`*/
-      navbarContactHTML += ` <a class="m-1" href="${contactArray[x].iconLink}">
+        /* navbarContactHTML += ` <a class="m-1" href="${bucketLink + contactArray[x].iconSource}">
+         <img src="${bucketLink + contactArray[x].iconSource}"
+           height="35rem" width="35rem" class="contactIcon">
+       </a>`*/
+        navbarContactHTML += ` <a class="m-1" href="${contactArray[x].iconLink}">
       <img src="${contactArray[x].iconSource}"
         height="35rem" width="35rem" class="contactIcon">
     </a>`
-    
+
     }
     $("#navbarContactIconContainer").html(navbarContactHTML)
 
@@ -135,6 +194,10 @@ function generateNavbarContactIcons(contactArray) {
 
 function generateDescription(description) {
     $("#meDescription").html(description)
+}
+
+function generateDescription1(description) {
+    $("#meDescription1").html(description)
 }
 
 function generatePersonalImage(personalImage) {
@@ -158,12 +221,12 @@ function generateSkills(skillObject) {
 
             skillHTML += `<div class="skillRowContainer d-flex my-3 justify-content-center">
             <div class="skillRow d-flex">
-              <div class="skillTitle col-4 me-2">
+              <div class="skillTitle me-1">
                 ${currentSkillObject[y].skillTitle}
               </div>
-              <div class="skillBar col-8 d-flex justify-content-start">
+            </div>
+              <div class="skillBar d-flex justify-content-start align-items-center">
                 ${returnProficiencyHTML(currentSkillObject[y].skillProficiency)}
-              </div>
               </div>
             </div>`
         }
@@ -337,7 +400,7 @@ function generateProjectsAndEvents(projectArray) {
 
     $('#projectInfoContainer').html(`
         <div class="d-flex mb-3" id="projectInfoHeader">
-        This is where i keep all my projects
+        My Projects
         </div>
         <hr class="divider" id="headerDivider">
         <div id="projectInfoDescription">All my Projects that I personally think are good enough and impactful enough to display are shown on the left in no particular order.</div>
@@ -408,7 +471,17 @@ function generateSpinnersForTab(tab) {
             <div id="leftImageGallerySpinner" class="spinner-grow mx-auto text-muted my-5"></div>
             `)
             $('#rightSkillContainer').html(`
-            <div class="spinner-grow text-muted mx-auto my-5"></div>
+            <div id="rightSkillSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
+            `)
+            $("#meDescription").html(`
+            <div class="row mx-5">
+                <div id="leftDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
+            </div>
+            `)
+            $("#meDescription1").html(`
+            <div class="row mx-5">
+                <div id="leftDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
+            </div>
             `)
             break;
         case "projectsTab":
@@ -417,11 +490,19 @@ function generateSpinnersForTab(tab) {
             `)
 
             $(`#projectInfoContainer`).html(`
-            <div class="spinner-grow text-muted mx-auto my-5"></div>
+            <div id="projectInfoSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
             `)
             break;
         case "timelineTab":
             $(`#timelineRow`).html(`<div id="timelineSpinner" class="spinner-grow text-muted mx-auto my-5"></div>`)
+            break;
+        case "conceptsTab":
+            $(`#conceptColumn`).html(`<div id="conceptColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>`)
+
+            $(`#conceptAnimationContainer`).html(`<div id="conceptAnimationSpinner" class="spinner-grow text-muted mx-auto my-5"></div>`)
+
+            $(`#conceptDescriptionColumn`).html(`<div id="conceptDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>`)
+
             break;
     }
 }
@@ -496,6 +577,283 @@ function generateTimeline(timelineArray) {
         )
     }
 }
+
+function generateConcepts() {//Called everytime header is clicked on
+
+    $(`#conceptColumnSpinner`).hide()
+    $(`#conceptAnimationSpinner`).hide()
+    $(`#conceptDescriptionSpinner`).hide()
+
+    for (let x = 0; conceptArray.length > x; x++) {
+        $('#conceptColumn').append(`
+            <div class="conceptMini d-flex" id="concept${x}">
+            <div class="textContainer my-3 ms-5">
+                    <div class="conceptMiniTitle">
+                    ${conceptArray[x].conceptTitle}
+                    </div>
+                    <div class="conceptMiniSubTitle">
+                    ${conceptArray[x].conceptSubTitle}
+                    </div>
+                    <div class="conceptMiniDescription">
+                    ${conceptArray[x].conceptDescription}
+                    </div>
+                </div>
+            </div>`)
+
+        if (selectedConceptID && conceptArray[x].conceptID == selectedConceptID) {//Handles when nothing is selected
+
+            generateSelectedConceptColumn(x)
+            generateSelectedConcept(x)
+            generateSelectedConceptDescription(x)
+        }
+
+        $('#concept' + x).click(() => {
+            selectedConceptID = conceptArray[x].conceptID
+
+            generateSelectedConceptColumn(x)
+            generateSelectedConcept(x)
+            generateSelectedConceptDescription(x)
+        })
+    }
+
+}
+
+function generateSelectedConceptColumn(x) {
+    $('.conceptMini').removeClass("active")
+    $('#concept' + x).addClass("active")
+}
+
+function generateSelectedConcept(x) {
+    var gridData = generateNodeGraphGrid(10, 10, 0.1)
+    $('#conceptAnimationContainer').html(`
+        <div class="container" id="conceptAnimation">
+                    ${generateConceptGridArr(gridData)}
+                    ${generateConceptSettings(x)}
+                <svg 
+                id="fullsvg" 
+                xmlns="http://www.w3.org/2000/svg">
+                </svg>   
+            </div>
+        </div>
+    `)
+
+    /*setting event*/
+    $("#goNext").click(goNext)
+
+    $("#goBack").click(goBack)
+
+    $(window).resize(() => {
+        generateLinesAndText();
+    })
+
+    generateLinesAndText();
+}
+
+function generateConceptGridArr(array) {
+
+    let returnString = ``
+    let totalNodes = 0;
+
+    for (let x = 0; array.length > x; x++) {
+
+        returnString += `<div class="conceptAnimationRow row justify-content-center flex-nowrap">`
+
+        for (let y = 0; array[x].length > y; y++) {
+            if (array[x][y]) {
+                returnString += `
+                <div class="conceptAnimationColumn col-sm d-flex justify-content-center ">
+                    <div class="d-flex align-items-center justify-content-center conceptNode active" id="conceptNode${String.fromCharCode("A".charCodeAt(0) + totalNodes)}">
+                        ${String.fromCharCode("A".charCodeAt(0) + totalNodes)}
+                    </div>
+                </div>`
+
+                graphMapObject[String.fromCharCode("A".charCodeAt(0) + totalNodes)] = {}//Setting all keys
+
+                totalNodes++;
+            } else {
+                returnString += `
+                <div class="conceptAnimationColumn col-sm d-flex justify-content-center ">
+                    <div class="d-flex align-items-center justify-content-center conceptNode">
+                    </div>
+                </div>`
+            }
+
+        }
+
+        returnString += `</div>`
+    }
+
+    return returnString
+}
+
+function generateConceptSettings() {
+    return `<div class="conceptSettingContainer my-5 d-flex flex-row justify-content-around">
+        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
+            <img src="../icons/next.png" class="conceptSettingIcon">
+        </div> 
+        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="randomizeValues">
+            <img src="../icons/next.png" class="conceptSettingIcon">
+        </div> 
+        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="resetEverything">
+            <img src="../icons/next.png" class="conceptSettingIcon">
+        </div>
+        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="randomizeStructure">
+            <img src="../icons/next.png" class="conceptSettingIcon">
+        </div>
+        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+            <img src="../icons/next.png" class="conceptSettingIcon">
+        </div>
+    </div>`
+}
+
+function generateLinesAndText() {
+    $("#fullsvg").empty()
+
+    let boundingRectArray = []
+
+    $(`.conceptAnimationColumn .conceptNode.active`).map(function () {
+        let boundingObj = this.getBoundingClientRect();
+
+        boundingRectArray.push(boundingObj)
+    })
+
+    // Given n nodes,n*(n-1)/2 will be the amount of connections connected to every other node.
+    let n = boundingRectArray.length;
+    let chance = 0;
+    let extraLine = 0;
+    for (let x = 0; x < n - 1; x++) {
+        let b1 = boundingRectArray[x]
+        let b2 = boundingRectArray[x + 1]
+
+        generateLineAndText(b1, b2, x, 5)
+        modifyGraphObjectBasedOnNumber(x, x + 1, 5)
+
+        if (Math.random() < chance) {
+            let randomNumber1 = generateRandomNumber(0, n - 1);
+            let randomNumber2 = generateRandomNumber(0, n - 2);
+
+            b1 = boundingRectArray[randomNumber1]
+            b2 = boundingRectArray[randomNumber2]
+
+            extraLine++;
+            generateLineAndText(b1, b2, extraLine + (n - 1))
+            modifyGraphObjectBasedOnNumber(randomNumber1, randomNumber2, 5)
+        }
+
+    }
+
+    var svg = window.btoa(($(`#fullsvg`)[0]).outerHTML)
+
+    $("#conceptAnimation").css("background-image", "url(data:image/svg+xml;base64," + svg + ")")
+}
+
+function modifyGraphObjectBasedOnNumber(start, end, weight) {//This adds neighbours to the graphobject, including the starting node
+    graphMapObject[String.fromCharCode("A".charCodeAt(0) + start)][String.fromCharCode("A".charCodeAt(0) + end)] = weight
+    graphMapObject[String.fromCharCode("A".charCodeAt(0) + end)][String.fromCharCode("A".charCodeAt(0) + start)] = weight
+    console.log(graphMapObject)
+}
+
+function generateLineAndText(boundingObj1, boundingObj2, idNumber, weight) {
+
+    $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr(
+        generateLineAttributes(boundingObj1, boundingObj2, idNumber)
+    ).appendTo("#fullsvg")
+
+    let textSVG = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'))
+
+    textSVG[0].innerHTML = weight//WEIGHT
+
+    textSVG.attr(
+        generateTextAttributes(boundingObj1, boundingObj2)
+    ).appendTo("#fullsvg")
+}
+
+function generateLineAttributes(b1, b2, pointer) {
+    let x1;
+    let y1;
+    let x2;
+    let y2;
+
+    if (b1.left == b2.left && b1.right == b2.right) {//If nodes are on top of one another
+        x1 = b1.left + b1.width / 2;
+        y1 = b1.bottom;
+
+        x2 = b2.left + b2.width / 2;
+        y2 = b2.top;
+    } else {
+        x1 = b1.left > b2.left ? b1.left : b1.right;
+        y1 = b1.top + b1.height / 2;
+
+        x2 = b2.left > b1.left ? b2.left : b2.right;
+        y2 = b2.top + b2.height / 2;
+    }
+
+    return {
+        id: "line" + pointer,
+        x1: x1 - $("#conceptAnimation").offset().left,
+        y1: y1 - $("#conceptAnimation").offset().top,
+        x2: x2 - $("#conceptAnimation").offset().left,
+        y2: y2 - $("#conceptAnimation").offset().top,
+        style: "stroke: black;stroke-width: 3;"
+    }
+}
+
+function generateTextAttributes(b1, b2) {
+
+    let lineAttributeObject = generateLineAttributes(b1, b2, 0)
+
+    return {
+        "font-size": `1em`,
+        x: (lineAttributeObject.x1 + lineAttributeObject.x2) / 2,
+        y: (lineAttributeObject.y1 + lineAttributeObject.y2) / 2 - 5,
+        fill: `black`
+    }
+}
+
+function generateNodeGraphGrid(x, y, chance) {
+    let returnArray = []
+    for (let a = 0; a < y; a++) {
+        returnArray.push([])
+        for (let b = 0; b < x; b++) {
+            if ((returnArray[a - 1] && returnArray[a - 1][b]) || (returnArray[a] && returnArray[a][b - 1])) {
+                returnArray[a].push(false)
+            } else {
+                let value = Math.random() < chance
+                returnArray[a].push(value)
+            }
+        }
+    }
+    return returnArray
+}
+
+function generateSelectedConceptDescription(x) {
+    $("#conceptDescriptionColumn").html(`
+        <div id="conceptTextDescription" class="h-50 bg-warning" >
+       
+        </div>
+        <div id="conceptTextDescription" class="h-50 bg-danger">
+            <div id="conceptDescriptionHeader" class="text-center mt-2">
+                ${conceptArray[x].conceptTitle}        
+            </div>
+            <hr class="divider" style="margin-left: 0.75rem;">
+            <div id="conceptDescriptionDescription" class="mx-3">
+                ${conceptArray[x].conceptDescription}   
+            </div>
+        </div>
+    `)
+}
+
+function goNext() {
+    
+    //$(`#conceptNode${String.fromCharCode("A".charCodeAt(0) + conceptPointer)}`).css("background-color", "red")
+    //conceptPointer++;
+}
+
+function goBack() {
+    //conceptPointer--;
+    //$(`#conceptNode${String.fromCharCode("A".charCodeAt(0) + conceptPointer)}`).css("background-color", "lightgrey")
+}
+
 
 //Admin Page
 function generateAdminPagination(pageArray) {//Move this to the under the database scope belowg jyf
@@ -902,8 +1260,9 @@ function generateAdminPage(pageObject, pageTitle) {
             <input class="mx-2 imageArrayFormControl" accept="image/*" type='file' id="profileImageInput" onchange="document.getElementById('profilePicture').src = window.URL.createObjectURL(this.files[0])" />
           </div>
             <div class="mt-2">
-          <label class="form-label">Description</label>
-          <textarea class="form-control textArea" id="adminMeDescription">${pageObject.meDescription}</textarea>
+          <label class="form-label">Descriptions</label>
+          <textarea class="form-control textArea adminMeDescription mt-1" id="adminMeDescription">${pageObject.meDescription}</textarea>
+          <textarea class="form-control textArea adminMeDescription mt-1" id="adminMeDescription1">${pageObject.meDescription1}</textarea>
         </div>
        
         <div class="mt-2">
@@ -935,6 +1294,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 let postData = {}
 
                 postData.meDescription = $(`#adminMeDescription`).val()//use html instead of val
+                postData.meDescription1 = $(`#adminMeDescription1`).val()//use html instead of val
 
                 if ($("#profileImageInput").prop('files').length) {
                     uploadImage({
@@ -1145,20 +1505,25 @@ $(document).ready(function () {
         if (snapshot.exists()) {
             generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
 
-            $("#navbarToggler").click(() => {//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
-                $("#navbarContactIconContainer").remove()
-                $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
-                generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
+            $("#navbarToggler").click(() => {//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom, Changed method
+                $("#navbarSupportedContent").removeClass("order-1")
+                $("#navbarSupportedContent").addClass("order-3")
             })
 
-            $(window).resize(() => {
-                //Handles after navbar toggler is clicked, makes contact icons go back to the original place
-                if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
-                    $("#navbarContactIconContainer").remove()
-                    $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
-                    generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
-                }
-            })
+            // $("#navbarToggler").click(() => {//Handles when navbar toggler is clicked, makes it so the contact icon isnt at the bottom
+            //     $("#navbarContactIconContainer").remove()
+            //     $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarToggler")
+            //     generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
+            // })
+
+            // $(window).resize(() => {
+            //     //Handles after navbar toggler is clicked, makes contact icons go back to the original place
+            //     if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
+            //         $("#navbarContactIconContainer").remove()
+            //         $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
+            //         generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
+            //     }
+            // })
         } else {
             throw new Error("Data does not exist!")
         }
@@ -1275,7 +1640,7 @@ $(document).ready(function () {
             generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
             switch (clickedID.slice(0, clickedID.length - 4)) {
                 case "meTab":
-                    $('#descDivider').animate({ width: "97%" }, 1000)
+                    $('.descDivider').animate({ width: "97%" }, 1000)
                     $('#titleDivider').animate({ width: "40%" }, 1000)
                     $('#softSkillDivider').animate({ width: "82%" }, 1000)
                     setTimeout(() => {
@@ -1285,6 +1650,7 @@ $(document).ready(function () {
                                 generateSkills(snapshot.val().meSkillObject)
                                 generatePersonalImage(snapshot.val().meImage)
                                 generateDescription(snapshot.val().meDescription)
+                                generateDescription1(snapshot.val().meDescription1)
                             } else {
                                 throw new Error("Data does not exist!")
                             }
@@ -1331,8 +1697,12 @@ $(document).ready(function () {
                     }, 1000)
                     break;
 
+                case "conceptsTab":
+                    setTimeout(() => {
+                        generateConcepts()
+                    }, 1000)
+
             }
-            console.log(('#' + clickedID.slice(0, clickedID.length - 4) + 'Content'))
             $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
         }
     });
@@ -1343,11 +1713,13 @@ $(document).ready(function () {
 
     $('.divider').css({ width: '0%' })
     $('#meTabContent').fadeIn('slow')
-    $('#descDivider').animate({ width: "97%" }, 1000)
+    $('.descDivider').animate({ width: "97%" }, 1000)
     $('#titleDivider').animate({ width: "40%" }, 1000)
     $('#softSkillDivider').animate({ width: "82%" }, 1000)
 
     //loading Information from mePage
+    //Load Footer
+    $("#footer").load("htmlComponents/footer.html")
     setTimeout(() => {
         get(child(database, "mePage")).then((snapshot) => {
             if (snapshot.exists()) {
@@ -1355,13 +1727,14 @@ $(document).ready(function () {
                 generateSkills(snapshot.val().meSkillObject)
                 generatePersonalImage(snapshot.val().meImage)
                 generateDescription(snapshot.val().meDescription)
+                generateDescription1(snapshot.val().meDescription1)
             } else {
                 throw new Error("Data does not exist!")
             }
         }).catch((error) => {
             console.error(error);
         }).finally(() => {
-            $('.contentContainer').height($(window).height() - $(`.navbar`).height());
+            //$('.contentContainer').height($(window).height() - $(`.navbar`).height());
         });
     }, 1000)
 
