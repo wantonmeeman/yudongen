@@ -19,6 +19,7 @@ const s3 = new S3Client({
 });
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyAuZ5UQ-hhmzen645TayrsRgXxP6l0ZvJ8",
     authDomain: "personalwebsite-b90a5.firebaseapp.com",
     databaseURL: "https://personalwebsite-b90a5-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -84,61 +85,25 @@ var selectedConceptID;
 var conceptArray = [
     {
         conceptID: 1,
-        conceptTitle: `TestAnimation2`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 2,
-        conceptTitle: `TestAnimation1`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 3,
-        conceptTitle: `TestAnimation2`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 4,
-        conceptTitle: `TestAnimation1`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 5,
-        conceptTitle: `TestAnimation2`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 6,
-        conceptTitle: `TestAnimation1`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 1,
-        conceptTitle: `TestAnimation2`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
-    },
-    {
-        conceptID: 2,
-        conceptTitle: `TestAnimation1`,
-        conceptSubTitle: `N^O`,
-        conceptDescription: `TestDescription`,
+        conceptTitle: `Dijkstra's Algorithim`,
+        conceptDescription: `Specifically the variant that finds the shortest paths from source to all other nodes.`,
     }
 ]
 
 var secretMeClickCounter = 0;
 
-var graphMapObject = {}//Contains all the data(vertices and edges)
+/*Concept Variables*/
 
-var graphMapObject = {}
+var graphUserDistance = []
 
-var conceptPointer = 0;
+var graphUserDistanceHistory = []//A nested array of distance history
+
+var graphArrayPointer = -1;//This decides where we are at in the graph 0 = "A",0 starting node,-1 ready position, this also dictates what is highlighted
+
+//I can definately combine these into 1 Array with objects. But it would not be effecient
+var graphGridNodeState = []//Nested Array, Stores were are nodes in state
+
+var graphNodeConnections = []//Nested Array, Index 1 = "A"
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -164,7 +129,6 @@ function changeLargeTextHeader(content) {
         }
     })
 }
-
 //Use append when events need to be added
 
 function returnProficiencyHTML(proficiency) {
@@ -233,8 +197,6 @@ function generateSkills(skillObject) {
     }
     $('#rightSkillContainer').html(skillHTML)
 }
-
-
 
 function generateMeCarouselImages(meImageArray) {
     let meCarouselIndicatorHTML = "";
@@ -499,7 +461,7 @@ function generateSpinnersForTab(tab) {
         case "conceptsTab":
             $(`#conceptColumn`).html(`<div id="conceptColumnSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>`)
 
-            $(`#conceptAnimationContainer`).html(`<div id="conceptAnimationSpinner" class="spinner-grow text-muted mx-auto my-5"></div>`)
+            $(`#conceptCenterContainer`).html(`<div id="conceptAnimationSpinner" class="spinner-grow text-muted mx-auto my-5"></div>`)
 
             $(`#conceptDescriptionColumn`).html(`<div id="conceptDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>`)
 
@@ -578,6 +540,8 @@ function generateTimeline(timelineArray) {
     }
 }
 
+/*Concept Functions*/
+
 function generateConcepts() {//Called everytime header is clicked on
 
     $(`#conceptColumnSpinner`).hide()
@@ -587,12 +551,9 @@ function generateConcepts() {//Called everytime header is clicked on
     for (let x = 0; conceptArray.length > x; x++) {
         $('#conceptColumn').append(`
             <div class="conceptMini d-flex" id="concept${x}">
-            <div class="textContainer my-3 ms-5">
+            <div class="textContainer my-3 ms-3">
                     <div class="conceptMiniTitle">
                     ${conceptArray[x].conceptTitle}
-                    </div>
-                    <div class="conceptMiniSubTitle">
-                    ${conceptArray[x].conceptSubTitle}
                     </div>
                     <div class="conceptMiniDescription">
                     ${conceptArray[x].conceptDescription}
@@ -623,33 +584,156 @@ function generateSelectedConceptColumn(x) {
     $('#concept' + x).addClass("active")
 }
 
-function generateSelectedConcept(x) {
-    var gridData = generateNodeGraphGrid(10, 10, 0.1)
-    $('#conceptAnimationContainer').html(`
-        <div class="container" id="conceptAnimation">
-                    ${generateConceptGridArr(gridData)}
-                    ${generateConceptSettings(x)}
-                <svg 
-                id="fullsvg" 
-                xmlns="http://www.w3.org/2000/svg">
-                </svg>   
+function generateSelectedConceptDescription(x) {
+    $("#conceptDescriptionColumn").html(`
+        <div id="conceptTextDescription" class="h-50 bg-danger">
+            <div id="conceptDescriptionHeader" class="text-center mt-2">
+                ${conceptArray[x].conceptTitle}        
+            </div>
+            <hr class="divider" style="margin-left: 0.75rem;">
+            <div id="conceptDescriptionDescription" class="mx-3">
+                ${conceptArray[x].conceptDescription}   
             </div>
         </div>
+        <div id="conceptGrid" class="h-50 bg-warning" >
+            ${generateUserDistance(graphUserDistance)}
+        </div>
     `)
-
-    /*setting event*/
-    $("#goNext").click(goNext)
-
-    $("#goBack").click(goBack)
-
-    $(window).resize(() => {
-        generateLinesAndText();
-    })
-
-    generateLinesAndText();
 }
 
-function generateConceptGridArr(array) {
+function generateSelectedConcept(x) {
+
+    switch (x) {
+        case 0:
+            //Generate User Graph States and Store into Array
+            graphUserDistance = []
+            graphUserDistanceHistory = []
+            graphArrayPointer = -1
+            graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)//Change X
+            graphNodeConnections = generateNodeConnections(graphGridNodeState);
+
+            //graphUserStatesArray = generateUserGraphStates(graphGridNodeState,graphNodeConnections);
+
+            generateSelectedConceptDescription(x)
+
+            $('#conceptCenterContainer').html(`
+                    <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
+                        ${renderConceptGrid(graphGridNodeState)}
+                        ${renderConceptControls(x)}
+                    <svg 
+                    id="fullsvg" 
+                    xmlns="http://www.w3.org/2000/svg">
+                    </svg>   
+                </div>
+            </div>
+        `)
+
+            /*setting event*/
+            $("#goNext").click(goNext)
+
+            $("#goBack").click(goBack)
+
+            $("#toggleAutoPlay").click(toggleAutoPlay)
+
+            $("#toggleGrid").click(toggleGrid)
+
+            $("#resetEverything").click(() => generateSelectedConcept(x))
+
+            $(window).resize(() => {
+                renderLinesAndText();
+            })
+
+            renderLinesAndText();
+            break;
+
+    }
+
+}
+
+function generateNodeGraphGrid(x, y, chance) {
+    let returnArray = []
+    for (let a = 0; a < y; a++) {
+        returnArray.push([])
+        for (let b = 0; b < x; b++) {
+            if ((returnArray[a - 1] && returnArray[a - 1][b]) || (returnArray[a] && returnArray[a][b - 1])) {
+                returnArray[a].push(false)
+            } else {
+                let value = Math.random() < chance
+                returnArray[a].push(value)
+            }
+        }
+    }
+    return returnArray
+}
+
+function generateNodeConnections(nodeGrid) {//This stores whether node A has a connection with B and its distance
+    let returnArray = []
+    let previousNodePointX = null;
+    let previousNodePointY = null;
+
+    let connectionPointer = 0;
+
+    // Given n nodes,n*(n-1)/2 will be the amount of connections connected to every other node.
+    for (var x = 0; x < nodeGrid.length; x++) {//Getting the Distance from A -> B first
+        for (var y = 0; y < nodeGrid[x].length; y++) {
+            if (nodeGrid[x][y]) {//Found a Node
+
+                //Assumes the closest path to next Node        
+                if (previousNodePointX != null && previousNodePointY != null) {
+
+                    let distanceBetweenNode = Number(Math.sqrt((Math.abs(previousNodePointX - x) ** 2 + Math.abs(previousNodePointY - y) ** 2)).toFixed(0))
+
+                    if (!returnArray[connectionPointer]) {
+                        returnArray[connectionPointer] = []
+                    }
+
+                    returnArray[connectionPointer][connectionPointer + 1] = distanceBetweenNode
+
+                    if (!returnArray[connectionPointer + 1]) {
+                        returnArray[connectionPointer + 1] = []
+                    }
+
+                    returnArray[connectionPointer + 1][connectionPointer] = distanceBetweenNode
+                    connectionPointer++;
+                }
+
+                previousNodePointX = x
+                previousNodePointY = y
+            }
+        }
+    }
+
+    for (let x = 0; returnArray.length > x; x++) {//Fill in Blank Spaces in Array, use -2 as last element is not the largest
+
+        if (Math.random() < 0.45) {//Generate Random Connection
+            let randomEndNode = generateRandomNumber(1, x);
+            if (!returnArray[x][randomEndNode] && !returnArray[randomEndNode][x] && x != randomEndNode) {//Both must not have anything, the end node cannot be the start node
+                returnArray[x][randomEndNode] = 10//Generate a random number here too
+                returnArray[randomEndNode][x] = 10
+            }
+        }
+
+        let concatArray = new Array(returnArray[returnArray.length - 2].length - returnArray[x].length).fill(null)//Get last Array's length
+        returnArray[x] = returnArray[x].concat(concatArray)
+
+        graphUserDistance[x] = 0
+        graphUserDistanceHistory[x + 1] = []
+    }
+
+    graphUserDistanceHistory[0] = graphUserDistance.slice(0)
+    console.log(graphUserDistanceHistory)
+    return returnArray
+}
+
+function renderNodeHighlight(character) {
+    $(`#conceptNode` + character).css("background-color", "red")
+}
+
+function unRenderNodeHighlight(character) {
+    $(`#conceptNode` + character).css("background-color", "grey")
+}
+
+function renderConceptGrid(array) {
 
     let returnString = ``
     let totalNodes = 0;
@@ -661,18 +745,16 @@ function generateConceptGridArr(array) {
         for (let y = 0; array[x].length > y; y++) {
             if (array[x][y]) {
                 returnString += `
-                <div class="conceptAnimationColumn col-sm d-flex justify-content-center ">
+                <div class="conceptAnimationColumn col-1 d-flex justify-content-center ">
                     <div class="d-flex align-items-center justify-content-center conceptNode active" id="conceptNode${String.fromCharCode("A".charCodeAt(0) + totalNodes)}">
                         ${String.fromCharCode("A".charCodeAt(0) + totalNodes)}
                     </div>
                 </div>`
 
-                graphMapObject[String.fromCharCode("A".charCodeAt(0) + totalNodes)] = {}//Setting all keys
-
                 totalNodes++;
             } else {
                 returnString += `
-                <div class="conceptAnimationColumn col-sm d-flex justify-content-center ">
+                <div class="conceptAnimationColumn col-1 d-flex justify-content-center ">
                     <div class="d-flex align-items-center justify-content-center conceptNode">
                     </div>
                 </div>`
@@ -686,77 +768,59 @@ function generateConceptGridArr(array) {
     return returnString
 }
 
-function generateConceptSettings() {
-    return `<div class="conceptSettingContainer my-5 d-flex flex-row justify-content-around">
+function renderConceptControls() {
+    return `
+    <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
         <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
             <img src="../icons/next.png" class="conceptSettingIcon">
         </div> 
-        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="randomizeValues">
-            <img src="../icons/next.png" class="conceptSettingIcon">
+        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
+            <img src="../icons/grid.svg" class="conceptSettingIcon">
         </div> 
-        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="resetEverything">
-            <img src="../icons/next.png" class="conceptSettingIcon">
-        </div>
-        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="randomizeStructure">
-            <img src="../icons/next.png" class="conceptSettingIcon">
-        </div>
+        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+            <img src="../icons/pause.svg" class="conceptSettingIcon">
+        </div> 
+        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+            <img src="../icons/reset.svg" class="conceptSettingIcon">
+        </div> 
         <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
             <img src="../icons/next.png" class="conceptSettingIcon">
         </div>
     </div>`
 }
 
-function generateLinesAndText() {
+function renderLinesAndText() {
     $("#fullsvg").empty()
 
-    let boundingRectArray = []
+    let boundingRectNodeArray = []
 
     $(`.conceptAnimationColumn .conceptNode.active`).map(function () {
         let boundingObj = this.getBoundingClientRect();
 
-        boundingRectArray.push(boundingObj)
+        boundingRectNodeArray.push(boundingObj)
     })
 
-    // Given n nodes,n*(n-1)/2 will be the amount of connections connected to every other node.
-    let n = boundingRectArray.length;
-    let chance = 0;
-    let extraLine = 0;
-    for (let x = 0; x < n - 1; x++) {
-        let b1 = boundingRectArray[x]
-        let b2 = boundingRectArray[x + 1]
-
-        generateLineAndText(b1, b2, x, 5)
-        modifyGraphObjectBasedOnNumber(x, x + 1, 5)
-
-        if (Math.random() < chance) {
-            let randomNumber1 = generateRandomNumber(0, n - 1);
-            let randomNumber2 = generateRandomNumber(0, n - 2);
-
-            b1 = boundingRectArray[randomNumber1]
-            b2 = boundingRectArray[randomNumber2]
-
-            extraLine++;
-            generateLineAndText(b1, b2, extraLine + (n - 1))
-            modifyGraphObjectBasedOnNumber(randomNumber1, randomNumber2, 5)
+    for (let x = 0; x < graphNodeConnections.length; x++) {
+        //Start Drawing the Node's Connections'
+        for (let y = 0; y < graphNodeConnections[x].length; y++) {
+            //Iterate through the Node's Connections'
+            if (graphNodeConnections[x][y] && x != graphNodeConnections.length - 1) {
+                let b1 = boundingRectNodeArray[x]
+                let b2 = boundingRectNodeArray[y]
+                renderLineAndText(b1, b2, graphNodeConnections[x][y], graphArrayPointer == x || graphArrayPointer == y)
+            }
         }
-
     }
 
-    var svg = window.btoa(($(`#fullsvg`)[0]).outerHTML)
+    var svg = window.btoa(($(`#fullsvg`)[0]).outerHTML)//set base64 svg as background
 
     $("#conceptAnimation").css("background-image", "url(data:image/svg+xml;base64," + svg + ")")
 }
 
-function modifyGraphObjectBasedOnNumber(start, end, weight) {//This adds neighbours to the graphobject, including the starting node
-    graphMapObject[String.fromCharCode("A".charCodeAt(0) + start)][String.fromCharCode("A".charCodeAt(0) + end)] = weight
-    graphMapObject[String.fromCharCode("A".charCodeAt(0) + end)][String.fromCharCode("A".charCodeAt(0) + start)] = weight
-    console.log(graphMapObject)
-}
-
-function generateLineAndText(boundingObj1, boundingObj2, idNumber, weight) {
+function renderLineAndText(boundingObj1, boundingObj2, weight, highlight) {
 
     $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr(
-        generateLineAttributes(boundingObj1, boundingObj2, idNumber)
+        generateLineAttributes(boundingObj1, boundingObj2, highlight)
     ).appendTo("#fullsvg")
 
     let textSVG = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'))
@@ -764,11 +828,11 @@ function generateLineAndText(boundingObj1, boundingObj2, idNumber, weight) {
     textSVG[0].innerHTML = weight//WEIGHT
 
     textSVG.attr(
-        generateTextAttributes(boundingObj1, boundingObj2)
+        generateTextAttributes(boundingObj1, boundingObj2, highlight)
     ).appendTo("#fullsvg")
 }
 
-function generateLineAttributes(b1, b2, pointer) {
+function generateLineAttributes(b1, b2, highlight) {
     let x1;
     let y1;
     let x2;
@@ -789,71 +853,108 @@ function generateLineAttributes(b1, b2, pointer) {
     }
 
     return {
-        id: "line" + pointer,
         x1: x1 - $("#conceptAnimation").offset().left,
         y1: y1 - $("#conceptAnimation").offset().top,
         x2: x2 - $("#conceptAnimation").offset().left,
         y2: y2 - $("#conceptAnimation").offset().top,
-        style: "stroke: black;stroke-width: 3;"
+        style: highlight ? `stroke: red;stroke-width: 3;` : `stroke: black;stroke-width: 2;`
     }
 }
 
-function generateTextAttributes(b1, b2) {
+function generateTextAttributes(b1, b2, highlight) {
 
     let lineAttributeObject = generateLineAttributes(b1, b2, 0)
 
     return {
-        "font-size": `1em`,
+        "font-size": highlight ? `1.25em` : `1em`,
         x: (lineAttributeObject.x1 + lineAttributeObject.x2) / 2,
         y: (lineAttributeObject.y1 + lineAttributeObject.y2) / 2 - 5,
-        fill: `black`
+        fill: highlight ? `red` : `black`
     }
 }
 
-function generateNodeGraphGrid(x, y, chance) {
-    let returnArray = []
-    for (let a = 0; a < y; a++) {
-        returnArray.push([])
-        for (let b = 0; b < x; b++) {
-            if ((returnArray[a - 1] && returnArray[a - 1][b]) || (returnArray[a] && returnArray[a][b - 1])) {
-                returnArray[a].push(false)
-            } else {
-                let value = Math.random() < chance
-                returnArray[a].push(value)
+function generateUserDistance(userDistanceArr) {
+    let returnString = ``
+
+    for (let x = 0; x < userDistanceArr.length; x++) {
+        returnString += `
+        <tr>
+            <th scope="row">${String.fromCharCode("A".charCodeAt(0) + x)}</th>
+            <td>${userDistanceArr[x]}</td>
+        </tr>
+        `
+    }
+
+    return `
+    <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Node</th>
+        <th scope="col">Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+        ${returnString}
+    </tbody>
+  </table>
+    `
+}
+
+function nextDijkstraStep() {//Go forward
+    for (var x = 0; graphNodeConnections[graphArrayPointer].length > x; x++) {//Checks all the connections between this node and other nodes
+        // console.log(graphNodeConnections, graphUserDistance, graphArrayPointer)
+
+        if (x != graphArrayPointer - 1) {//If the ignore setting distance to the previous node
+            if (graphNodeConnections[graphArrayPointer][x]) {//If there is a connection
+                let tempWeight = graphNodeConnections[graphArrayPointer][x] + graphUserDistance[graphArrayPointer]//Set the Temporary weight to Graph
+
+                if (graphUserDistance[x] == 0 || tempWeight < graphUserDistance[x]) {//If there is no distance, or the stored distance is more than the graph user distance
+                    graphUserDistance[x] = tempWeight
+                }
             }
         }
     }
-    return returnArray
+    graphUserDistanceHistory[graphArrayPointer + 1] = graphUserDistance.slice(0)//creates a new array, doesnt allow for pass by value
+
+    generateSelectedConceptDescription(0)
 }
 
-function generateSelectedConceptDescription(x) {
-    $("#conceptDescriptionColumn").html(`
-        <div id="conceptTextDescription" class="h-50 bg-warning" >
-       
-        </div>
-        <div id="conceptTextDescription" class="h-50 bg-danger">
-            <div id="conceptDescriptionHeader" class="text-center mt-2">
-                ${conceptArray[x].conceptTitle}        
-            </div>
-            <hr class="divider" style="margin-left: 0.75rem;">
-            <div id="conceptDescriptionDescription" class="mx-3">
-                ${conceptArray[x].conceptDescription}   
-            </div>
-        </div>
-    `)
-}
-
-function goNext() {
-    
-    //$(`#conceptNode${String.fromCharCode("A".charCodeAt(0) + conceptPointer)}`).css("background-color", "red")
-    //conceptPointer++;
+function lastDijkstraStep() {//Go back via history
+    console.log(graphUserDistanceHistory, graphUserDistanceHistory[graphArrayPointer])
+    graphUserDistance = graphUserDistanceHistory[graphArrayPointer].slice(0)
+    generateSelectedConceptDescription(0)
 }
 
 function goBack() {
-    //conceptPointer--;
-    //$(`#conceptNode${String.fromCharCode("A".charCodeAt(0) + conceptPointer)}`).css("background-color", "lightgrey")
+    if (graphArrayPointer != -1) {
+        unRenderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))//Will throw an error.
+        lastDijkstraStep()
+        graphArrayPointer--;
+
+
+        renderLinesAndText()
+    }
 }
 
+function toggleGrid() {
+    if ($(".conceptNode").css("border-style") == "none")
+        $(".conceptNode").css("border-style", "solid")
+    else
+        $(".conceptNode").css("border-style", "none")
+}
+
+function toggleAutoPlay() {
+
+}
+
+function goNext() {
+    if (graphArrayPointer != graphNodeConnections.length) {
+        graphArrayPointer++;
+        nextDijkstraStep()
+        renderLinesAndText()
+        renderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))
+    }
+}
 
 //Admin Page
 function generateAdminPagination(pageArray) {//Move this to the under the database scope belowg jyf

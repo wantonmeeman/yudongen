@@ -99,9 +99,15 @@ html {
    /* background-color: var(--mainBackgroundColor);*/
     overflow:hidden;
  } 
+
   .carousel {
     max-width: 85%;
     margin: 0 auto;
+  }
+
+  .table{
+    max-height: 100px;
+    table-layout: fixed;
   }
 
   .contentContainer{
@@ -114,6 +120,7 @@ html {
     transition: background-color var(--lightingModeAnim);
     background-color:var(--mainBackgroundColor);
   }
+
 
   .navbar {
     -webkit-transition: background-color var(--lightingModeAnim);
@@ -284,17 +291,13 @@ html {
     color: var(--mainTextColor);
   }
 
-  .projectMiniDescription, .conceptMiniSubTitle{
+  .projectMiniDescription{
     font-size:.7rem;
     -webkit-transition: color var(--lightingModeAnim);
     -moz-transition: color var(--lightingModeAnim);
     -o-transition: color var(--lightingModeAnim);
     transition: color var(--lightingModeAnim);
     color: var(--mainTextColor);
-  }
-
-  .conceptMiniSubTitle{
-    font-size: .85rem;
   }
 
   .conceptMiniDescription{
@@ -781,9 +784,12 @@ th,label{
 }
 
 .conceptNode{
-  width: 50px;
+  width: 50px; 
   height: 50px;
   border-radius: 50%;
+  border-style: none;
+  border-color: grey;
+  border-width: 2px;
 }
 
 .conceptNode.active{
@@ -797,9 +803,21 @@ th,label{
   transition: background-color var(--lightingModeAnim);
 }
 
+#conceptGrid{
+  overflow-y: scroll;
+}
+
 .conceptAnimation{
   display: flex;
   flex-direction: column;
+}
+
+.conceptAnimationRow{
+
+}
+
+.conceptAnimationColumn{
+  padding: 0;
 }
 
 .conceptSettingContainer{
@@ -814,6 +832,10 @@ th,label{
 
 }
 
+#conceptDescriptionColumn{
+  height: 100vh;
+}
+
 #fullsvg {
   position:absolute;
   left:0; top:0;
@@ -826,6 +848,10 @@ th,label{
 .conceptSettingIcon{
   height: 20px;
   width: 20px;
+}
+
+#goBack{
+  transform:rotate(180deg)
 }
 
 /* #footer{
