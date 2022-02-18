@@ -87,7 +87,12 @@ var conceptArray = [
         conceptID: 1,
         conceptTitle: `Dijkstra's Algorithim`,
         conceptDescription: `Specifically the variant that finds the shortest paths from source to all other nodes.`,
-    }
+    },
+    {
+        conceptID: 2,
+        conceptTitle: `Bubble Sort`,
+        conceptDescription: ``,
+    },
 ]
 
 var secretMeClickCounter = 0;
@@ -104,6 +109,8 @@ var graphArrayPointer = -1;//This decides where we are at in the graph 0 = "A",0
 var graphGridNodeState = []//Nested Array, Stores were are nodes in state
 
 var graphNodeConnections = []//Nested Array, Index 1 = "A"
+
+var conceptAutoPlayInterval = null;
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -585,7 +592,9 @@ function generateSelectedConceptColumn(x) {
 }
 
 function generateSelectedConceptDescription(x) {
-    $("#conceptDescriptionColumn").html(`
+    switch (x) {
+        case 0:
+            $("#conceptDescriptionColumn").html(`
         <div id="conceptTextDescription" class="h-50 bg-danger">
             <div id="conceptDescriptionHeader" class="text-center mt-2">
                 ${conceptArray[x].conceptTitle}        
@@ -598,23 +607,41 @@ function generateSelectedConceptDescription(x) {
         <div id="conceptGrid" class="h-50 bg-warning" >
             ${generateUserDistance(graphUserDistance)}
         </div>
-    `)
+        `)
+            break;
+        case 1:
+            $("#conceptDescriptionColumn").html(`
+        <div id="conceptTextDescription" class="h-100 bg-danger">
+            <div id="conceptDescriptionHeader" class="text-center mt-2">
+                ${conceptArray[x].conceptTitle}        
+            </div>
+            <hr class="divider" style="margin-left: 0.75rem;">
+            <div id="conceptDescriptionDescription" class="mx-3">
+                ${conceptArray[x].conceptDescription}   
+            </div>
+        </div>
+        `)
+            break;
+    }
+
 }
 
 function generateSelectedConcept(x) {
+    //Universal accross all demonstrations
+    generateSelectedConceptDescription(x)
+    conceptAutoPlayInterval = null
+
+    //Shortest Path Algorithim
+    graphUserDistance = []
+    graphUserDistanceHistory = []
+    graphArrayPointer = -1
 
     switch (x) {
-        case 0:
+        case 0://Dijkstra
             //Generate User Graph States and Store into Array
-            graphUserDistance = []
-            graphUserDistanceHistory = []
-            graphArrayPointer = -1
-            graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)//Change X
+
+            graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)
             graphNodeConnections = generateNodeConnections(graphGridNodeState);
-
-            //graphUserStatesArray = generateUserGraphStates(graphGridNodeState,graphNodeConnections);
-
-            generateSelectedConceptDescription(x)
 
             $('#conceptCenterContainer').html(`
                     <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
@@ -626,7 +653,7 @@ function generateSelectedConcept(x) {
                     </svg>   
                 </div>
             </div>
-        `)
+            `)
 
             /*setting event*/
             $("#goNext").click(goNext)
@@ -645,7 +672,16 @@ function generateSelectedConcept(x) {
 
             renderLinesAndText();
             break;
+        case 1:
 
+            
+
+            $('#conceptCenterContainer').html(`
+            <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
+
+            </div>
+            `)
+            break;
     }
 
 }
@@ -708,8 +744,9 @@ function generateNodeConnections(nodeGrid) {//This stores whether node A has a c
         if (Math.random() < 0.45) {//Generate Random Connection
             let randomEndNode = generateRandomNumber(1, x);
             if (!returnArray[x][randomEndNode] && !returnArray[randomEndNode][x] && x != randomEndNode) {//Both must not have anything, the end node cannot be the start node
-                returnArray[x][randomEndNode] = 10//Generate a random number here too
-                returnArray[randomEndNode][x] = 10
+                let randomConnectionWeight = generateRandomNumber(1, 7)
+                returnArray[x][randomEndNode] = randomConnectionWeight//Generate a random number here too
+                returnArray[randomEndNode][x] = randomConnectionWeight
             }
         }
 
@@ -778,7 +815,7 @@ function renderConceptControls() {
             <img src="../icons/grid.svg" class="conceptSettingIcon">
         </div> 
         <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
-            <img src="../icons/pause.svg" class="conceptSettingIcon">
+            <img src="../icons/play.svg" class="conceptSettingIcon">
         </div> 
         <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
             <img src="../icons/reset.svg" class="conceptSettingIcon">
@@ -876,7 +913,8 @@ function generateTextAttributes(b1, b2, highlight) {
 function generateUserDistance(userDistanceArr) {
     let returnString = ``
 
-    for (let x = 0; x < userDistanceArr.length; x++) {
+    for (let x = 0; x <= userDistanceArr.length; x++) {
+        console.log(userDistanceArr)
         returnString += `
         <tr>
             <th scope="row">${String.fromCharCode("A".charCodeAt(0) + x)}</th>
@@ -944,7 +982,16 @@ function toggleGrid() {
 }
 
 function toggleAutoPlay() {
-
+    if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
+        $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
+        conceptAutoPlayInterval = setInterval(() => {
+            goNext()
+        }, 2000)
+    } else {
+        $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+        clearInterval(conceptAutoPlayInterval)
+    }
+    console.log(conceptAutoPlayInterval)
 }
 
 function goNext() {
