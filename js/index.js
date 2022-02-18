@@ -80,18 +80,16 @@ var titleArray = [
 
 var selectedProjectID;
 
-var selectedConceptID;
+var selectedConceptIteration;
 
 var conceptArray = [
     {
-        conceptID: 1,
         conceptTitle: `Dijkstra's Algorithim`,
         conceptDescription: `Specifically the variant that finds the shortest paths from source to all other nodes.`,
     },
     {
-        conceptID: 2,
-        conceptTitle: `Bubble Sort`,
-        conceptDescription: ``,
+        conceptTitle: `Bubble Sort `,
+        conceptDescription: `[O(n^2)]`,
     },
 ]
 
@@ -105,12 +103,13 @@ var graphUserDistanceHistory = []//A nested array of distance history
 
 var graphArrayPointer = -1;//This decides where we are at in the graph 0 = "A",0 starting node,-1 ready position, this also dictates what is highlighted
 
-//I can definately combine these into 1 Array with objects. But it would not be effecient
-var graphGridNodeState = []//Nested Array, Stores were are nodes in state
-
 var graphNodeConnections = []//Nested Array, Index 1 = "A"
 
 var conceptAutoPlayInterval = null;
+
+var conceptSorted = false;
+
+var conceptSortArray = []
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -568,7 +567,7 @@ function generateConcepts() {//Called everytime header is clicked on
                 </div>
             </div>`)
 
-        if (selectedConceptID && conceptArray[x].conceptID == selectedConceptID) {//Handles when nothing is selected
+        if (selectedConceptIteration && x == selectedConceptIteration) {//Handles when nothing is selected
 
             generateSelectedConceptColumn(x)
             generateSelectedConcept(x)
@@ -576,7 +575,7 @@ function generateConcepts() {//Called everytime header is clicked on
         }
 
         $('#concept' + x).click(() => {
-            selectedConceptID = conceptArray[x].conceptID
+            selectedConceptIteration = x
 
             generateSelectedConceptColumn(x)
             generateSelectedConcept(x)
@@ -627,21 +626,19 @@ function generateSelectedConceptDescription(x) {
 }
 
 function generateSelectedConcept(x) {
-    //Universal accross all demonstrations
-    generateSelectedConceptDescription(x)
-    conceptAutoPlayInterval = null
 
     //Shortest Path Algorithim
     graphUserDistance = []
     graphUserDistanceHistory = []
     graphArrayPointer = -1
+    clearInterval(conceptAutoPlayInterval)
 
     switch (x) {
         case 0://Dijkstra
             //Generate User Graph States and Store into Array
 
-            graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)
-            graphNodeConnections = generateNodeConnections(graphGridNodeState);
+            let graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)//Nested Array, Stores were are nodes in state
+            graphNodeConnections = generateNodeConnections(graphGridNodeState);//this needs to be a global variable
 
             $('#conceptCenterContainer').html(`
                     <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
@@ -656,15 +653,7 @@ function generateSelectedConcept(x) {
             `)
 
             /*setting event*/
-            $("#goNext").click(goNext)
 
-            $("#goBack").click(goBack)
-
-            $("#toggleAutoPlay").click(toggleAutoPlay)
-
-            $("#toggleGrid").click(toggleGrid)
-
-            $("#resetEverything").click(() => generateSelectedConcept(x))
 
             $(window).resize(() => {
                 renderLinesAndText();
@@ -673,17 +662,112 @@ function generateSelectedConcept(x) {
             renderLinesAndText();
             break;
         case 1:
-
-            
+            conceptSorted = false;
+            conceptSortArray = generateBarGraph(1000, 1, 500)
 
             $('#conceptCenterContainer').html(`
             <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
-
+                <div id="conceptBarContainer" class="d-flex align-items-end">
+                </div>
+                ${renderConceptControls(x)}
             </div>
             `)
+
+            renderConceptBar(conceptSortArray)
+
             break;
     }
 
+
+    //Universal accross all demonstrations
+    setConceptControlsListeners(x)
+    generateSelectedConceptDescription(x)
+}
+
+function setConceptControlsListeners(x) {
+    switch (x) {
+        case 0:
+            $("#goNext").click(() => {
+                if (graphArrayPointer != graphNodeConnections.length) {
+                    graphArrayPointer++;
+                    nextDijkstraStep()
+                    renderLinesAndText()
+                    renderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))
+                }
+            })
+
+            $("#goBack").click(() => {
+                if (graphArrayPointer != -1) {
+                    unRenderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))//Will throw an error.
+                    lastDijkstraStep()
+                    graphArrayPointer--;
+
+                    renderLinesAndText()
+                }
+            })
+
+            $("#toggleAutoPlay").click(() => {
+                if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
+                    conceptAutoPlayInterval = setInterval(() => {
+                        if (graphArrayPointer != graphNodeConnections.length) {
+                            graphArrayPointer++;
+                            nextDijkstraStep()
+                            renderLinesAndText()
+                            renderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))
+                        }
+                    }, 2000)
+                } else {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                    clearInterval(conceptAutoPlayInterval)
+                }
+                console.log(conceptAutoPlayInterval)
+            })
+
+            $("#toggleGrid").click(() => {
+                if ($(".conceptNode").css("border-style") == "none")
+                    $(".conceptNode").css("border-style", "solid")
+                else
+                    $(".conceptNode").css("border-style", "none")
+            })
+
+            $("#resetEverything").click(() => generateSelectedConcept(x))
+
+            break;
+        case 1:
+            $("#goNext").click(() => {
+                if (conceptSorted) {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                    clearInterval(conceptAutoPlayInterval)
+                } else {
+                    nextBubbleSortStep()
+                    renderConceptBar(conceptSortArray)
+                }
+            })
+
+            $("#toggleAutoPlay").click(() => {
+                if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
+                    conceptAutoPlayInterval = setInterval(() => {
+                        if (conceptSorted) {
+                            $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                            clearInterval(conceptAutoPlayInterval)
+                        } else {
+                            nextBubbleSortStep()
+                            renderConceptBar(conceptSortArray)
+                        }
+                        console.log("bluface")
+                    }, 50)
+                } else {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                    clearInterval(conceptAutoPlayInterval)
+                }
+            })
+
+            $("#resetEverything").click(() => generateSelectedConcept(x))
+
+            break;
+    }
 }
 
 function generateNodeGraphGrid(x, y, chance) {
@@ -762,6 +846,15 @@ function generateNodeConnections(nodeGrid) {//This stores whether node A has a c
     return returnArray
 }
 
+function generateBarGraph(length, min, max) {
+    let returnArray = new Array(length)
+
+    for (let x = 0; x < returnArray.length; x++) {
+        returnArray[x] = generateRandomNumber(min, max)
+    }
+    return returnArray
+}
+
 function renderNodeHighlight(character) {
     $(`#conceptNode` + character).css("background-color", "red")
 }
@@ -805,25 +898,71 @@ function renderConceptGrid(array) {
     return returnString
 }
 
-function renderConceptControls() {
-    return `
-    <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
-        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
-            <img src="../icons/next.png" class="conceptSettingIcon">
-        </div> 
-        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
-            <img src="../icons/grid.svg" class="conceptSettingIcon">
-        </div> 
-        <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
-            <img src="../icons/play.svg" class="conceptSettingIcon">
-        </div> 
-        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
-            <img src="../icons/reset.svg" class="conceptSettingIcon">
-        </div> 
-        <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
-            <img src="../icons/next.png" class="conceptSettingIcon">
-        </div>
-    </div>`
+function renderConceptBar(array) {
+    let returnString = ``
+
+    for (let x = 0; array.length > x; x++) {
+        returnString += `<div class="conceptBar d-flex" style="height:${array[x]}px" ></div>`
+    }
+
+    $("#conceptBarContainer").html(returnString)
+}
+
+function renderConceptControls(x) {
+
+    switch (x) {
+        case 0:
+            return `
+            <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
+                    <img src="../icons/next.png" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
+                    <img src="../icons/grid.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                    <img src="../icons/play.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+                    <img src="../icons/reset.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+                    <img src="../icons/next.png" class="conceptSettingIcon">
+                </div>
+            </div>`
+        case 1:
+            return `<div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+                <img src="../icons/reset.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                <img src="../icons/play.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+                <img src="../icons/next.png" class="conceptSettingIcon">
+            </div>
+        </div>`
+    }
+
+}
+
+function nextBubbleSortStep() {
+    let swapped = false;
+    let tempVal;
+
+    for (let x = 0; x < conceptSortArray.length; x++) {
+        if (conceptSortArray[x] > conceptSortArray[x + 1]) {
+            swapped = true;
+
+            tempVal = conceptSortArray[x]
+
+            conceptSortArray[x] = conceptSortArray[x + 1]
+
+            conceptSortArray[x + 1] = tempVal
+            /*JQUERY/CSS Code */
+        }
+    }
+    conceptSorted = !swapped;
 }
 
 function renderLinesAndText() {
@@ -961,46 +1100,6 @@ function lastDijkstraStep() {//Go back via history
     console.log(graphUserDistanceHistory, graphUserDistanceHistory[graphArrayPointer])
     graphUserDistance = graphUserDistanceHistory[graphArrayPointer].slice(0)
     generateSelectedConceptDescription(0)
-}
-
-function goBack() {
-    if (graphArrayPointer != -1) {
-        unRenderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))//Will throw an error.
-        lastDijkstraStep()
-        graphArrayPointer--;
-
-
-        renderLinesAndText()
-    }
-}
-
-function toggleGrid() {
-    if ($(".conceptNode").css("border-style") == "none")
-        $(".conceptNode").css("border-style", "solid")
-    else
-        $(".conceptNode").css("border-style", "none")
-}
-
-function toggleAutoPlay() {
-    if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
-        $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
-        conceptAutoPlayInterval = setInterval(() => {
-            goNext()
-        }, 2000)
-    } else {
-        $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
-        clearInterval(conceptAutoPlayInterval)
-    }
-    console.log(conceptAutoPlayInterval)
-}
-
-function goNext() {
-    if (graphArrayPointer != graphNodeConnections.length) {
-        graphArrayPointer++;
-        nextDijkstraStep()
-        renderLinesAndText()
-        renderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))
-    }
 }
 
 //Admin Page
