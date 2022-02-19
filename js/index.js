@@ -69,8 +69,10 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     carouselNextIcon: [`url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23d1d1d1'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");`, `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000000'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")`]
 }
 
+
 var titleArrayIterable = 0;
 
+/*Move these out of the global scope*/
 var titleArray = [
     "Hi there!",
     "你好",
@@ -88,28 +90,53 @@ var conceptArray = [
         conceptDescription: `Specifically the variant that finds the shortest paths from source to all other nodes.`,
     },
     {
-        conceptTitle: `Bubble Sort `,
+        conceptTitle: `Bubble Sort`,
         conceptDescription: `[O(n^2)]`,
     },
+    {
+        conceptTitle: `Binary Search`,
+        conceptDescription: `TestValue`,
+    }
 ]
 
 var secretMeClickCounter = 0;
 
-/*Concept Variables*/
+/*Concept Global Variables*/
+
+var conceptAutoPlayInterval = null;
+
+/*Concept Graph */
 
 var graphUserDistance = []
 
 var graphUserDistanceHistory = []//A nested array of distance history
 
-var graphArrayPointer = -1;//This decides where we are at in the graph 0 = "A",0 starting node,-1 ready position, this also dictates what is highlighted
+var graphArrayPointer = -1;//This decides where we are at in the graph 0 = "A",0 starting node,-1 ready position, this also dictates what is conceptHighlightedBar
 
 var graphNodeConnections = []//Nested Array, Index 1 = "A"
 
-var conceptAutoPlayInterval = null;
+/*Concept Sort*/
 
 var conceptSorted = false;
 
+var conceptBarSwapped = false;
+
 var conceptSortArray = []
+
+var conceptHighlightedBarHigher = 0;
+
+var conceptHighlightedBarLower = 0;
+
+var conceptIterator = 0;
+
+var conceptSpeed = 0;
+
+/*Concept Search*/
+
+var conceptTargetNumber = 0;
+
+var conceptSearchStatus = false;
+
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -267,26 +294,32 @@ function generateSelectedProjectDescription(projectObject) {
         complete: function () {
             $('#projectCarouselContent').empty()
             $('#projectCarouselIndicators').empty()
-            for (let y = 0; projectObject.projectImageArray.length > y; y++) {
-                if (!y) {
-                    $('#projectCarouselIndicators').append(`
-                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
-                    `)
-                } else {
-                    $('#projectCarouselIndicators').append(`
-                    <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
-                   `)
+            if (projectObject.projectImageArray) {
+                $(`#projectsCarouselExampleControls`).show()
+                for (let y = 0; projectObject.projectImageArray.length > y; y++) {
+                    if (!y) {
+                        $('#projectCarouselIndicators').append(`
+                        <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}" class="active"}></li>
+                        `)
+                    } else {
+                        $('#projectCarouselIndicators').append(`
+                        <li data-bs-target="#projectsCarouselExampleControls" data-bs-slide-to="${y}"}></li>
+                       `)
+                    }
+                    $('#projectCarouselContent').append(`
+                        <div class="carousel-item ${y == 0 ? "active" : ""}">
+                        <div class="d-flex imageCarouselContainer">
+                    <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem " alt="..." />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
+                        <p class="carouselImageSubtitle">${projectObject.projectImageArray[y].imageSubTitle}</p>
+                    </div>
+                </div>`)
                 }
-                $('#projectCarouselContent').append(`
-                    <div class="carousel-item ${y == 0 ? "active" : ""}">
-                    <div class="d-flex imageCarouselContainer">
-                <img src="${bucketLink + projectObject.projectImageArray[y].imageSource}" class="imageCarouselItem " alt="..." />
-                <div class="carousel-caption d-none d-md-block">
-                    <h5 class="carouselImageTitle">${projectObject.projectImageArray[y].imageTitle}</h5>
-                    <p class="carouselImageSubtitle">${projectObject.projectImageArray[y].imageSubTitle}</p>
-                </div>
-            </div>`)
+            } else {
+                $(`#projectsCarouselExampleControls`).hide()
             }
+
 
             $('#projectImageContainer').css("margin-left", "-10%")
             $('#projectImageContainer').animate({
@@ -535,7 +568,7 @@ function generateTimeline(timelineArray) {
             )
             if (timelineArray[x].events[y].type == "project" && timelineArray[x].events[y].projectID) {
                 $(`#event${x}${y}`).click(() => {
-                    $('.navbar-nav li a').trigger("click")//How does this take me to projects? I dont know but im not changing the code
+                    $('.navbar-nav li').children().eq(2).trigger("click")
                     selectedProjectID = timelineArray[x].events[y].projectID
                 })
             }
@@ -621,6 +654,18 @@ function generateSelectedConceptDescription(x) {
         </div>
         `)
             break;
+        case 2:
+            $("#conceptDescriptionColumn").html(`
+        <div id="conceptTextDescription" class="h-100 bg-danger">
+            <div id="conceptDescriptionHeader" class="text-center mt-2">
+                ${conceptArray[x].conceptTitle}        
+            </div>
+            <hr class="divider" style="margin-left: 0.75rem;">
+            <div id="conceptDescriptionDescription" class="mx-3">
+                ${conceptArray[x].conceptDescription}   
+            </div>
+        </div>
+        `)
     }
 
 }
@@ -633,6 +678,8 @@ function generateSelectedConcept(x) {
     graphArrayPointer = -1
     clearInterval(conceptAutoPlayInterval)
 
+    $(window).unbind(`resize`)
+
     switch (x) {
         case 0://Dijkstra
             //Generate User Graph States and Store into Array
@@ -643,7 +690,6 @@ function generateSelectedConcept(x) {
             $('#conceptCenterContainer').html(`
                     <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
                         ${renderConceptGrid(graphGridNodeState)}
-                        ${renderConceptControls(x)}
                     <svg 
                     id="fullsvg" 
                     xmlns="http://www.w3.org/2000/svg">
@@ -654,24 +700,50 @@ function generateSelectedConcept(x) {
 
             /*setting event*/
 
-
             $(window).resize(() => {
                 renderLinesAndText();
             })
 
             renderLinesAndText();
+
             break;
         case 1:
             conceptSorted = false;
+
+            conceptBarSwapped = false;
+
+            conceptHighlightedBarHigher = 0;
+
+            conceptHighlightedBarLower = 0;
+
+            conceptIterator = 0;
+
             conceptSortArray = generateBarGraph(1000, 1, 500)
 
             $('#conceptCenterContainer').html(`
             <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
-                <div id="conceptBarContainer" class="d-flex align-items-end">
+                <div id="conceptBarContainer" class="d-flex align-items-end justify-content-center">
                 </div>
-                ${renderConceptControls(x)}
             </div>
             `)
+
+            renderConceptBar(conceptSortArray)
+
+            break;
+        case 2:
+            conceptSearchStatus = false;
+            conceptSortArray = generateSortedBarGraph(1000, 1, 500)
+            conceptTargetNumber = generateRandomNumber(1, 500)
+            
+            //Reusing variables,what could go wrong? 
+            //we can theorically use the last array we sorted too
+
+            $('#conceptCenterContainer').html(`
+                <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
+                    <div id="conceptBarContainer" class="d-flex align-items-end justify-content-center">
+                    </div>
+                </div>
+                `)
 
             renderConceptBar(conceptSortArray)
 
@@ -687,8 +759,28 @@ function generateSelectedConcept(x) {
 function setConceptControlsListeners(x) {
     switch (x) {
         case 0:
+
+            $("#conceptAnimation").append(`
+            <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
+                    <img src="../icons/next.png" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
+                    <img src="../icons/grid.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                    <img src="../icons/play.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+                    <img src="../icons/reset.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+                    <img src="../icons/next.png" class="conceptSettingIcon">
+                </div>
+            </div>`)
+
             $("#goNext").click(() => {
-                if (graphArrayPointer != graphNodeConnections.length) {
+                if (graphArrayPointer != graphNodeConnections.length - 1) {
                     graphArrayPointer++;
                     nextDijkstraStep()
                     renderLinesAndText()
@@ -710,7 +802,7 @@ function setConceptControlsListeners(x) {
                 if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
                     $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
                     conceptAutoPlayInterval = setInterval(() => {
-                        if (graphArrayPointer != graphNodeConnections.length) {
+                        if (graphArrayPointer != graphNodeConnections.length - 1) {
                             graphArrayPointer++;
                             nextDijkstraStep()
                             renderLinesAndText()
@@ -735,9 +827,25 @@ function setConceptControlsListeners(x) {
 
             break;
         case 1:
+
+            $("#conceptAnimation").append(`
+            <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+                <img src="../icons/reset.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                <img src="../icons/play.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleSpeed">
+                <img src="../icons/speed1.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+                <img src="../icons/next.png" class="conceptSettingIcon">
+            </div>
+        </div>`)
+
             $("#goNext").click(() => {
                 if (conceptSorted) {
-                    $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
                     clearInterval(conceptAutoPlayInterval)
                 } else {
                     nextBubbleSortStep()
@@ -756,7 +864,6 @@ function setConceptControlsListeners(x) {
                             nextBubbleSortStep()
                             renderConceptBar(conceptSortArray)
                         }
-                        console.log("bluface")
                     }, 50)
                 } else {
                     $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
@@ -764,8 +871,64 @@ function setConceptControlsListeners(x) {
                 }
             })
 
+            $("#toggleSpeed").click(() => {
+                if ($("#toggleSpeed").children().attr("src") == `../icons/speed1.svg`) {
+                    conceptSpeed = 1
+                    conceptIterator = 0;//Set iteration back to start
+                    $("#toggleSpeed").children().attr("src", `../icons/speed2.svg`)
+
+                } else {
+                    conceptSpeed = 0
+                    $("#toggleSpeed").children().attr("src", `../icons/speed1.svg`)
+
+                }
+            })
+
             $("#resetEverything").click(() => generateSelectedConcept(x))
 
+            break;
+        case 2:
+            $("#conceptAnimation").append(`
+            <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
+                <img src="../icons/reset.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                <img src="../icons/play.svg" class="conceptSettingIcon">
+            </div> 
+            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
+                <img src="../icons/next.png" class="conceptSettingIcon">
+            </div>
+        </div>`)
+
+            $("#goNext").click(() => {
+                if (conceptSearchStatus) {
+                    clearInterval(conceptAutoPlayInterval)
+                } else {
+                    nextBinarySearchStep()
+                    renderConceptBar(conceptSortArray)
+                }
+            })
+
+            $("#toggleAutoPlay").click(() => {
+                if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
+                    conceptAutoPlayInterval = setInterval(() => {
+                        if (conceptSearchStatus) {
+                            $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                            clearInterval(conceptAutoPlayInterval)
+                        } else {
+                            nextBinarySearchStep()
+                            renderConceptBar(conceptSortArray)
+                        }
+                    }, 500)
+                } else {
+                    $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                    clearInterval(conceptAutoPlayInterval)
+                }
+            })
+
+            $("#resetEverything").click(() => generateSelectedConcept(x))
             break;
     }
 }
@@ -842,7 +1005,6 @@ function generateNodeConnections(nodeGrid) {//This stores whether node A has a c
     }
 
     graphUserDistanceHistory[0] = graphUserDistance.slice(0)
-    console.log(graphUserDistanceHistory)
     return returnArray
 }
 
@@ -853,6 +1015,15 @@ function generateBarGraph(length, min, max) {
         returnArray[x] = generateRandomNumber(min, max)
     }
     return returnArray
+}
+
+function generateSortedBarGraph(length, min, max) {
+    let returnArray = new Array(length)
+
+    for (let x = 0; x < returnArray.length; x++) {
+        returnArray[x] = generateRandomNumber(min, max)
+    }
+    return returnArray.sort((a, b) => { return a - b })//For simplicity
 }
 
 function renderNodeHighlight(character) {
@@ -902,67 +1073,83 @@ function renderConceptBar(array) {
     let returnString = ``
 
     for (let x = 0; array.length > x; x++) {
-        returnString += `<div class="conceptBar d-flex" style="height:${array[x]}px" ></div>`
+        if (conceptHighlightedBarHigher == x) {
+            returnString += `<div class="conceptBar conceptHighlightedBarHigher" style="height:${array[x]}px" ></div>`
+        } else if (conceptHighlightedBarLower == x) {
+            returnString += `<div class="conceptBar conceptHighlightedBarLower" style="height:${array[x]}px" ></div>`
+        } else {
+            returnString += `<div class="conceptBar" style="height:${array[x]}px" ></div>`
+        }
     }
 
     $("#conceptBarContainer").html(returnString)
 }
 
-function renderConceptControls(x) {
+function nextBubbleSortStep() {
+    if (conceptSpeed == 0) {
+        if (conceptIterator == conceptSortArray.length) {
+            conceptIterator = 0;
+            conceptSorted = !conceptBarSwapped
+            conceptBarSwapped = false
+        } else {
+            if (bubbleSortIteration(conceptIterator,conceptSpeed)) {
+                conceptBarSwapped = true;
+            }
+            conceptIterator++;
+        }
+    } else if (conceptSpeed == 1) {//Faster
+        conceptBarSwapped = false
 
-    switch (x) {
-        case 0:
-            return `
-            <div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
-                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
-                    <img src="../icons/next.png" class="conceptSettingIcon">
-                </div> 
-                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
-                    <img src="../icons/grid.svg" class="conceptSettingIcon">
-                </div> 
-                <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
-                    <img src="../icons/play.svg" class="conceptSettingIcon">
-                </div> 
-                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
-                    <img src="../icons/reset.svg" class="conceptSettingIcon">
-                </div> 
-                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
-                    <img src="../icons/next.png" class="conceptSettingIcon">
-                </div>
-            </div>`
-        case 1:
-            return `<div class="conceptSettingContainer d-flex flex-row justify-content-around my-2">
-            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
-                <img src="../icons/reset.svg" class="conceptSettingIcon">
-            </div> 
-            <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
-                <img src="../icons/play.svg" class="conceptSettingIcon">
-            </div> 
-            <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
-                <img src="../icons/next.png" class="conceptSettingIcon">
-            </div>
-        </div>`
+        for (let x = 0; x < conceptSortArray.length; x++) {
+
+            if (bubbleSortIteration(x,conceptSpeed)) {
+                conceptBarSwapped = true;
+            }
+
+        }
+
+        conceptSorted = !conceptBarSwapped
     }
 
 }
 
-function nextBubbleSortStep() {
-    let swapped = false;
+function bubbleSortIteration(x,speed) {
     let tempVal;
+    if (conceptSortArray[x] > conceptSortArray[x + 1]) {//If swapped
 
-    for (let x = 0; x < conceptSortArray.length; x++) {
-        if (conceptSortArray[x] > conceptSortArray[x + 1]) {
-            swapped = true;
+        tempVal = conceptSortArray[x]
 
-            tempVal = conceptSortArray[x]
+        conceptSortArray[x] = conceptSortArray[x + 1]
 
-            conceptSortArray[x] = conceptSortArray[x + 1]
-
-            conceptSortArray[x + 1] = tempVal
-            /*JQUERY/CSS Code */
-        }
+        conceptSortArray[x + 1] = tempVal
+        conceptHighlightedBarLower = x
+        conceptHighlightedBarHigher = x + 1
+        return true
     }
-    conceptSorted = !swapped;
+    if(speed == 0){
+        conceptHighlightedBarLower = x
+        conceptHighlightedBarHigher = x + 1
+    }
+    return false
+}
+
+function nextBinarySearchStep() {
+
+    if (conceptSortArray) {
+        const middleIndex = Math.ceil(conceptSortArray.length / 2);
+
+        if (conceptSortArray[middleIndex] == conceptTargetNumber)
+            conceptSearchStatus = true;
+
+        if (conceptSortArray[middleIndex] > conceptTargetNumber) {//This means the target number is in the left array
+            conceptSortArray = conceptSortArray.slice(0, middleIndex)
+        } else {//This means the target number is in the right array
+            conceptSortArray = conceptSortArray.slice(-middleIndex)
+        }
+
+    } else {
+        conceptSearchStatus = true;//true  here means ust done
+    }
 }
 
 function renderLinesAndText() {
@@ -1050,10 +1237,10 @@ function generateTextAttributes(b1, b2, highlight) {
 }
 
 function generateUserDistance(userDistanceArr) {
+    console.log(userDistanceArr)
     let returnString = ``
 
-    for (let x = 0; x <= userDistanceArr.length; x++) {
-        console.log(userDistanceArr)
+    for (let x = 0; x < userDistanceArr.length; x++) {
         returnString += `
         <tr>
             <th scope="row">${String.fromCharCode("A".charCodeAt(0) + x)}</th>
@@ -1067,7 +1254,7 @@ function generateUserDistance(userDistanceArr) {
     <thead>
       <tr>
         <th scope="col">Node</th>
-        <th scope="col">Weight</th>
+        <th scope="col">Shortest Distance</th>
       </tr>
     </thead>
     <tbody>
@@ -1763,14 +1950,16 @@ $(document).ready(function () {
             //     generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
             // })
 
-            // $(window).resize(() => {
-            //     //Handles after navbar toggler is clicked, makes contact icons go back to the original place
-            //     if ($(window).width() >= 576 && $("#navbar").children().eq(3).attr("id") != "navbarContactIconContainer") {
-            //         $("#navbarContactIconContainer").remove()
-            //         $(`<div class="mx-2 justify-content-start d-flex flex-row-reverses" id="navbarContactIconContainer"></div>`).insertAfter("#navbarSupportedContent")
-            //         generateNavbarContactIcons(snapshot.val().navbarContactIconArray)
-            //     }
-            // })
+            $(window).resize(() => {
+                //Handles after navbar toggler is clicked, makes contact icons go back to the original place
+                if ($(window).width() >= 992) {
+                    $("#navbarSupportedContent").addClass("order-1")
+                    $("#navbarSupportedContent").removeClass("order-3")
+                } else {
+                    $("#navbarSupportedContent").removeClass("order-1")
+                    $("#navbarSupportedContent").addClass("order-3")
+                }
+            })
         } else {
             throw new Error("Data does not exist!")
         }
@@ -1950,6 +2139,7 @@ $(document).ready(function () {
                     }, 1000)
 
             }
+            clearInterval(conceptAutoPlayInterval)
             $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
         }
     });
