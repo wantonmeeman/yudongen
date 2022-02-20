@@ -791,7 +791,7 @@ th,label{
 }
 
 .conceptBar{
-  width: 1px;/*just need to state a number*/
+  width: 100%;
   background-color: grey;
 }
 
@@ -803,6 +803,24 @@ th,label{
 .conceptBar.conceptHighlightedBarLower{
   /*width:10px;*/
   background-color: blue;
+}
+
+.conceptBar.conceptHighlightedUnusedBar{
+  background-color: yellow;
+}
+
+/*sort*/
+
+.conceptBar.conceptHighlightedTargetBar{
+  background-color: purple;
+}
+
+.conceptBar.conceptHighlightedSplitBar{
+  background-color: red;
+}
+
+.conceptBar.conceptHighlightedSplitBar.conceptHighlightedTargetBar{
+ background-color: green;
 }
 
 .conceptNode{
@@ -855,7 +873,7 @@ table tbody{
 }
 
 #conceptDescriptionColumn{
-  height: 100%;
+
 }
 
 #fullsvg {
@@ -876,17 +894,30 @@ table tbody{
   transform:rotate(180deg)
 }
 
-/* #footer{
-  height: 75px;  
+.valueWrapper{
+  background-color: #3264fe;
+  position: relative;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 50%;
+  font-family: "Poppins",sans-serif;
   -webkit-transition: background-color var(--lightingModeAnim);
   -moz-transition: background-color var(--lightingModeAnim);
   -o-transition: background-color var(--lightingModeAnim);
   transition: background-color var(--lightingModeAnim);
-  background-color:var(--navbarBackgroundColor)
-} */
+  color: var(--mainTextColor);
+  margin: auto;
+}
 
-
-
-
-
-
+.valueWrapperTriangle{
+  width: 1%;
+  display: block;
+  border-bottom: 15px solid #3264fe;
+  -webkit-transition: border-bottom var(--lightingModeAnim);
+  -moz-transition: border-bottom var(--lightingModeAnim);
+  -o-transition: border-bottom var(--lightingModeAnim);
+  transition: border-bottom var(--lightingModeAnim);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  margin: auto;
+}

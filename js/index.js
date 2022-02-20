@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, get, child, update } from "firebase/database";
+
 const { CognitoIdentityClient } = require("@aws-sdk/client-cognito-identity");
 const { fromCognitoIdentityPool } = require("@aws-sdk/credential-provider-cognito-identity");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
@@ -121,7 +122,7 @@ var conceptSorted = false;
 
 var conceptBarSwapped = false;
 
-var conceptSortArray = []
+var conceptSortArray = []//this is used for both search and sort
 
 var conceptHighlightedBarHigher = 0;
 
@@ -131,11 +132,23 @@ var conceptIterator = 0;
 
 var conceptSpeed = 0;
 
+var conceptArrayLength = 100
+
+var conceptMinimumValue = 10
+
+var conceptMaximumValue = 500
+
 /*Concept Search*/
 
-var conceptTargetNumber = 0;
+var conceptTargetIndex = 0;
 
 var conceptSearchStatus = false;
+
+var conceptSearchMode = true;//true = show split, false = do cut
+
+var conceptSortArrayStatus = [];
+
+var conceptSearchIteration = 0;
 
 
 async function uploadImage(uploadObject) {
@@ -627,7 +640,7 @@ function generateSelectedConceptDescription(x) {
     switch (x) {
         case 0:
             $("#conceptDescriptionColumn").html(`
-        <div id="conceptTextDescription" class="h-50 bg-danger">
+        <div id="conceptTextDescription" class="h-50 bg-danger d-flex flex-column">
             <div id="conceptDescriptionHeader" class="text-center mt-2">
                 ${conceptArray[x].conceptTitle}        
             </div>
@@ -643,20 +656,72 @@ function generateSelectedConceptDescription(x) {
             break;
         case 1:
             $("#conceptDescriptionColumn").html(`
-        <div id="conceptTextDescription" class="h-100 bg-danger">
-            <div id="conceptDescriptionHeader" class="text-center mt-2">
-                ${conceptArray[x].conceptTitle}        
+            <div id="conceptTextDescription" class="h-50 bg-danger d-flex flex-column">
+                <div id="conceptDescriptionHeader" class="text-center mt-2">
+                    ${conceptArray[x].conceptTitle}        
+                </div>
+                <hr class="divider" style="margin-left: 0.75rem;">
+                <div id="conceptDescriptionDescription" class="mx-3">
+                    ${conceptArray[x].conceptDescription}   
+                </div>
             </div>
-            <hr class="divider" style="margin-left: 0.75rem;">
-            <div id="conceptDescriptionDescription" class="mx-3">
-                ${conceptArray[x].conceptDescription}   
-            </div>
-        </div>
-        `)
+            <div id="conceptVariables" class="h-50 bg-warning">
+                <div class="rangeContainer m-2 d-flex flex-column justify-content-center">
+                    <label class="form-label text-center">Array Length</label>
+                    <input type="range" class="form-range" min="10" max="500" id="conceptArrayLengthSlider" step="10" value="${conceptArrayLength}"/>
+                    <div class="wrapper">
+                    <div class="valueWrapperTriangle">
+                    
+                    </div>
+                    <div class="valueWrapper text-center">
+                        <span id="conceptArrayLengthDisplay">
+                        
+                        </span>
+                    </div>
+                </div>
+                </div>            
+                <div class="rangeContainer m-2 d-flex flex-column justify-content-center">
+                    <label class="form-label text-center" >Maximum Value</label>
+                    <input type="range" class="form-range" min="10" max="500" id="conceptMaximumValueSlider" step="10" value="${conceptMaximumValue}"/>
+                </div>
+                <div class="rangeContainer m-2 d-flex flex-column justify-content-center">
+                    <label class="form-label text-center" >Minimum Value</label>
+                    <input type="range" class="form-range" min="10" max="500" id="conceptMinimumValueSlider" step="10" value="${conceptMinimumValue}" on/>
+                    <div class="wrapper">
+                    <div class="valueWrapperTriangle">
+                    
+                    </div>
+                    <div class="valueWrapper text-center">
+                        <span id="conceptArrayMinimumValueDisplay">
+                        
+                        </span>
+                        <span> &dash; </span>
+                        <span id="conceptArrayMaximumValueDisplay">
+    
+                        </span>
+                    </div>
+                </div>
+            `)
+
+            $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+            $('#conceptArrayMaximumValueDisplay').html($(`#conceptMaximumValueSlider`).val())
+            $('#conceptArrayMinimumValueDisplay').html($(`#conceptMinimumValueSlider`).val())
+
+            $('#conceptArrayLengthSlider').on('input', () => {
+                $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+            });
+
+            $('#conceptMaximumValueSlider').on('input', () => {
+                $('#conceptArrayMaximumValueDisplay').html($(`#conceptMaximumValueSlider`).val())
+            });
+
+            $('#conceptMinimumValueSlider').on('input', () => {
+                $('#conceptArrayMinimumValueDisplay').html($(`#conceptMinimumValueSlider`).val())
+            });
             break;
         case 2:
             $("#conceptDescriptionColumn").html(`
-        <div id="conceptTextDescription" class="h-100 bg-danger">
+        <div id="conceptTextDescription" class="h-50 bg-danger d-flex flex-column">
             <div id="conceptDescriptionHeader" class="text-center mt-2">
                 ${conceptArray[x].conceptTitle}        
             </div>
@@ -665,7 +730,42 @@ function generateSelectedConceptDescription(x) {
                 ${conceptArray[x].conceptDescription}   
             </div>
         </div>
+        <div id="conceptVariables" class="h-50 bg-warning">
+            <div class="rangeContainer m-2 d-flex flex-column justify-content-center">
+                <label class="form-label text-center">Array Length</label>
+                <input type="range" class="form-range" min="10" max="500" id="conceptArrayLengthSlider" step="10" value="${conceptArrayLength}"/>
+                <div class="wrapper">
+                <div class="valueWrapperTriangle">
+                
+                </div>
+                <div class="valueWrapper text-center">
+                    <span id="conceptArrayLengthDisplay">
+                    
+                    </span>
+                </div>
+            </div>
+            <div class="rangeContainer m-2 d-flex flex-column justify-content-center">
+                <label class="form-label text-center">Target Number(Index)</label>
+                <div class="wrapper">
+                <div class="valueWrapperTriangle" id="targetNumberWrapperTriangle">
+                
+                </div>
+                <div class="valueWrapper text-center" id="targetNumberWrapper">
+                    <span id="conceptTargetDisplay">
+                        ${conceptSortArray[conceptTargetIndex]}(${conceptTargetIndex})
+                    </span>
+                </div>
+            </div>
+        </div>           
         `)
+
+            $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+
+            $('#conceptArrayLengthSlider').on('input', () => {
+                $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+            });
+
+            break;
     }
 
 }
@@ -673,9 +773,7 @@ function generateSelectedConceptDescription(x) {
 function generateSelectedConcept(x) {
 
     //Shortest Path Algorithim
-    graphUserDistance = []
-    graphUserDistanceHistory = []
-    graphArrayPointer = -1
+
     clearInterval(conceptAutoPlayInterval)
 
     $(window).unbind(`resize`)
@@ -683,6 +781,10 @@ function generateSelectedConcept(x) {
     switch (x) {
         case 0://Dijkstra
             //Generate User Graph States and Store into Array
+
+            graphUserDistance = []
+            graphUserDistanceHistory = []
+            graphArrayPointer = -1
 
             let graphGridNodeState = generateNodeGraphGrid(12, 12, 0.075)//Nested Array, Stores were are nodes in state
             graphNodeConnections = generateNodeConnections(graphGridNodeState);//this needs to be a global variable
@@ -712,13 +814,21 @@ function generateSelectedConcept(x) {
 
             conceptBarSwapped = false;
 
-            conceptHighlightedBarHigher = 0;
+            conceptHighlightedBarHigher = -1;
 
-            conceptHighlightedBarLower = 0;
+            conceptHighlightedBarLower = -1;
 
             conceptIterator = 0;
 
-            conceptSortArray = generateBarGraph(1000, 1, 500)
+            conceptSpeed = 0;
+
+            conceptArrayLength = $(`#conceptArrayLengthSlider`).val() ? Number($(`#conceptArrayLengthSlider`).val()) : conceptArrayLength
+
+            conceptMinimumValue = $(`#conceptMinimumValueSlider`).val() ? Number($(`#conceptMinimumValueSlider`).val()) : conceptMinimumValue
+
+            conceptMaximumValue = $(`#conceptMaximumValueSlider`).val() ? Number($(`#conceptMaximumValueSlider`).val()) : conceptMaximumValue
+
+            conceptSortArray = generateBarGraph(Number(conceptArrayLength), Number(conceptMinimumValue), Number(conceptMaximumValue))
 
             $('#conceptCenterContainer').html(`
             <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
@@ -732,11 +842,16 @@ function generateSelectedConcept(x) {
             break;
         case 2:
             conceptSearchStatus = false;
-            conceptSortArray = generateSortedBarGraph(1000, 1, 500)
-            conceptTargetNumber = generateRandomNumber(1, 500)
-            
-            //Reusing variables,what could go wrong? 
-            //we can theorically use the last array we sorted too
+
+            conceptArrayLength = $(`#conceptArrayLengthSlider`).val() ? Number($(`#conceptArrayLengthSlider`).val()) : conceptArrayLength //Reusing variables,what could go wrong? 
+
+            conceptSortArray = generateBarGraph(Number(conceptArrayLength), 1, 500).sort((a, b) => { return a - b })
+
+            conceptSortArrayStatus = new Array(conceptSortArray.length).fill(0)
+
+            conceptTargetIndex = generateRandomNumber(0, conceptArrayLength - 1)
+
+            conceptSearchIteration = 0;
 
             $('#conceptCenterContainer').html(`
                 <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
@@ -745,8 +860,7 @@ function generateSelectedConcept(x) {
                 </div>
                 `)
 
-            renderConceptBar(conceptSortArray)
-
+            renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, false)
             break;
     }
 
@@ -767,7 +881,7 @@ function setConceptControlsListeners(x) {
                 </div> 
                 <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
                     <img src="../icons/grid.svg" class="conceptSettingIcon">
-                </div> 
+                </div>
                 <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
                     <img src="../icons/play.svg" class="conceptSettingIcon">
                 </div> 
@@ -802,11 +916,15 @@ function setConceptControlsListeners(x) {
                 if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
                     $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
                     conceptAutoPlayInterval = setInterval(() => {
+                        console.log(graphArrayPointer, graphNodeConnections.length - 1)
                         if (graphArrayPointer != graphNodeConnections.length - 1) {
                             graphArrayPointer++;
                             nextDijkstraStep()
                             renderLinesAndText()
                             renderNodeHighlight(String.fromCharCode("A".charCodeAt(0) + graphArrayPointer))
+                        } else {
+                            $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                            clearInterval(conceptAutoPlayInterval)
                         }
                     }, 2000)
                 } else {
@@ -903,10 +1021,24 @@ function setConceptControlsListeners(x) {
 
             $("#goNext").click(() => {
                 if (conceptSearchStatus) {
+                    $(`#targetNumberWrapper`).css("background-color", "red")
+                    $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid red")
                     clearInterval(conceptAutoPlayInterval)
                 } else {
-                    nextBinarySearchStep()
-                    renderConceptBar(conceptSortArray)
+                    let tempArray = returnModifiedArray()
+
+                    if (conceptSearchMode) {
+                        conceptSearchMode = false
+                        renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, returnTrueIndex(Math.floor(tempArray.length / 2)))
+                        if (tempArray[Math.ceil((tempArray.length - 1) / 2)] == conceptSortArray[conceptTargetIndex]) {
+                            conceptSearchStatus = true;
+                        }
+                    } else {
+                        conceptSearchIteration++
+                        nextBinarySearchStep(tempArray)
+                        renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, false)
+                        conceptSearchMode = true
+                    }
                 }
             })
 
@@ -916,10 +1048,24 @@ function setConceptControlsListeners(x) {
                     conceptAutoPlayInterval = setInterval(() => {
                         if (conceptSearchStatus) {
                             $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                            $(`#targetNumberWrapper`).css("background-color", "red")
+                            $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid red")
                             clearInterval(conceptAutoPlayInterval)
                         } else {
-                            nextBinarySearchStep()
-                            renderConceptBar(conceptSortArray)
+                            let tempArray = returnModifiedArray()
+
+                            if (conceptSearchMode) {
+                                conceptSearchMode = false
+                                renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, returnTrueIndex(Math.floor(tempArray.length / 2)))
+                                if (tempArray[Math.floor(tempArray.length / 2)] == conceptSortArray[conceptTargetIndex]) {
+                                    conceptSearchStatus = true;
+                                }
+                            } else {
+                                conceptSearchIteration++
+                                nextBinarySearchStep(tempArray)
+                                renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, false)
+                                conceptSearchMode = true
+                            }
                         }
                     }, 500)
                 } else {
@@ -932,6 +1078,8 @@ function setConceptControlsListeners(x) {
             break;
     }
 }
+
+
 
 function generateNodeGraphGrid(x, y, chance) {
     let returnArray = []
@@ -1009,21 +1157,18 @@ function generateNodeConnections(nodeGrid) {//This stores whether node A has a c
 }
 
 function generateBarGraph(length, min, max) {
-    let returnArray = new Array(length)
+    if (min > max) {
+        alert("Bar Graph Generation Error")
+        return []
+    } else {
+        let returnArray = new Array(length)
 
-    for (let x = 0; x < returnArray.length; x++) {
-        returnArray[x] = generateRandomNumber(min, max)
+        for (let x = 0; x < returnArray.length; x++) {
+            returnArray[x] = generateRandomNumber(min, max)
+        }
+        return returnArray
     }
-    return returnArray
-}
 
-function generateSortedBarGraph(length, min, max) {
-    let returnArray = new Array(length)
-
-    for (let x = 0; x < returnArray.length; x++) {
-        returnArray[x] = generateRandomNumber(min, max)
-    }
-    return returnArray.sort((a, b) => { return a - b })//For simplicity
 }
 
 function renderNodeHighlight(character) {
@@ -1085,14 +1230,31 @@ function renderConceptBar(array) {
     $("#conceptBarContainer").html(returnString)
 }
 
+function renderConceptBarSearch(array, statusArray, targetIndex, splitIndex) {
+    let returnString = ``
+
+    for (let x = 0; array.length > x; x++) {
+        if (x == targetIndex) {
+            returnString += `<div class="conceptBar conceptHighlightedTargetBar ${splitIndex !== false && splitIndex === x ? `conceptHighlightedSplitBar` : ``}" style="height:${array[x]}px" ></div>`
+        } else if (statusArray[x] > 0) {
+            returnString += `<div class="conceptBar conceptHighlightedUnusedBar ${splitIndex !== false && splitIndex === x ? `conceptHighlightedSplitBar` : ``}" style="height:${array[x]}px;opacity:${statusArray[x] / 10};" ></div>`
+        } else {
+            returnString += `<div class="conceptBar ${splitIndex !== false && splitIndex === x ? `conceptHighlightedSplitBar` : ``}" style="height:${array[x]}px" ></div>`
+        }
+    }
+
+    $("#conceptBarContainer").html(returnString)
+}
+
 function nextBubbleSortStep() {
     if (conceptSpeed == 0) {
         if (conceptIterator == conceptSortArray.length) {
+
             conceptIterator = 0;
             conceptSorted = !conceptBarSwapped
             conceptBarSwapped = false
         } else {
-            if (bubbleSortIteration(conceptIterator,conceptSpeed)) {
+            if (bubbleSortIteration(conceptIterator, conceptSpeed)) {
                 conceptBarSwapped = true;
             }
             conceptIterator++;
@@ -1102,7 +1264,7 @@ function nextBubbleSortStep() {
 
         for (let x = 0; x < conceptSortArray.length; x++) {
 
-            if (bubbleSortIteration(x,conceptSpeed)) {
+            if (bubbleSortIteration(x, conceptSpeed)) {
                 conceptBarSwapped = true;
             }
 
@@ -1113,7 +1275,7 @@ function nextBubbleSortStep() {
 
 }
 
-function bubbleSortIteration(x,speed) {
+function bubbleSortIteration(x, speed) {
     let tempVal;
     if (conceptSortArray[x] > conceptSortArray[x + 1]) {//If swapped
 
@@ -1126,30 +1288,92 @@ function bubbleSortIteration(x,speed) {
         conceptHighlightedBarHigher = x + 1
         return true
     }
-    if(speed == 0){
+    if (speed == 0) {
         conceptHighlightedBarLower = x
         conceptHighlightedBarHigher = x + 1
     }
     return false
 }
 
-function nextBinarySearchStep() {
+function nextBinarySearchStep(tempArray) {
 
-    if (conceptSortArray) {
-        const middleIndex = Math.ceil(conceptSortArray.length / 2);
+    // if (conceptSortArrayModify) {
+    //     const middleIndex = Math.ceil(conceptSortArrayModify.length / 2);
 
-        if (conceptSortArray[middleIndex] == conceptTargetNumber)
-            conceptSearchStatus = true;
+    // if (conceptSortArrayModify[middleIndex] == conceptSortArray[conceptTargetIndex]){
+    //     conceptSearchStatus = true;
+    // }else{
+    //     if (conceptSortArrayModify[middleIndex] > conceptSortArray[conceptTargetIndex]) {//This means the target number is in the left array
+    //         conceptSortArrayModify = conceptSortArrayModify.slice(0, middleIndex)
+    //     } else {//This means the target number is in the right array
+    //         conceptSortArrayModify = conceptSortArrayModify.slice(-middleIndex)
+    //     }
+    // }
+    // } else {
+    //     conceptSearchStatus = true;//true  here means ust done
+    // }
 
-        if (conceptSortArray[middleIndex] > conceptTargetNumber) {//This means the target number is in the left array
-            conceptSortArray = conceptSortArray.slice(0, middleIndex)
+    //Create the new temporary array
+    if (tempArray.length) {
+
+        let middleIndex = Math.floor(tempArray.length / 2)
+
+        let iterator = 0;//makes it start from 0
+        let trueMiddleIndex = 0
+
+        if (tempArray[middleIndex] > conceptSortArray[conceptTargetIndex]) {//This means the target number is in the left array
+            for (let x = conceptSortArrayStatus.length - 1; middleIndex - 1 <= x; x--) {
+                if (middleIndex == iterator) {
+                    trueMiddleIndex = x
+                    break;
+                }
+                if (conceptSortArrayStatus[x] == 0) {
+                    iterator++
+                    conceptSortArrayStatus[x] = conceptSearchIteration + 1;
+                }
+            }
         } else {//This means the target number is in the right array
-            conceptSortArray = conceptSortArray.slice(-middleIndex)
-        }
+            for (let x = 0; conceptSortArrayStatus.length > x; x++) {
+                if (middleIndex == iterator) {
+                    trueMiddleIndex = x
+                    break;
+                }
+                if (conceptSortArrayStatus[x] == 0) {
+                    iterator++
+                    conceptSortArrayStatus[x] = conceptSearchIteration + 1;
+                }
 
+            }
+        }
+        return trueMiddleIndex
     } else {
-        conceptSearchStatus = true;//true  here means ust done
+        conceptSearchStatus = true;
+        return false
     }
+}
+
+function returnTrueIndex(index) {
+    let iterator = 0
+
+    for (let x = 0; conceptSortArrayStatus.length > x; x++) {
+        if (index == iterator) {
+            return x
+        }
+        if (conceptSortArrayStatus[x] == 0) {
+            iterator++
+        }
+    }
+}
+
+function returnModifiedArray() {
+    let tempArray = []
+    for (let x = 0; x < conceptSortArray.length; x++) {
+        if (conceptSortArrayStatus[x] == 0) {
+            tempArray.push(conceptSortArray[x])
+        }
+    }
+
+    return tempArray
 }
 
 function renderLinesAndText() {
