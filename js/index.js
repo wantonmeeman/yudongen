@@ -851,6 +851,8 @@ function generateSelectedConcept(x) {
 
             conceptTargetIndex = generateRandomNumber(0, conceptArrayLength - 1)
 
+            console.log(conceptTargetIndex)
+
             conceptSearchIteration = 0;
 
             $('#conceptCenterContainer').html(`
@@ -1021,35 +1023,44 @@ function setConceptControlsListeners(x) {
 
             $("#goNext").click(() => {
                 if (conceptSearchStatus) {
-                    $(`#targetNumberWrapper`).css("background-color", "red")
-                    $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid red")
+                    $(`#targetNumberWrapper`).css("background-color", "green")
+                    $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid green")
                     clearInterval(conceptAutoPlayInterval)
                 } else {
                     let tempArray = returnModifiedArray()
-
+                    console.log(conceptSearchMode)
                     if (conceptSearchMode) {
                         conceptSearchMode = false
                         renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, returnTrueIndex(Math.floor(tempArray.length / 2)))
-                        if (tempArray[Math.ceil((tempArray.length - 1) / 2)] == conceptSortArray[conceptTargetIndex]) {
+                        if (tempArray[Math.floor(tempArray.length / 2)] == conceptSortArray[conceptTargetIndex]) {
                             conceptSearchStatus = true;
                         }
                     } else {
-                        conceptSearchIteration++
                         nextBinarySearchStep(tempArray)
+                        conceptSearchIteration++
                         renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, false)
                         conceptSearchMode = true
                     }
+
+                    if (conceptSearchStatus) {
+                        $(`#targetNumberWrapper`).css("background-color", "green")
+                        $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid green")
+                        clearInterval(conceptAutoPlayInterval)
+                    }
+
                 }
             })
 
             $("#toggleAutoPlay").click(() => {
                 if ($("#toggleAutoPlay").children().attr("src") == `../icons/play.svg`) {
                     $("#toggleAutoPlay").children().attr("src", `../icons/pause.svg`)
+                    conceptSearchMode = true;
                     conceptAutoPlayInterval = setInterval(() => {
+
                         if (conceptSearchStatus) {
                             $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
-                            $(`#targetNumberWrapper`).css("background-color", "red")
-                            $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid red")
+                            $(`#targetNumberWrapper`).css("background-color", "green")
+                            $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid green")
                             clearInterval(conceptAutoPlayInterval)
                         } else {
                             let tempArray = returnModifiedArray()
@@ -1061,11 +1072,19 @@ function setConceptControlsListeners(x) {
                                     conceptSearchStatus = true;
                                 }
                             } else {
-                                conceptSearchIteration++
                                 nextBinarySearchStep(tempArray)
+                                conceptSearchIteration++
                                 renderConceptBarSearch(conceptSortArray, conceptSortArrayStatus, conceptTargetIndex, false)
                                 conceptSearchMode = true
                             }
+
+                            if (conceptSearchStatus) {
+                                $("#toggleAutoPlay").children().attr("src", `../icons/play.svg`)
+                                $(`#targetNumberWrapper`).css("background-color", "green")
+                                $(`#targetNumberWrapperTriangle`).css("border-bottom", "15px solid green")
+                                clearInterval(conceptAutoPlayInterval)
+                            }
+                            console.log(conceptSearchStatus)
                         }
                     }, 500)
                 } else {
@@ -1232,7 +1251,6 @@ function renderConceptBar(array) {
 
 function renderConceptBarSearch(array, statusArray, targetIndex, splitIndex) {
     let returnString = ``
-
     for (let x = 0; array.length > x; x++) {
         if (x == targetIndex) {
             returnString += `<div class="conceptBar conceptHighlightedTargetBar ${splitIndex !== false && splitIndex === x ? `conceptHighlightedSplitBar` : ``}" style="height:${array[x]}px" ></div>`
@@ -1298,7 +1316,7 @@ function bubbleSortIteration(x, speed) {
 function nextBinarySearchStep(tempArray) {
 
     // if (conceptSortArrayModify) {
-    //     const middleIndex = Math.ceil(conceptSortArrayModify.length / 2);
+    //     const middleIndex = Math.floor(conceptSortArrayModify.length / 2);
 
     // if (conceptSortArrayModify[middleIndex] == conceptSortArray[conceptTargetIndex]){
     //     conceptSearchStatus = true;
@@ -1315,8 +1333,8 @@ function nextBinarySearchStep(tempArray) {
 
     //Create the new temporary array
     if (tempArray.length) {
-
         let middleIndex = Math.floor(tempArray.length / 2)
+        console.log(`MI`,middleIndex,`CTI`,conceptTargetIndex)
 
         let iterator = 0;//makes it start from 0
         let trueMiddleIndex = 0
@@ -1328,24 +1346,27 @@ function nextBinarySearchStep(tempArray) {
                     break;
                 }
                 if (conceptSortArrayStatus[x] == 0) {
+                    conceptSortArrayStatus[x] = 1 + conceptSearchIteration;
                     iterator++
-                    conceptSortArrayStatus[x] = conceptSearchIteration + 1;
                 }
             }
-        } else {//This means the target number is in the right array
+            return trueMiddleIndex
+        } else if(tempArray[middleIndex] < conceptSortArray[conceptTargetIndex]) {//This means the target number is in the right array
             for (let x = 0; conceptSortArrayStatus.length > x; x++) {
                 if (middleIndex == iterator) {
                     trueMiddleIndex = x
                     break;
                 }
                 if (conceptSortArrayStatus[x] == 0) {
+                    conceptSortArrayStatus[x] = 1 + conceptSearchIteration;
                     iterator++
-                    conceptSortArrayStatus[x] = conceptSearchIteration + 1;
                 }
 
             }
+            return trueMiddleIndex
+        }else{
+            return middleIndex
         }
-        return trueMiddleIndex
     } else {
         conceptSearchStatus = true;
         return false
@@ -1353,10 +1374,13 @@ function nextBinarySearchStep(tempArray) {
 }
 
 function returnTrueIndex(index) {
+    console.log(`index`, index)
+    console.log(`CONCEPTsORT`, conceptSortArrayStatus)
     let iterator = 0
 
     for (let x = 0; conceptSortArrayStatus.length > x; x++) {
         if (index == iterator) {
+
             return x
         }
         if (conceptSortArrayStatus[x] == 0) {
