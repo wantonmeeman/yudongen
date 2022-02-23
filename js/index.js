@@ -45,6 +45,8 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     /*navbarHoverTextColor:"],*/
     navbarContactIconContainerBackgroundColor: ["#e8e8e8", "#3a3a3a"],
     navbarContactIconBackgroundColor: ["#d4d4d4", "#6c6c6c"],
+    footerBackgroundColor:["#e3e3e3","#292929"],
+    footerContactIconBackgroundColor:["#f0f0f0","#292929"],
     carouselImageSubtitle: ['#d1d1d1', '#c8c8c8'],
     carouselImageTitle: ['#d1d1d1', '#c8c8c8'],
     carouselIndicators: ['#d1d1d1', '#c8c8c8'],
@@ -55,6 +57,7 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
     skillBarInactive: ["#e8e8e8", "#3a3a3a"],
     scrollBarThumbColor: ["#e0e0e0", "#424242"],
     scrollBarHoverColor: ["#d1d1d1", "#515151"],
+    scrollBarTrackColor: ['#fcfcfc', '#030303'],
     projectMiniHoverColor: ["#e8e8e8", "#3a3a3a"],
     projectMiniSelectedColor: ["#cfcfcf", "#484848"],
     projectBottomBorderColor: ["#dbdbdb", "#5a5a5a"],
@@ -71,10 +74,10 @@ const cssColorVariables = {//1st = light,2nd = dark//Take light val difference *
 }
 
 
-var titleArrayIterable = 0;
+var greetingArrayIterable = 0;
 
 /*Move these out of the global scope*/
-var titleArray = [
+var greetingArray = [
     "Hi there!",
     "你好",
     "नमस्ते",
@@ -149,7 +152,6 @@ var conceptSearchMode = true;//true = show split, false = do cut
 var conceptSortArrayStatus = [];
 
 var conceptSearchIteration = 0;
-
 
 async function uploadImage(uploadObject) {
     await s3.send(new PutObjectCommand(uploadObject));
@@ -497,6 +499,7 @@ function generateSpinnersForTab(tab) {
                 <div id="leftDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
             </div>
             `)
+            //$("#personalImage").attr("src", `https://media0.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif`)
             break;
         case "projectsTab":
             $(`#projectMiniColumn`).html(`
@@ -845,7 +848,7 @@ function generateSelectedConcept(x) {
 
             conceptArrayLength = $(`#conceptArrayLengthSlider`).val() ? Number($(`#conceptArrayLengthSlider`).val()) : conceptArrayLength //Reusing variables,what could go wrong? 
 
-            conceptSortArray = generateBarGraph(Number(conceptArrayLength), 1, 500).sort((a, b) => { return a - b })
+            conceptSortArray = conceptSorted ? conceptSortArray : generateBarGraph(Number(conceptArrayLength), 1, 500).sort((a, b) => { return a - b })
 
             conceptSortArrayStatus = new Array(conceptSortArray.length).fill(0)
 
@@ -881,15 +884,15 @@ function setConceptControlsListeners(x) {
                 <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goBack">
                     <img src="../icons/next.png" class="conceptSettingIcon">
                 </div> 
-                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
-                    <img src="../icons/grid.svg" class="conceptSettingIcon">
-                </div>
-                <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
-                    <img src="../icons/play.svg" class="conceptSettingIcon">
-                </div> 
                 <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="resetEverything">
                     <img src="../icons/reset.svg" class="conceptSettingIcon">
                 </div> 
+                <div class="settingBtn bg-danger d-flex justify-content-center align-items-center" id="toggleAutoPlay">
+                    <img src="../icons/play.svg" class="conceptSettingIcon">
+                </div> 
+                <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="toggleGrid">
+                    <img src="../icons/grid.svg" class="conceptSettingIcon">
+                </div>
                 <div class="settingBtn bg-secondary d-flex justify-content-center align-items-center" id="goNext">
                     <img src="../icons/next.png" class="conceptSettingIcon">
                 </div>
@@ -1334,7 +1337,7 @@ function nextBinarySearchStep(tempArray) {
     //Create the new temporary array
     if (tempArray.length) {
         let middleIndex = Math.floor(tempArray.length / 2)
-        console.log(`MI`,middleIndex,`CTI`,conceptTargetIndex)
+        console.log(`MI`, middleIndex, `CTI`, conceptTargetIndex)
 
         let iterator = 0;//makes it start from 0
         let trueMiddleIndex = 0
@@ -1351,7 +1354,7 @@ function nextBinarySearchStep(tempArray) {
                 }
             }
             return trueMiddleIndex
-        } else if(tempArray[middleIndex] < conceptSortArray[conceptTargetIndex]) {//This means the target number is in the right array
+        } else if (tempArray[middleIndex] < conceptSortArray[conceptTargetIndex]) {//This means the target number is in the right array
             for (let x = 0; conceptSortArrayStatus.length > x; x++) {
                 if (middleIndex == iterator) {
                     trueMiddleIndex = x
@@ -1364,7 +1367,7 @@ function nextBinarySearchStep(tempArray) {
 
             }
             return trueMiddleIndex
-        }else{
+        } else {
             return middleIndex
         }
     } else {
@@ -1591,7 +1594,7 @@ function generateAdminPage(pageObject, pageTitle) {
                 let randomNumber = generateRandomNumber(skillObject.length, 10000000)//Probability of choosing same number is low, but gets higher if spammed
 
                 //Probablity of same 2 random numbers out of 1000 runs
-                //1 - 10000000!/(10000000^1000)(10000000-1000)! = roughly 4%, give or take
+                //1 - 10000000!/(10000000^500)(10000000-500)! = roughly 4%, give or take
                 //
 
                 $(`<tr id="${adminSkillName + randomNumber}">
@@ -2319,14 +2322,14 @@ $(document).ready(function () {
             $(this).removeClass('inactive')
 
             $('.contentContainer').hide();
-            $('.divider').css({ width: '0%' })
+            $('.divider:not(#footerDivider):not(#contactMeDivider)').css({ width: '0%' })
 
             generateSpinnersForTab(clickedID.slice(0, clickedID.length - 4));
             switch (clickedID.slice(0, clickedID.length - 4)) {
                 case "meTab":
-                    $('.descDivider').animate({ width: "97%" }, 1000)
-                    $('#titleDivider').animate({ width: "40%" }, 1000)
-                    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+                    $('.descDivider').animate({ width: "97%" }, 500)
+                    $('#titleDivider').animate({ width: "40%" }, 500)
+                    $('#softSkillDivider').animate({ width: "82%" }, 500)
                     setTimeout(() => {
                         get(child(database, "mePage")).then((snapshot) => {//Apis will be recalled every time it is clicked
                             if (snapshot.exists()) {
@@ -2342,12 +2345,12 @@ $(document).ready(function () {
                             console.error(error);
                         }).finally(() => {
                         });
-                    }, 1000)
+                    }, 500)
 
                     break;
 
                 case "projectsTab":
-                    $('#headerDivider').animate({ width: "97%" }, 1000)
+                    $('#headerDivider').animate({ width: "97%" }, 500)
                     setTimeout(() => {
                         get(child(database, "projectsPage")).then((snapshot) => {
                             if (snapshot.exists()) {
@@ -2361,7 +2364,7 @@ $(document).ready(function () {
                         }).finally(() => {//Would remove spinner here, but .html removes it for us already 🤷 
 
                         });
-                    }, 1000)
+                    }, 500)
                     break;
 
                 case "timelineTab":
@@ -2378,17 +2381,17 @@ $(document).ready(function () {
                         }).finally(() => {
                             $('#timelineSpinner').hide()
                         });
-                    }, 1000)
+                    }, 500)
                     break;
 
                 case "conceptsTab":
                     setTimeout(() => {
                         generateConcepts()
-                    }, 1000)
+                    }, 500)
 
             }
             clearInterval(conceptAutoPlayInterval)
-            $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').fadeIn('slow')
+            $('#' + clickedID.slice(0, clickedID.length - 4) + 'Content').show()
         }
     });
 
@@ -2398,13 +2401,14 @@ $(document).ready(function () {
 
     $('.divider').css({ width: '0%' })
     $('#meTabContent').fadeIn('slow')
-    $('.descDivider').animate({ width: "97%" }, 1000)
-    $('#titleDivider').animate({ width: "40%" }, 1000)
-    $('#softSkillDivider').animate({ width: "82%" }, 1000)
+    $('.descDivider').animate({ width: "97%" }, 500)
+    $('#titleDivider').animate({ width: "40%" }, 500)
+    $('#softSkillDivider').animate({ width: "82%" }, 500)
 
     //loading Information from mePage
     //Load Footer
     $("#footer").load("htmlComponents/footer.html")
+
     setTimeout(() => {
         get(child(database, "mePage")).then((snapshot) => {
             if (snapshot.exists()) {
@@ -2421,20 +2425,21 @@ $(document).ready(function () {
         }).finally(() => {
             //$('.contentContainer').height($(window).height() - $(`.navbar`).height());
         });
-    }, 1000)
+    }, 500)
 
     //==================================== ME tab ==========================
     //Handles if a User focuses on tab
     var changeGreetingInterval = setInterval(function () {
-        titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-        changeLargeTextHeader(titleArray[titleArrayIterable])
+        greetingArrayIterable == greetingArray.length - 1 ? greetingArrayIterable = 0 : greetingArrayIterable++;
+        changeLargeTextHeader(greetingArray[greetingArrayIterable])
     }, 15000)
 
     $(window).focus(function () {
         clearInterval(changeGreetingInterval)
+
         changeGreetingInterval = setInterval(function () {
-            titleArrayIterable == titleArray.length - 1 ? titleArrayIterable = 0 : titleArrayIterable++;
-            changeLargeTextHeader(titleArray[titleArrayIterable])
+            greetingArrayIterable == greetingArray.length - 1 ? greetingArrayIterable = 0 : greetingArrayIterable++;
+            changeLargeTextHeader(greetingArray[greetingArrayIterable])
         }, 15000)
     })
 

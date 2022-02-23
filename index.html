@@ -18,6 +18,7 @@
 
   <title>Yu Dong En's Website</title>
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 <nav class="navbar navbar-expand-lg navbar-light navbar-fixed-top" id="navbar">
   <div class="mx-2 d-flex justify-content-center order-0">
@@ -58,10 +59,9 @@
     <div class="spinner-grow text-muted"></div>
   </div>
   <!--animate this increasing/decreasing to fit items at the start of the page-->
-
 </nav>
+
 <body>
-  
   <div class="row g-0 contentContainer" id="projectsTabContent">
     <div id="leftProjectContainer" class="col-lg-4">
       <div id="projectMiniColumn" class="d-flex flex-column mr-3">
@@ -73,20 +73,19 @@
         <div id="projectInfoSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
       </div>
     </div>
-    <div id="footer"></div>
   </div>
   <div class="row g-0 contentContainer" id="timelineTabContent">
     <div class="row" id="timelineRow">
 
     </div>
-    <div id="footer"></div>
   </div>
   <div class="row g-0 contentContainer" id="meTabContent">
     <div id="leftMeContainer" class="col-md-9">
       <div class="m-5 my-4" id="meHeaderContainer">
-        <div id="meHeaderLargeText">Hi there!
-        </div>
-        <div id="meHeaderSmallText">I'm Yu Dong En.</div>
+        <div id="meHeaderLargeText">Hi there!</div>
+        <div id="meHeaderIntroduction">I'm Yu Dong En(杨东恩)</div> 
+        <div id="meHeaderTitle" class="mt-2">Software Engineer &nbsp| &nbspFull Stack Developer</div> 
+        <div id="meHeaderLocationText" class="mt-2">📍 &nbsp Singapore, Singapore</div>
       </div>
       <div class="row mx-5" style="height: 1px;">
         <hr class="divider" id="titleDivider" style="margin-left: 0.75rem;">
@@ -118,6 +117,60 @@
             <div id="leftDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
           </div>
         </div>
+        <div id="meHeaderGitShield" class="d-flex flex-column">
+          <div class="meHeaderGitRow d-flex flex-wrap mt-2">
+            <img src="https://img.shields.io/badge/-JavaScript-blue?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-Node.JS-brightgreen?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-express-green?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-Multer-green?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-stripe-green?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-bcrypt-green?style=plastic" class="me-1">
+            <img src="https://img.shields.io/badge/-jsonwebtoken-green?style=plastic" class="me-1">
+          </div>
+
+
+          <div class="meHeaderGitRow d-flex flex-row flex-wrap mt-2">
+            <img src="https://img.shields.io/badge/-Web_Development-blue?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-Bootstrap-brightgreen?style=plastic" class="me-1">
+         
+            <img src="https://img.shields.io/badge/-Jquery-brightgreen?style=plastic" class="me-1">
+         
+            <img src="https://img.shields.io/badge/-React-brightgreen?style=plastic" class="me-1">
+          </div>
+
+          <div class="meHeaderGitRow d-flex flex-row flex-wrap mt-2">
+            <img src="https://img.shields.io/badge/-Mobile Development-blue?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-React_Native-brightgreen?style=plastic" class="me-1">
+         
+            <img src="https://img.shields.io/badge/-Android_SDK(Java)-brightgreen?style=plastic" class="me-1">
+          </div>
+
+          <div class="meHeaderGitRow d-flex flex-row flex-wrap mt-2">
+            <img src="https://img.shields.io/badge/-Database-blue?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-PostGreSQL-brightgreen?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-MySQL-brightgreen?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-MSSQL-brightgreen?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-NoSQL-brightgreen?style=plastic" class="me-1">
+         
+            <img src="https://img.shields.io/badge/-Firebase-green?style=plastic" class="me-1">
+          </div>
+
+          <div class="meHeaderGitRow d-flex flex-row flex-wrap mt-2">
+            <img src="https://img.shields.io/badge/-Python-blue?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-MatPlotLib-brightgreen?style=plastic" class="me-1">
+         
+            <img src="https://img.shields.io/badge/-NumPy-brightgreen?style=plastic" class="me-1">
+          
+            <img src="https://img.shields.io/badge/-Pandas-brightgreen?style=plastic" class="me-1">
+          </div>
+        </div>
       </div>
     </div>
     <div id="rightMeContainer" class="col-md-3">
@@ -129,7 +182,7 @@
         <div id="rightSkillSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
       </div>
     </div>
-    <div id="footer"></div>
+    <div id="footer" class="d-flex"></div>
   </div>
   <div class="row g-0 contentContainer" id="conceptsTabContent">
     <div id="conceptLeftContainer" class="col-xxl-3">
@@ -138,14 +191,13 @@
       </div>
     </div>
     <div id="conceptCenterContainer" class="col-xxl-6 d-flex justify-content-center">
-        <div id="conceptAnimationSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
+      <div id="conceptAnimationSpinner" class="spinner-grow text-muted mx-auto my-5"></div>
     </div>
     <div id="conceptRightContainer" class="col-xxl-3">
-      <div id="conceptDescriptionColumn" class="d-flex flex-column bg-primary h-100">
+      <div id="conceptDescriptionColumn" class="d-flex flex-column h-100">
         <div id="conceptDescriptionSpinner" class="spinner-grow text-muted my-5 mx-auto"></div>
       </div>
     </div>
-    <div id="footer"></div>
   </div>
   <div class="row g-0 contentContainer" id="adminTabContent">
     <div class="mx-2 justify-content-center" id="editContainer">
@@ -156,9 +208,8 @@
         </ul>
       </nav>
     </div>
-    <div id="footer"></div>
   </div>
-</div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
