@@ -1,30 +1,25 @@
 <footer class="d-flex flex-column w-100 align-items-center">
-    <div class="m-2 w-100 d-flex">
-        <div class="w-50" id="contactMe">
-            <div id="contactMeContainer" class="d-flex flex-row my-2 d-flex justify-content-around">
-                <div class="footerIcon">
-                    <a href="https://www.reddit.com/r/playboicarti/" target="_blank" rel="noopener noreferrer">
-                        <img class="contactFooterIconImage" src="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?width=640&crop=smart&auto=webp&s=bfd318557bf2a5b3602367c9c4d9cd84d917ccd5">
-                    </a>
-                </div>
-                <div class="footerIcon" id="emailFooterIcon" onclick='navigator.clipboard.writeText(`tokyo.yu.96@gmail.com`).then(function () {console.log(1)}, function (err) {console.log(err)});'>
-                    <img class="contactFooterIconImage" src="../icons/email.svg">
-                </div>
+    <div class="d-flex w-100" id="footerInformation">
+        <div class="my-2 px-5 text-center col-4 d-flex flex-column align-items-center justify-content-center" id="footerContactInfoContainer">
+            <div id="footerContactTop" class="mb-2">
+                Need to contact me?
             </div>
+            📧 Email: wantonmeeman@gmail.com
         </div>
-        <div class="w-50" id="contactLinks">
-            <div id="contactLinkContainer" class="d-flex flex-row my-2 d-flex justify-content-around">
-                <a href="https://www.reddit.com/r/playboicarti/" download="YuDongEn_Resume_2022">
-                    Résumé
+        <div class="my-2 px-5 text-center col-8 d-flex flex-column align-items-center justify-content-center"
+            id="footerFinePrintContainer">
+            <div class="text-center" id="footerFinePrintTop">
+                This website was built by myself. Website requests can be directed to my email.
+            </div>
+            <div class="text-center" id="footerFinePrintBottom">
+                Yu Dong En. 2022
+            </div>
+            <div class="d-flex mt-1" id="footerLinks">
+                <a href="../documents/" download>
+                    Resume
                 </a>
             </div>
         </div>
     </div>
-    <hr class="divider" id="footerDivider">
-    <div class="m-2 mt-0 text-center" id="footerFinePrint">
-        This website was built by myself. Website requests can be directed to my email.
-        <br>
-        <br>
-        @2022 Yu Dong En
-    </div>
+    <hr class="divider col-12" id="footerDivider">
 </footer>

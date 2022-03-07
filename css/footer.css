@@ -2,26 +2,31 @@
     width: 95%;
 }
 
-.contactFooterIconImage,.contactFooterIcon{
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border:1px solid #00000050;
-    background-color: var(--footerContactIconBackgroundColor);
-}
-
 footer{
     background-color: var(--footerBackgroundColor);
-}
-
-#contactMe{
-    border-right:1px solid #00000050;
 }
 
 .footerIcon{
     cursor: pointer;
 }
 
-#footerFinePrint{
-    font-size: 8px;
+#footerFinePrintContainer{
+    font-size: 12px;
+    border-left:1px solid #00000050;
+}
+
+#footerFinePrintTop{
+    font-size: 10px;
+}
+
+#footerFinePrintBottom{
+    font-size: 9px;
+}
+
+#footerContactInfoContainer{
+    font-size: 13px;
+}
+
+#footerContactTop{
+    font-size: 16px;
 }
