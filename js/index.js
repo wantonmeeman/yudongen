@@ -997,29 +997,29 @@ function generateSelectedConceptDescription(x) {
             });
 
             break;
-        case 5:
-            $("#conceptDescriptionColumn").html(`
-            <div id="conceptTextDescription" class="bg-danger d-flex flex-column h-100 h-xxl-50 w-100">
-                <div id="conceptDescriptionHeader" class="text-center mt-2">
-                    ${conceptArray[x].conceptTitle}        
-                </div>
-                <hr class="divider" style="margin-left: 0.75rem;">
-                <div id="conceptDescriptionDescription" class="m-3 mt-0">
-                    ${conceptArray[x].conceptDescription}   
-                </div>
-            </div>
-            <div id="conceptVariables" class="bg-warning h-100 h-xxl-50 w-100">
+        // case 5:
+        //     $("#conceptDescriptionColumn").html(`
+        //     <div id="conceptTextDescription" class="bg-danger d-flex flex-column h-100 h-xxl-50 w-100">
+        //         <div id="conceptDescriptionHeader" class="text-center mt-2">
+        //             ${conceptArray[x].conceptTitle}        
+        //         </div>
+        //         <hr class="divider" style="margin-left: 0.75rem;">
+        //         <div id="conceptDescriptionDescription" class="m-3 mt-0">
+        //             ${conceptArray[x].conceptDescription}   
+        //         </div>
+        //     </div>
+        //     <div id="conceptVariables" class="bg-warning h-100 h-xxl-50 w-100">
 
-            </div>           
-            `)
+        //     </div>           
+        //     `)
 
-            $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+        //     $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
 
-            $('#conceptArrayLengthSlider').on('input', () => {
-                $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
-            });
+        //     $('#conceptArrayLengthSlider').on('input', () => {
+        //         $('#conceptArrayLengthDisplay').html($(`#conceptArrayLengthSlider`).val())
+        //     });
 
-            break;
+        //     break;
     }
 
 }
@@ -1173,22 +1173,22 @@ function generateSelectedConcept(x) {
 
             renderConceptLinearSearch(conceptSortArray, conceptTargetIndex, conceptSearchIteration)
             break;
-        case 5:
-            conceptArrayLength = $(`#conceptArrayLengthSlider`).val() ? Number($(`#conceptArrayLengthSlider`).val()) : conceptArrayLength //Reusing variables,what could go wrong? 
+        // case 5:
+        //     conceptArrayLength = $(`#conceptArrayLengthSlider`).val() ? Number($(`#conceptArrayLengthSlider`).val()) : conceptArrayLength //Reusing variables,what could go wrong? 
 
-            conceptSortArray = generateSequentialBarGraph(Number(conceptArrayLength), 1, 500)
+        //     conceptSortArray = generateSequentialBarGraph(Number(conceptArrayLength), 1, 500)
 
-            $('#conceptCenterContainer').html(`
-                <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
-                    <div id="conceptBarContainer" class="d-flex align-items-end justify-content-center">
-                    </div>
-                </div>
-                `)
+        //     $('#conceptCenterContainer').html(`
+        //         <div id="conceptAnimation" class="container d-flex col-lg-12 row flex-column">
+        //             <div id="conceptBarContainer" class="d-flex align-items-end justify-content-center">
+        //             </div>
+        //         </div>
+        //         `)
 
-            $(`#switchSorted`).prop("checked", conceptArraySort)
+        //     $(`#switchSorted`).prop("checked", conceptArraySort)
 
-            renderConceptLinearSearch(conceptSortArray, conceptTargetIndex, conceptSearchIteration)
-            break;
+        //     renderConceptLinearSearch(conceptSortArray, conceptTargetIndex, conceptSearchIteration)
+        //     break;
     }
 
 
