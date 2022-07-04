@@ -828,6 +828,7 @@ textarea,
 }
 
 th,
+td,
 label {
   -webkit-transition: color var(--lightingModeAnim);
   -moz-transition: color var(--lightingModeAnim);
@@ -946,9 +947,9 @@ table tbody {
   word-break: break-word;
 }
 
-/* #conceptDescriptionColumn{
-  height: calc(100vh - 59px);
-} */
+#conceptDescriptionColumn{
+  height: 100%
+}
 
 #fullsvg {
   position: absolute;

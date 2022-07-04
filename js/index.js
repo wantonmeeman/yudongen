@@ -34,6 +34,8 @@ initializeApp(firebaseConfig)
 
 var database = ref(getDatabase())
 
+var lightingMode = true//True = Light,False = Dark
+
 const cssColorVariables = {//1st = light,2nd = dark//Take light val difference * 2.5
     mainTextColor: ["#000000", "#919191"],
     mainBackgroundColor: ["#FFFFFF", "#000000"],
@@ -1030,7 +1032,7 @@ function generateSelectedConcept(x) {
 
     clearInterval(conceptAutoPlayInterval)
 
-    $("#conceptDescriptionColumn").height($("#conceptCenterContainer").height())
+    //$("#conceptDescriptionColumn").height($("#conceptCenterContainer").height())
 
     $(window).unbind(`resize`)
 
@@ -2000,7 +2002,7 @@ function renderLinesAndText() {
             if (graphNodeConnections[x][y] && x != graphNodeConnections.length - 1) {
                 let b1 = boundingRectNodeArray[x]
                 let b2 = boundingRectNodeArray[y]
-                renderLineAndText(b1, b2, graphNodeConnections[x][y], graphArrayPointer == x || graphArrayPointer == y)
+                renderLineAndText(b1, b2, graphNodeConnections[x][y], graphArrayPointer == x || graphArrayPointer == y,lightingMode,lightingMode)
             }
         }
     }
@@ -2010,22 +2012,22 @@ function renderLinesAndText() {
     $("#conceptAnimation").css("background-image", "url(data:image/svg+xml;base64," + svg + ")")
 }
 
-function renderLineAndText(boundingObj1, boundingObj2, weight, highlight) {
+function renderLineAndText(boundingObj1, boundingObj2, weight, highlight,lightingMode) {
 
     $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr(
-        generateLineAttributes(boundingObj1, boundingObj2, highlight)
+        generateLineAttributes(boundingObj1, boundingObj2, highlight,lightingMode)
     ).appendTo("#fullsvg")
 
     let textSVG = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'))
 
-    textSVG[0].innerHTML = weight//WEIGHT
+    textSVG[0].innerHTML = weight
 
     textSVG.attr(
-        generateTextAttributes(boundingObj1, boundingObj2, highlight)
+        generateTextAttributes(boundingObj1, boundingObj2, highlight,lightingMode)
     ).appendTo("#fullsvg")
 }
 
-function generateLineAttributes(b1, b2, highlight) {
+function generateLineAttributes(b1, b2, highlight,lightingMode) {
     let x1;
     let y1;
     let x2;
@@ -2057,19 +2059,19 @@ function generateLineAttributes(b1, b2, highlight) {
         y1: y1 - $("#conceptAnimation").offset().top,
         x2: x2 - $("#conceptAnimation").offset().left,
         y2: y2 - $("#conceptAnimation").offset().top,
-        style: highlight ? `stroke: red;stroke-width: 3;` : `stroke: black;stroke-width: 2;`
+        style: highlight ? `stroke: red;stroke-width: 3;` : `stroke: ${lightingMode ? `black` : `white`};stroke-width: 2;`
     }
 }
 
-function generateTextAttributes(b1, b2, highlight) {
+function generateTextAttributes(b1, b2, highlight,lightingMode) {
 
-    let lineAttributeObject = generateLineAttributes(b1, b2, 0)
+    let lineAttributeObject = generateLineAttributes(b1, b2, 0, lightingMode)
 
     return {
         "font-size": highlight ? `1.25em` : `1em`,
         x: (lineAttributeObject.x1 + lineAttributeObject.x2) / 2,
         y: (lineAttributeObject.y1 + lineAttributeObject.y2) / 2 - 5,
-        fill: highlight ? `red` : `black`
+        fill: highlight ? `red` : `${lightingMode ? `black` : `white`}`
     }
 }
 
@@ -2768,6 +2770,11 @@ $(document).ready(function () {
                 `--${cssColorVariablesKeyArray[x]}:
             ${(cssColorVariables[cssColorVariablesKeyArray[x]][checkbox.target.checked ? 1 : 0])}; `
         }
+
+        lightingMode = !lightingMode
+
+        renderLinesAndText()
+
         $("html").attr("style", styleNavbarBackgroundString)
     });
 
